@@ -22,9 +22,7 @@ namespace Dynamo.PythonMigration
         private const string NOTIFICATION_TITLE = "IronPythonNotification";
 
         private ViewLoadedParams LoadedParams { get; set; }
-        private WorkspaceModel CurrentWorkspace { get; set; }
         private DynamoViewModel DynamoViewModel { get; set; }
-        private DynamoLogger DynamoLogger { get { return DynamoViewModel.Model.Logger; } }
         private NotificationMessage IronPythonNotification { get; set; }
 
         /// <summary>
@@ -55,7 +53,7 @@ namespace Dynamo.PythonMigration
             DynamoViewModel = LoadedParams.DynamoWindow.DataContext as DynamoViewModel;
             DynamoViewModel.CurrentSpaceViewModel.Model.NodeAdded += Model_NodeAdded;
             DynamoViewModel.Model.PropertyChanged += Model_PropertyChanged;
-            DynamoLogger.NotificationLogged += DynamoLogger_NotificationLogged;
+            DynamoViewModel.Model.Logger.NotificationLogged += DynamoLogger_NotificationLogged;
             
         }
 
@@ -81,8 +79,7 @@ namespace Dynamo.PythonMigration
             {
                 IronPythonNotification = null;
                 var dynamoModel = sender as DynamoModel;
-                CurrentWorkspace = dynamoModel.CurrentWorkspace;
-                CheckForIronPythonDependencies(CurrentWorkspace);
+                CheckForIronPythonDependencies(dynamoModel.CurrentWorkspace);
             }
         }
 
