@@ -88,24 +88,6 @@ namespace PythonNodeModels.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This graph currently contains python nodes that are using the old IronPython Engine which will be deprecated in later versions.Consider updating these nodes to use the new CPython 3.7 Engine..
-        /// </summary>
-        public static string IronPythonNotificationDetailedMessage {
-            get {
-                return ResourceManager.GetString("IronPythonNotificationDetailedMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This graph contains nodes that are using IronPython Engine..
-        /// </summary>
-        public static string IronPythonNotificationShortMessage {
-            get {
-                return ResourceManager.GetString("IronPythonNotificationShortMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Result of the python script.
         /// </summary>
         public static string PythonNodePortDataOutputToolTip {

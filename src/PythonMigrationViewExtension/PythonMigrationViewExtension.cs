@@ -2,6 +2,7 @@
 using Dynamo.Graph.Workspaces;
 using Dynamo.Logging;
 using Dynamo.Models;
+using Dynamo.PythonMigration.Properties;
 using Dynamo.UI.Prompts;
 using Dynamo.ViewModels;
 using Dynamo.Wpf.Extensions;
@@ -104,11 +105,11 @@ namespace Dynamo.PythonMigration
 
         private void DisplayIronPythonDialog()
         {
-            string summary = Dynamo.Properties.Resources.IronPythonDialogSummary;
-            var description = Dynamo.Properties.Resources.IronPythonDialogDescription;
+            string summary = Resources.IronPythonDialogSummary;
+            var description = Resources.IronPythonDialogDescription;
 
             var dialog = new IronPythonDialog();
-            dialog.Title = Dynamo.Properties.Resources.IronPythonDialogTitle;
+            dialog.Title = Resources.IronPythonDialogTitle;
             dialog.SummaryText.Text = summary;
             dialog.DescriptionText.Text = description;
             dialog.Owner = LoadedParams.DynamoWindow;
@@ -120,8 +121,8 @@ namespace Dynamo.PythonMigration
             DynamoViewModel.Model.Logger.LogNotification(
                 this.GetType().Name,
                 NOTIFICATION_TITLE,
-                PythonNodeModels.Properties.Resources.IronPythonNotificationShortMessage,
-                PythonNodeModels.Properties.Resources.IronPythonNotificationDetailedMessage);
+                Resources.IronPythonNotificationShortMessage,
+                Resources.IronPythonNotificationDetailedMessage);
         }
     }
 }
