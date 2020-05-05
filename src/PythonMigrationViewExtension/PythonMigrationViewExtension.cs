@@ -46,16 +46,16 @@ namespace Dynamo.PythonMigration
 
         public void Dispose()
         {
+            EventUnsubscriber();
         }
+
 
         public void Loaded(ViewLoadedParams p)
         {
             LoadedParams = p;
             DynamoViewModel = LoadedParams.DynamoWindow.DataContext as DynamoViewModel;
-            DynamoViewModel.CurrentSpaceViewModel.Model.NodeAdded += Model_NodeAdded;
-            DynamoViewModel.Model.PropertyChanged += Model_PropertyChanged;
-            DynamoViewModel.Model.Logger.NotificationLogged += DynamoLogger_NotificationLogged;
-            
+            EventSubscriber();
+
         }
 
         private void DynamoLogger_NotificationLogged(NotificationMessage obj)
@@ -74,14 +74,10 @@ namespace Dynamo.PythonMigration
             }
         }
 
-        private void Model_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void LoadedParams_CurrentWorkspaceChanged(IWorkspaceModel workspace)
         {
-            if (e.PropertyName == "CurrentWorkspace")
-            {
-                IronPythonNotification = null;
-                var dynamoModel = sender as DynamoModel;
-                CheckForIronPythonDependencies(dynamoModel.CurrentWorkspace);
-            }
+            IronPythonNotification = null;
+            CheckForIronPythonDependencies(workspace as WorkspaceModel);
         }
 
         private void CheckForIronPythonDependencies(WorkspaceModel workspace)
@@ -124,5 +120,19 @@ namespace Dynamo.PythonMigration
                 Resources.IronPythonNotificationShortMessage,
                 Resources.IronPythonNotificationDetailedMessage);
         }
+
+        private void EventSubscriber()
+        {
+            LoadedParams.CurrentWorkspaceChanged += LoadedParams_CurrentWorkspaceChanged;
+            DynamoViewModel.CurrentSpaceViewModel.Model.NodeAdded += Model_NodeAdded;
+            DynamoViewModel.Model.Logger.NotificationLogged += DynamoLogger_NotificationLogged;
+        }
+        private void EventUnsubscriber()
+        {
+            LoadedParams.CurrentWorkspaceChanged -= LoadedParams_CurrentWorkspaceChanged;
+            DynamoViewModel.CurrentSpaceViewModel.Model.NodeAdded -= Model_NodeAdded;
+            DynamoViewModel.Model.Logger.NotificationLogged -= DynamoLogger_NotificationLogged;
+        }
+
     }
 }
