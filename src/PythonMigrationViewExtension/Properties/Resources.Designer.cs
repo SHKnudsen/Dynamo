@@ -61,7 +61,7 @@ namespace Dynamo.PythonMigration.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This graph currently contains python nodes that are using the old IronPython Engine which will be deprecated in later versions. Consider updating these nodes to use the new CPython 3.7 Engine..
+        ///   Looks up a localized string similar to Please consider updating these nodes to use the new CPython 3.7 Engine..
         /// </summary>
         public static string IronPythonDialogDescription {
             get {
@@ -70,7 +70,7 @@ namespace Dynamo.PythonMigration.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This graph contains nodes that are using IronPython Engine..
+        ///   Looks up a localized string similar to This graph contains nodes that are using the old IronPython Engine..
         /// </summary>
         public static string IronPythonDialogSummary {
             get {
@@ -79,7 +79,7 @@ namespace Dynamo.PythonMigration.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Graph Contains Python Nodes using IronPyton Engine.
+        ///   Looks up a localized string similar to Graph Contains Python Nodes using the old IronPyton Engine.
         /// </summary>
         public static string IronPythonDialogTitle {
             get {
@@ -97,7 +97,7 @@ namespace Dynamo.PythonMigration.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This graph contains nodes that are using IronPython Engine..
+        ///   Looks up a localized string similar to This graph contains nodes that are using the old IronPython Engine..
         /// </summary>
         public static string IronPythonNotificationShortMessage {
             get {

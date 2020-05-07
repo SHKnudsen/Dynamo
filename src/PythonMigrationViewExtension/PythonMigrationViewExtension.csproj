@@ -59,8 +59,8 @@
     </Compile>
     <Compile Include="PythonMigrationViewExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="IronPythonDialog.xaml.cs">
-      <DependentUpon>IronPythonDialog.xaml</DependentUpon>
+    <Compile Include="IronPythonInfoDialog.xaml.cs">
+      <DependentUpon>IronPythonInfoDialog.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -81,7 +81,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="IronPythonDialog.xaml">
+    <Page Include="IronPythonInfoDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

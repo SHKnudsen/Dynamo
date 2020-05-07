@@ -23,12 +23,12 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBlock Foreground="{StaticResource headerForegroundInactive}"
+        <!--<TextBlock Foreground="{StaticResource headerForegroundInactive}"
                     Grid.Row="1"
                    Text="Python Engine:"
-                   FontSize="8" />
+                   FontSize="8" />-->
         <TextBlock Foreground="{StaticResource headerForegroundInactive}"
-                    Grid.Row="2"
+                    Grid.Row="1"
                    Text="{Binding Engine}"
                    FontSize="8" />
     </Grid>

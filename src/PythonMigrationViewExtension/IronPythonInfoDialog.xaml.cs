@@ -19,9 +19,9 @@ namespace Dynamo.PythonMigration
     /// <summary>
     /// Interaction logic for UserControl1.xaml
     /// </summary>
-    public partial class IronPythonDialog : Window
+    public partial class IronPythonInfoDialog : Window
     {
-        public IronPythonDialog()
+        public IronPythonInfoDialog()
         {
             InitializeComponent();
         }

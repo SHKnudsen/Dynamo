@@ -97,7 +97,7 @@ namespace PythonNodeModels.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Python3.
+        ///   Looks up a localized string similar to CPython3.
         /// </summary>
         public static string PythonNodeContextMenuEngineVersionThree {
             get {
@@ -106,7 +106,7 @@ namespace PythonNodeModels.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Python2.
+        ///   Looks up a localized string similar to IronPython2.
         /// </summary>
         public static string PythonNodeContextMenuEngineVersionTwo {
             get {
