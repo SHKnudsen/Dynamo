@@ -1,13 +1,26 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Navigation;
+using Dynamo.Controls;
 using Dynamo.Models;
 using Dynamo.PackageManager;
+using Dynamo.Wpf;
 
 namespace Dynamo.ViewModels
 {
     partial class DynamoViewModel
     {
+
+        /// <summary>
+        ///     Event that is fired when analyze code is clicked.
+        /// </summary>
+        public event Action<VariableInputNodeViewCustomization> AnalyzePythonCode;
+        public virtual void OnAnalyzePythonCode(VariableInputNodeViewCustomization pythonNode)
+        {
+            var handler = AnalyzePythonCode;
+            if (handler != null) handler(pythonNode);
+        }
+
         public event EventHandler RequestManagePackagesDialog;
         public virtual void OnRequestManagePackagesDialog(Object sender, EventArgs e)
         {

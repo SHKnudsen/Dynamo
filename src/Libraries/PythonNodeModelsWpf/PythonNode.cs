@@ -17,7 +17,7 @@ namespace PythonNodeModelsWpf
     public class PythonNodeViewCustomization : VariableInputNodeViewCustomization, INodeViewCustomization<PythonNode>
     {       
         private DynamoViewModel dynamoViewModel;
-        private PythonNode pythonNodeModel;
+        public PythonNode pythonNodeModel;
         private NodeView pythonNodeView;
         private WorkspaceModel workspaceModel;
         private ScriptEditorWindow editWindow;
@@ -44,6 +44,11 @@ namespace PythonNodeModelsWpf
             nodeView.PresentationGrid.Visibility = Visibility.Visible;
             nodeView.PresentationGrid.DataContext = this.pythonNodeModel;
             nodeView.PresentationGrid.Children.Add(new EngineLabel());
+        }
+
+        private void OnAnalyzeCodeClicked(object sender, RoutedEventArgs e)
+        {
+            dynamoViewModel.OnAnalyzePythonCode(this);
         }
 
         private void NodeModel_Disposed(Dynamo.Graph.ModelBase obj)
@@ -100,9 +105,15 @@ namespace PythonNodeModelsWpf
                     editWindow = new ScriptEditorWindow(dynamoViewModel, pythonNodeModel, pythonNodeView, ref editorWindowRect);
                     editWindow.Initialize(workspaceModel.Guid, pythonNodeModel.GUID, "ScriptContent", pythonNodeModel.Script);
                     editWindow.Closed += editWindow_Closed;
+                    editWindow.analyzeCode.Click += OnAnalyzeCodeClicked;
                     editWindow.Show();
                 }
             }
+        }
+
+        public void UpdateScriptContent()
+        {
+            editWindow.editText.Text = pythonNodeModel.Script;
         }
     }
 }

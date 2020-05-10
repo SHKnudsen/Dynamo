@@ -26,6 +26,7 @@ namespace PythonNodeModelsWpf
         private CompletionWindow completionWindow = null;
         private readonly IronPythonCompletionProvider completionProvider;
         private readonly DynamoViewModel dynamoViewModel;
+        private readonly NodeView nodeView;
         public PythonNode nodeModel { get; set; }
         private bool nodeWasModified = false;
         private string originalScript;
@@ -39,6 +40,7 @@ namespace PythonNodeModelsWpf
         {
             this.dynamoViewModel = dynamoViewModel;
             this.nodeModel = nodeModel;
+            this.nodeView = nodeView;
 
             completionProvider = new IronPythonCompletionProvider(dynamoViewModel.Model.PathManager.DynamoCoreDirectory);
             completionProvider.MessageLogged += dynamoViewModel.Model.Logger.Log;
@@ -162,8 +164,7 @@ namespace PythonNodeModelsWpf
             }
         }
 
+
         #endregion
-
-
     }
 }

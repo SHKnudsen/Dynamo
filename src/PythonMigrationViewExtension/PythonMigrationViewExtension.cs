@@ -1,4 +1,5 @@
-﻿using Dynamo.Graph.Nodes;
+﻿using Dynamo.Controls;
+using Dynamo.Graph.Nodes;
 using Dynamo.Graph.Workspaces;
 using Dynamo.Logging;
 using Dynamo.Models;
@@ -7,11 +8,13 @@ using Dynamo.UI.Prompts;
 using Dynamo.ViewModels;
 using Dynamo.Wpf.Extensions;
 using PythonNodeModels;
+using PythonNodeModelsWpf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace Dynamo.PythonMigration
@@ -26,6 +29,7 @@ namespace Dynamo.PythonMigration
         private DynamoViewModel DynamoViewModel { get; set; }
         private NotificationMessage IronPythonNotification { get; set; }
         private WorkspaceModel CurrentWorkspace { get; set; }
+        private PythonMigrationView MigrationWindow { get; set; }
 
         private Dictionary<Guid, NotificationMessage> NotificationTracker = new Dictionary<Guid, NotificationMessage>();
         private Dictionary<Guid, IronPythonInfoDialog> DialogTracker = new Dictionary<Guid, IronPythonInfoDialog>();
@@ -38,7 +42,7 @@ namespace Dynamo.PythonMigration
         /// <summary>
         /// Extension Name
         /// </summary>
-        public string Name { get { return EXTENSION_NAME; } }
+        public string Name { get { return EXTENSION_NAME; } }    
 
         public void Shutdown()
         {
@@ -59,8 +63,8 @@ namespace Dynamo.PythonMigration
             LoadedParams = p;
             DynamoViewModel = LoadedParams.DynamoWindow.DataContext as DynamoViewModel;
             CurrentWorkspace = LoadedParams.CurrentWorkspaceModel as WorkspaceModel;
+            var viewModel = new PythonMigrationViewModel(this, LoadedParams, DynamoViewModel);
             SubscribeToDynamoEvents();
-
         }
 
         private void CheckForIronPythonDependencies(WorkspaceModel workspace)
@@ -120,6 +124,7 @@ namespace Dynamo.PythonMigration
             DynamoViewModel.CurrentSpaceViewModel.Model.NodeAdded += OnNodeAdded;
             DynamoViewModel.Model.Logger.NotificationLogged += OnNotificationLogged;
         }
+
         private void UnsubscribeFromDynamoEvents()
         {
             LoadedParams.CurrentWorkspaceChanged -= OnCurrentWorkspaceChanged;
