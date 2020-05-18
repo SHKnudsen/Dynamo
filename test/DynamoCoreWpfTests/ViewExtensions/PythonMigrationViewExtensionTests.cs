@@ -17,6 +17,7 @@ using System.Windows.Controls;
 using Dynamo.DocumentationBrowser;
 using Dynamo.Graph.Workspaces;
 using Dynamo.Wpf.Extensions;
+using Dynamo.Utilities;
 
 namespace DynamoCoreWpfTests
 {
@@ -52,10 +53,11 @@ namespace DynamoCoreWpfTests
 
             // Act
             // open file
-            var examplePath = Path.Combine(UnitTestBase.TestDirectory, @"core\python", "python.dyn");
-            Open(examplePath);
+            Open(@"core\python\python.dyn");
 
-            var isIronPythonDialogOpen = this.View.OwnedWindows.Cast<Window>().Any(x=>x.GetType() == typeof(IronPythonInfoDialog));
+            var isIronPythonDialogOpen = this.View.OwnedWindows
+                .Cast<Window>()
+                .Any(x=>x.GetType() == typeof(IronPythonInfoDialog));
         
             // Assert
             Assert.IsTrue(isIronPythonDialogOpen);
@@ -80,19 +82,21 @@ namespace DynamoCoreWpfTests
                 raisedEvents.Add(obj.Sender);
             };
 
-            var nodesCount = this.ViewModel.CurrentSpace.Nodes.Count();
+            var nodesCountBeforeNodeAdded = this.ViewModel.CurrentSpace.Nodes.Count();
 
             this.ViewModel.ExecuteCommand(new DynamoModel.
                 CreateNodeCommand(Guid.NewGuid().ToString(), pythonNodeName, 0, 0, false, false));
 
+            var nodesCountAfterNodeAdded = this.ViewModel.CurrentSpace.Nodes.Count();
+
             // Assert
-            Assert.AreNotEqual(this.ViewModel.CurrentSpace.Nodes.Count(), nodesCount);
+            Assert.AreEqual(nodesCountBeforeNodeAdded+1, nodesCountAfterNodeAdded);
             Assert.AreEqual(raisedEvents.Count, 1);
             Assert.IsTrue(raisedEvents.Any(x => x.Contains(nameof(PythonMigrationViewExtension))));
         }
 
         /// <summary>
-        /// This test is created to check if a notification is logged to the Dynamo Logger 
+        /// This test verifies an IronPython warning notification is logged to the Dynamo Logger 
         /// only one time per open graph
         /// </summary>
         [Test]
@@ -110,23 +114,24 @@ namespace DynamoCoreWpfTests
                 raisedEvents.Add(obj.Sender);
             };
 
-            var nodesCount = this.ViewModel.CurrentSpace.Nodes.Count();
+            var nodesCountBeforeNodeAdded = this.ViewModel.CurrentSpace.Nodes.Count();
 
             this.ViewModel.ExecuteCommand(new DynamoModel.
                 CreateNodeCommand(Guid.NewGuid().ToString(), pythonNodeName, 0, 0, false, false));
             this.ViewModel.ExecuteCommand(new DynamoModel.
                 CreateNodeCommand(Guid.NewGuid().ToString(), pythonNodeName, 0, 0, false, false));
+
+            var nodesCountAfterNodeAdded = this.ViewModel.CurrentSpace.Nodes.Count();
 
             // Assert
-            Assert.AreNotEqual(this.ViewModel.CurrentSpace.Nodes.Count(), nodesCount);
-            Assert.AreEqual(2, this.ViewModel.CurrentSpace.Nodes.Count());
+            Assert.AreEqual(nodesCountBeforeNodeAdded+2, nodesCountAfterNodeAdded);
             Assert.AreEqual(raisedEvents.Count, 1);
             Assert.IsTrue(raisedEvents.Any(x => x.Contains(nameof(PythonMigrationViewExtension))));
         }
 
 
         /// <summary>
-        /// This test is created to that the IronPython dialog wont show the second time a graph is opened
+        /// This test verifies that the IronPython dialog wont show the second time a graph is opened
         /// even if it contains IronPython nodes
         /// </summary>
         [Test]
@@ -143,7 +148,7 @@ namespace DynamoCoreWpfTests
             // open file
             Open(examplePathIronPython);
             var ironPythonWorkspaceId = this.ViewModel.CurrentSpace.Guid;
-            var ironPythonDialog = GetOpenWindowsOfType<IronPythonInfoDialog>(this.View).First();
+            var ironPythonDialog = this.View.GetChildrenWindowsOfType<IronPythonInfoDialog>().First();
             Assert.IsNotNull(ironPythonDialog);
             ironPythonDialog.OkBtn.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
 
@@ -154,7 +159,7 @@ namespace DynamoCoreWpfTests
 
             Open(examplePathIronPython);
             Assert.AreEqual(ironPythonWorkspaceId, this.ViewModel.CurrentSpace.Guid);
-            var secondGraphIronPythonDialog = GetOpenWindowsOfType<IronPythonInfoDialog>(this.View);
+            var secondGraphIronPythonDialog = this.View.GetChildrenWindowsOfType<IronPythonInfoDialog>();
 
             // Assert
             Assert.AreEqual(0, secondGraphIronPythonDialog.Count());
@@ -175,7 +180,10 @@ namespace DynamoCoreWpfTests
             // open file
             Open(@"core\python\python.dyn");
 
-            var pythonMigration = extensionManager.ViewExtensions.Where(x => x.Name == viewExtension.Name).Select(x=>x).First() as PythonMigrationViewExtension;
+            var pythonMigration = extensionManager.ViewExtensions
+                .Where(x => x.Name == viewExtension.Name)
+                .Select(x=>x)
+                .First() as PythonMigrationViewExtension;
 
             // Assert
             Assert.IsTrue(pythonMigration.PythonDependencies.ContainsIronPythonDependencies());
@@ -183,7 +191,7 @@ namespace DynamoCoreWpfTests
 
         /// <summary>
         /// Checks if pressing the `More Information` button on the IronPythonInfoDialog window
-        /// will open the DocumentaionBrowser viewExtension.
+        /// will open the DocumentaionBrowser ViewExtension.
         /// </summary>
         [Test]
         public void CanOpenDocumentationBrowserWhenMoreInformationIsClicked()
@@ -198,15 +206,16 @@ namespace DynamoCoreWpfTests
             var examplePath = Path.Combine(UnitTestBase.TestDirectory, @"core\python", "python.dyn");
             Open(examplePath);
 
-            var ironPythonDialog = GetOpenWindowsOfType<IronPythonInfoDialog>(this.View).First();
+            var ironPythonDialog = this.View.GetChildrenWindowsOfType<IronPythonInfoDialog>().First();
             var viewExtensionTabsBeforeBtnClick = this.View.ExtensionTabItems.Count;
 
             ironPythonDialog.MoreInformationBtn.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            var hasDocumentationBrowserTab = this.View.ExtensionTabItems
+                .Any(x => x.Header.ToString() == "Documentation Browser");
 
             // Assert
-            Assert.AreNotEqual(viewExtensionTabsBeforeBtnClick, this.View.ExtensionTabItems.Count);
-            Assert.IsTrue(this.View.ExtensionTabItems
-                .Any(x => x.Header.ToString() == "Documentation Browser"));
+            Assert.AreEqual(viewExtensionTabsBeforeBtnClick + 1, this.View.ExtensionTabItems.Count);
+            Assert.IsTrue(hasDocumentationBrowserTab);
         }
 
         #region Helpers
@@ -218,17 +227,6 @@ namespace DynamoCoreWpfTests
             RoutedEventArgs args = new RoutedEventArgs(FrameworkElement.LoadedEvent);
 
             eventMethod.Invoke(element, new object[] { args });
-        }
-
-        public static IEnumerable<T> GetOpenWindowsOfType<T>(Window view)  where T : Window
-        {
-            if (view == null)
-                throw new ArgumentNullException(nameof(view));
-
-            return view.OwnedWindows
-                .Cast<Window>()
-                .Where(x => x.GetType() == typeof(T))
-                .Select(x => x as T);
         }
         #endregion
     }

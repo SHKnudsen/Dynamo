@@ -16,6 +16,7 @@ namespace DynamoCoreWpfTests
 {
     public class PythonNodeCustomizationTests : DynamoTestUIBase
     {
+        private readonly List<string> expectedEngineMenuItems = Enum.GetNames(typeof(PythonNodeModels.PythonEngineVersion)).ToList();
 
         public override void Open(string path)
         {
@@ -36,13 +37,13 @@ namespace DynamoCoreWpfTests
             var expectedDefaultEngine = PythonNodeModels.PythonEngineVersion.IronPython2;
             var engineChange = PythonNodeModels.PythonEngineVersion.CPython3;
 
-            // Act
             Open(@"core\python\python.dyn");
 
             var nodeView = NodeViewWithGuid("3bcad14e-d086-4278-9e08-ed2759ef92f3");
             var nodeModel = nodeView.ViewModel.NodeModel as PythonNodeModels.PythonNodeBase;
             Assert.NotNull(nodeModel);
 
+            // get the `Edit...` menu item from the nodes context menu so we can simulate the clik event.
             var editMenuItem = nodeView.MainContextMenu
                 .Items
                 .Cast<MenuItem>()
@@ -52,7 +53,9 @@ namespace DynamoCoreWpfTests
 
             editMenuItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
 
-            var scriptEditorWindow = GetOpenWindowsOfType<ScriptEditorWindow>(this.View).First();
+            // after simulating the click event get the opend Script editor window
+            // and fetch the EngineSelector dropdown
+            var scriptEditorWindow = this.View.GetChildrenWindowsOfType<ScriptEditorWindow>().First();
             var windowGrid = scriptEditorWindow.Content as Grid;
             var engineSelectorComboBox = windowGrid
                 .ChildrenOfType<ComboBox>()
@@ -60,15 +63,16 @@ namespace DynamoCoreWpfTests
                 .Select(x=>x)
                 .First();
 
-            var selectedEngine = engineSelectorComboBox.SelectedItem;
+            // Act
+            var engineBeforeChange = engineSelectorComboBox.SelectedItem;
             var comboBoxEngines = engineSelectorComboBox.Items.SourceCollection;
-            engineSelectorComboBox.SelectedItem = engineChange;
+            var engineAfterChange = engineSelectorComboBox.SelectedItem = engineChange;
 
             // Assert
             CollectionAssert.AreEqual(expectedAvailableEnignes, comboBoxEngines);
-            Assert.AreEqual(expectedDefaultEngine, selectedEngine);
+            Assert.AreEqual(expectedDefaultEngine, engineBeforeChange);
             Assert.AreEqual(engineSelectorComboBox.SelectedItem, PythonNodeModels.PythonEngineVersion.CPython3);
-            Assert.AreEqual(nodeModel.Engine, engineChange);
+            Assert.AreEqual(nodeModel.Engine, engineAfterChange);
         }
 
         /// <summary>
@@ -79,11 +83,9 @@ namespace DynamoCoreWpfTests
         public void CanChangePythonEngineFromContextMenuOnPythonFromStringNode()
         {
             // Arrange
-            var expectedEngineMenuItems = Enum.GetNames(typeof(PythonNodeModels.PythonEngineVersion)).ToList();
             var expectedEngineVersionOnOpen = PythonNodeModels.PythonEngineVersion.CPython3;
             var expectedEngineVersionAfterChange = PythonNodeModels.PythonEngineVersion.IronPython2;
 
-            // Act
             Open(@"core\python\pythonFromString.dyn");
 
             var nodeView = NodeViewWithGuid(new Guid("bad59bc89b4947b699ee34fa8dca91ae").ToString("D"));
@@ -106,8 +108,8 @@ namespace DynamoCoreWpfTests
                 .Select(x => x)
                 .First();
 
+            // Act
             ironPython2MenuItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
-
             var engineVersionAfterChange = nodeModel.Engine;
 
             // Assert
@@ -117,17 +119,16 @@ namespace DynamoCoreWpfTests
         }
 
         /// <summary>
-        /// This test check if the Python Node displays an EngineLabel showing which Engine the node is set to use,
+        /// This test checks if the Python Node displays an EngineLabel showing which Engine the node is set to use,
         /// and if this label updates as expected when changing the Engine property on the nodemodel.
         /// </summary>
         [Test]
-        public void PythonNodeHasLabelDisplayingCurrenEngine()
+        public void PythonNodeHasLabelDisplayingCurrentEngine()
         {
             // Arrange
             var expectedDefaultEngineLabelText = PythonNodeModels.PythonEngineVersion.IronPython2.ToString();
             var engineChange = PythonNodeModels.PythonEngineVersion.CPython3;
 
-            // Act
             Open(@"core\python\python.dyn");
 
             var nodeView = NodeViewWithGuid("3bcad14e-d086-4278-9e08-ed2759ef92f3");
@@ -144,28 +145,19 @@ namespace DynamoCoreWpfTests
             var currentEngineTextBlock = (engineLabel.Content as Grid).Children
                 .Cast<UIElement>()
                 .Where(x=>x.GetType() == typeof(TextBlock))
-                .Select(x => x as TextBlock).First();
+                .Select(x => x as TextBlock)
+                .First();
             var defaultEngineLabelText = currentEngineTextBlock.Text;
 
+            // Act
             nodeModel.Engine = engineChange;
-            var engineLableTextAfterChange = currentEngineTextBlock.Text;
+            var engineLabelTextAfterChange = currentEngineTextBlock.Text;
 
             // Assert
             Assert.IsTrue(nodeView.PresentationGrid.IsVisible);
             Assert.AreEqual(expectedDefaultEngineLabelText, defaultEngineLabelText);
-            Assert.AreEqual(engineChange.ToString(), engineLableTextAfterChange);
+            Assert.AreEqual(engineChange.ToString(), engineLabelTextAfterChange);
 
-        }
-
-        public static IEnumerable<T> GetOpenWindowsOfType<T>(Window view) where T : Window
-        {
-            if (view == null)
-                throw new ArgumentNullException(nameof(view));
-
-            return view.OwnedWindows
-                .Cast<Window>()
-                .Where(x => x.GetType() == typeof(T))
-                .Select(x => x as T);
         }
     }
 }
