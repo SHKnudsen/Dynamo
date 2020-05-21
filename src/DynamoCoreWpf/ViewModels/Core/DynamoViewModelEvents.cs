@@ -13,10 +13,10 @@ namespace Dynamo.ViewModels
         /// <summary>
         ///     Event that is fired when analyze code is clicked.
         /// </summary>
-        public event Action<VariableInputNodeViewCustomization> AnalyzePythonCode;
-        public virtual void OnAnalyzePythonCode(VariableInputNodeViewCustomization pythonNode)
+        public event Action<VariableInputNodeViewCustomization> CPythonEngineSelected;
+        public virtual void OnCPythonEngineSelected(VariableInputNodeViewCustomization pythonNode)
         {
-            var handler = AnalyzePythonCode;
+            var handler = CPythonEngineSelected;
             if (handler != null) handler(pythonNode);
         }
 

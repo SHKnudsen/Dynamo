@@ -3,6 +3,7 @@ using Dynamo.Graph.Nodes;
 using Dynamo.Graph.Workspaces;
 using Dynamo.Logging;
 using Dynamo.Models;
+using Dynamo.PythonMigration.Controls;
 using Dynamo.PythonMigration.Properties;
 using Dynamo.UI.Prompts;
 using Dynamo.ViewModels;

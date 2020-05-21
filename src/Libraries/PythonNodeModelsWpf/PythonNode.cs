@@ -35,7 +35,6 @@ namespace PythonNodeModelsWpf
             var editWindowItem = new MenuItem { Header = PythonNodeModels.Properties.Resources.EditHeader, IsCheckable = false };
             nodeView.MainContextMenu.Items.Add(editWindowItem);
             editWindowItem.Click += delegate { EditScriptContent(); };
-            nodeView.UpdateLayout();
 
             nodeView.MouseDown += view_MouseDown;
             nodeModel.DeletionStarted += NodeModel_DeletionStarted;
@@ -44,11 +43,14 @@ namespace PythonNodeModelsWpf
             nodeView.PresentationGrid.Visibility = Visibility.Visible;
             nodeView.PresentationGrid.DataContext = this.pythonNodeModel;
             nodeView.PresentationGrid.Children.Add(new EngineLabel());
+            nodeView.UpdateLayout();
         }
 
-        private void OnAnalyzeCodeClicked(object sender, RoutedEventArgs e)
+        private void OnEngineChanged(object sender, SelectionChangedEventArgs e)
         {
-            dynamoViewModel.OnAnalyzePythonCode(this);
+            var engineSelector = sender as ComboBox;
+            if (engineSelector.SelectedItem.ToString() == PythonEngineVersion.CPython3.ToString())
+                dynamoViewModel.OnCPythonEngineSelected(this);
         }
 
         private void NodeModel_Disposed(Dynamo.Graph.ModelBase obj)
@@ -104,8 +106,8 @@ namespace PythonNodeModelsWpf
                 {
                     editWindow = new ScriptEditorWindow(dynamoViewModel, pythonNodeModel, pythonNodeView, ref editorWindowRect);
                     editWindow.Initialize(workspaceModel.Guid, pythonNodeModel.GUID, "ScriptContent", pythonNodeModel.Script);
+                    editWindow.EngineSelectorComboBox.SelectionChanged += OnEngineChanged;
                     editWindow.Closed += editWindow_Closed;
-                    editWindow.analyzeCode.Click += OnAnalyzeCodeClicked;
                     editWindow.Show();
                 }
             }

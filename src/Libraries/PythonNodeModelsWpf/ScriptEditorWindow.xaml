@@ -64,13 +64,6 @@
                           Margin="2"
                           Grid.Column="1"
                           Foreground="{StaticResource DynamoStandardLableTextBrush}" />
-                <Button Content="Analyze Code"
-                        Style="{DynamicResource ResourceKey=STextButton}"
-                        Name="analyzeCode"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Bottom"
-                        Margin="2"
-                        Grid.Column="1" />
                 <Button Content="{x:Static p:Resources.PythonScriptEditorSaveChangesButton}" Style="{DynamicResource ResourceKey=STextButton}" Name="button2" Click="OnSaveClicked" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="2" Grid.Column="1"/>
                 <Button Content="{x:Static p:Resources.PythonScriptEditorRevertButton}" Style="{DynamicResource ResourceKey=STextButton}" Name="button1" Click="OnRevertClicked" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="2" Grid.Column="1"/>
             </StackPanel>

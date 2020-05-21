@@ -12,23 +12,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Dynamo.UI;
 
-namespace Dynamo.PythonMigration
+namespace Dynamo.PythonMigration.Controls
 {
     /// <summary>
-    /// Interaction logic for UserControl1.xaml
+    /// Interaction logic for PythonMigrationView.xaml
     /// </summary>
-    public partial class IronPythonInfoDialog : Window
+    public partial class PythonMigrationView : UserControl
     {
-        public IronPythonInfoDialog()
+        public PythonMigrationView()
         {
             InitializeComponent();
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
         }
     }
 }

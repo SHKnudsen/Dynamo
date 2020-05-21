@@ -9,6 +9,7 @@ using System.Windows;
 using Dynamo.Controls;
 using Dynamo.Core;
 using Dynamo.Graph.Workspaces;
+using Dynamo.PythonMigration.Controls;
 using Dynamo.ViewModels;
 using Dynamo.Wpf;
 using Dynamo.Wpf.Extensions;
@@ -22,14 +23,14 @@ namespace Dynamo.PythonMigration
         private const string FILE_PATH = @"C:\Users\SylvesterKnudsen\test.py";
 
         private PythonMigrationViewExtension ViewExtension { get; set; }
-        private ViewLoadedParams ViewLoadedParams { get; set; }
         private DynamoViewModel DynamoViewModel { get; set; }
         private PythonMigrationView MigrationView { get; set; }
         private PythonNodeViewCustomization PythonNodeView { get; set; }
         private PythonNode PythonNode { get; set; }
 
+        public ViewLoadedParams ViewLoadedParams { get; set; }
         public string Code { get; set; }
-        public string AnalysisResult { get; set; }
+        public string RefactoredCode { get; set; }
 
         public PythonMigrationViewModel(PythonMigrationViewExtension viewExtension, ViewLoadedParams vlp, DynamoViewModel dynamoViewModel)
         {
@@ -47,11 +48,11 @@ namespace Dynamo.PythonMigration
 
         private void SubscribeToDynamoEvents()
         {
-            DynamoViewModel.AnalyzePythonCode += OnAnalyzeCode;
+            DynamoViewModel.CPythonEngineSelected += OnCPythonEngineSelected;
             DynamoView.CloseExtension += OnCloseExtension;
         }
 
-        private void OnAnalyzeCode(Wpf.VariableInputNodeViewCustomization obj)
+        private void OnCPythonEngineSelected(Wpf.VariableInputNodeViewCustomization obj)
         {
             var pythonNodeView = obj as PythonNodeViewCustomization;
             if (pythonNodeView == null)
@@ -59,8 +60,15 @@ namespace Dynamo.PythonMigration
 
             this.PythonNodeView = pythonNodeView;
             this.PythonNode = pythonNodeView.pythonNodeModel;
-            //AddCodeToWindow(this.PythonNode);
-            this.ViewLoadedParams?.AddToExtensionsSideBar(ViewExtension, this.MigrationView);
+            CreatePyFile(PythonNode.Script);
+
+            if (RefactoredCode == PythonNode.Script)
+                return;
+
+            var openDiffDialog = new OpenDiffTableDialog(this);
+
+            openDiffDialog.Show();
+            openDiffDialog.Owner = ViewLoadedParams.DynamoWindow;
         }
 
         //private void AddCodeToWindow(PythonNode pythonNode)
@@ -79,20 +87,32 @@ namespace Dynamo.PythonMigration
 
         private void AnalyzeCode()
         {
-            string twoTo3 = @"C:\Users\SylvesterKnudsen\Miniconda3\Tools\scripts\2to3.py";
-            ProcessStartInfo start = new ProcessStartInfo();
-            start.FileName = @"C:\Users\SylvesterKnudsen\Miniconda3\envs\py3warning\python.exe";
-            start.Arguments = string.Format("{0} {1}", twoTo3, FILE_PATH);
-            start.UseShellExecute = false;
-            start.RedirectStandardOutput = true;
-            using (Process process = Process.Start(start))
+            string twoTo3 = @"C:\Users\SylvesterKnudsen\Documents\PythonPlayground\2to3_string.py";
+            // Set working directory and create process
+            var process = new Process
             {
-                using (StreamReader reader = process.StandardOutput)
+                StartInfo = new ProcessStartInfo
                 {
-                    AnalysisResult = reader.ReadToEnd();
-                    RaisePropertyChanged(nameof(AnalysisResult));
+                    FileName = @"C:\Users\SylvesterKnudsen\Miniconda3\envs\py3warning\python.exe",
+                    Arguments = string.Format("{0} {1}", twoTo3, FILE_PATH),
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true,
+                    WorkingDirectory = @"C:\Users\SylvesterKnudsen\Documents\PythonPlayground",
+                    CreateNoWindow = true
                 }
+            };
+
+            process.Start();
+
+            using (StreamReader reader = process.StandardOutput)
+            {
+                RefactoredCode = reader.ReadToEnd();
+                RaisePropertyChanged(nameof(RefactoredCode));
             }
+
+            process.WaitForExit();
         }
 
         private void SubscribToMigrationViewEvents()
@@ -111,24 +131,9 @@ namespace Dynamo.PythonMigration
             ConvertCode();
         }
 
-        private void ConvertCode()
+        internal void ConvertCode()
         {
-            string twoTo3 = @"C:\Users\SylvesterKnudsen\Miniconda3\Tools\scripts\2to3.py";
-            ProcessStartInfo start = new ProcessStartInfo();
-            start.FileName = @"C:\Users\SylvesterKnudsen\Miniconda3\envs\py3warning\python.exe";
-            start.Arguments = string.Format("{0} {1} {2}", twoTo3, "-w", FILE_PATH);
-            start.UseShellExecute = false;
-            start.RedirectStandardOutput = true;
-            using (Process process = Process.Start(start))
-            {
-                using (StreamReader reader = process.StandardOutput)
-                {
-                    reader.ReadToEnd();
-                }
-            }
-
-            string convertedPythonCode = System.IO.File.ReadAllText(FILE_PATH);
-            this.PythonNode.Script = convertedPythonCode;
+            this.PythonNode.Script = RefactoredCode;
             this.PythonNodeView.UpdateScriptContent();
         }
 
