@@ -31,6 +31,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DiffPlex, Version=1.6.3.0, Culture=neutral, PublicKeyToken=1d35e91d1bd7bc0f, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiffPlex.1.6.3\lib\net40\DiffPlex.dll</HintPath>
+    </Reference>
+    <Reference Include="DiffPlex.Wpf, Version=1.1.1.0, Culture=neutral, PublicKeyToken=1d35e91d1bd7bc0f, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiffPlex.Wpf.1.1.1\lib\net46\DiffPlex.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore">
       <Private>False</Private>
     </Reference>
@@ -86,6 +92,9 @@
     <Compile Include="..\AssemblySharedInfoGenerator\AssemblySharedInfo.cs">
       <Link>Properties\AssemblySharedInfo.cs</Link>
     </Compile>
+    <Compile Include="Controls\VisualDifferenceViewer.xaml.cs">
+      <DependentUpon>VisualDifferenceViewer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GraphPythonDependencies.cs" />
     <Compile Include="MigrationAssistant\ScriptMigrator.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -123,6 +132,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\VisualDifferenceViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="IronPythonInfoDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -143,7 +156,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="MigrationAssistant\2to3_string.py" />
+    <EmbeddedResource Include="MigrationAssistant\migrate_2to3.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">

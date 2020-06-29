@@ -1,60 +1,56 @@
 ﻿using Dynamo.PythonMigration.MigrationAssistant;
 using NUnit.Framework;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dynamo.Tests
 {
     public class PythonMigrationAssistantTests
     {
         [Test]
-        public void CanRunPython3CodeFromMigrationAssistant()
-        {
-            string code = System.IO.File.ReadAllText(@"C:\Users\SylvesterKnudsen\Documents\PythonPlayground\codeEvaluationTest.py");
-            var inputNames = new List<string>()
-            {
-                "name",
-                "value"
-            };
-            var inputValues = new List<object>()
-            {
-                "From .NET!!",
-                100
-            };
-
-            ScriptMigrator.MigrateCode(code, inputNames, inputValues, "output");
-        }
-
-        [Test]
         public void CanMigratePyton2CodeToPython3Code()
         {
-            var expectedNewCode = System.IO.File.ReadAllText(@"C:\Users\SylvesterKnudsen\Desktop\new");
-            var oldCode = System.IO.File.ReadAllText(@"C:\Users\SylvesterKnudsen\Desktop\old");
-            //var oldCode = @"import urllib
+            // Arrange
+            var expectedPython3Code = @"print(""Hello, Dynamo!"")";
 
-            //print ""Hello world""
+            var python2Code = @"print ""Hello, Dynamo!""";
 
-            //try:  
-            //    x = urllib.request.urlopen(""http://dynamobim.org"").read()
-            //    print x
-            //except NameError, err:  
-            //    print err, 'Error Caused'";
-
-            string pythonScript = System.IO.File.ReadAllText(@"C:\Users\SylvesterKnudsen\Documents\PythonPlayground\migrate_2to3.py");
             var inputNames = new List<string>()
             {
                 "code"
             };
             var inputValues = new List<object>()
             {
-                oldCode
+                python2Code
             };
 
-            var migratedScript = ScriptMigrator.MigrateCode(pythonScript, inputNames, inputValues, "output");
-            Assert.AreEqual(expectedNewCode, migratedScript);
+            // Act
+            var migratedScript = ScriptMigrator.MigrateCode(inputNames, inputValues, "output");
+
+            // Assert
+            Assert.AreNotEqual(python2Code, migratedScript);
+            Assert.AreEqual(expectedPython3Code, migratedScript);
+        }
+
+        [Test]
+        public void MigrationWillNotChangePython3CompatibleCode()
+        {
+            // Arrange
+            var expectedPython3Code = @"for x in range(1, 5): print(x)";
+
+            var inputNames = new List<string>()
+            {
+                "code"
+            };
+            var inputValues = new List<object>()
+            {
+                expectedPython3Code
+            };
+
+            // Act
+            var migratedScript = ScriptMigrator.MigrateCode(inputNames, inputValues, "output");
+
+            // Assert
+            Assert.AreEqual(expectedPython3Code, migratedScript);
         }
     }
 }

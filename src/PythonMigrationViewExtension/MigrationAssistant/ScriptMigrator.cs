@@ -1,15 +1,14 @@
-﻿using System;
+﻿using Python.Runtime;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Python.Runtime;
+using System.IO;
+using System.Reflection;
 
 namespace Dynamo.PythonMigration.MigrationAssistant
 {
     internal static class ScriptMigrator
     {
-        internal static string MigrateCode(string code, List<string> inputNames, List<object> inputValues, string returnName)
+        internal static string MigrateCode(List<string> inputNames, List<object> inputValues, string returnName)
         {
             Python.Included.Installer.SetupPython().Wait();
 
@@ -25,7 +24,7 @@ namespace Dynamo.PythonMigration.MigrationAssistant
             {
                 using (Py.GIL())
                 {
-                    
+
                     using (PyScope scope = Py.CreateScope())
                     {
                         int amt = Math.Min(inputNames.Count, inputValues.Count);
@@ -34,10 +33,10 @@ namespace Dynamo.PythonMigration.MigrationAssistant
                         {
                             scope.Set(inputNames[i], inputValues[i].ToPython());
                         }
-                        
+
                         try
                         {
-                            scope.Exec(code);
+                            scope.Exec(GetPythonMigrationScript());
                             var result = scope.Contains(returnName) ? scope.Get(returnName) : null;
 
                             return result.ToString();
@@ -58,6 +57,13 @@ namespace Dynamo.PythonMigration.MigrationAssistant
             {
                 PythonEngine.ReleaseLock(gs);
             }
+        }
+
+        private static string GetPythonMigrationScript()
+        {
+            Assembly asm = Assembly.GetExecutingAssembly();
+            var reader = new StreamReader(asm.GetManifestResourceStream("Dynamo.PythonMigration.MigrationAssistant.migrate_2to3.py"));
+            return reader.ReadToEnd();
         }
     }
 }

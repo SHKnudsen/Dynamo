@@ -1,17 +1,15 @@
-import lib2to3
 from lib2to3.pgen2.parse import ParseError
 from lib2to3.refactor import RefactoringTool, get_fixers_from_package
 import zipfile
 import os.path
+from pathlib import Path
 import sys
 
 def transform(source):
-    # CHANGE THIS!!!!
-    zip_path = "C:\\Users\\SylvesterKnudsen\\AppData\\Local\\python-3.7.3-embed-amd64"
-    #zip_path = os.path.dirname(sys.executable)
-    zip_file = get_zip_file(zip_path)
-    zip_folder = zipfile.ZipFile(os.path.join(zip_path, zip_file))
-    fixers = get_all_fixers_from_zipfolder(zip_folder)
+    python_zip_path = str(Path(os.path.dirname(os.__file__)).parents[0])
+    python_zip_file = get_zip_file(python_zip_path)
+    python_zip_folder = zipfile.ZipFile(os.path.join(python_zip_path, python_zip_file))
+    fixers = get_all_fixers_from_zipfolder(python_zip_folder)
 
     refactoring_tool = RefactoringTool(fixers)
 
@@ -45,5 +43,4 @@ def get_all_fixers_from_zipfolder(folder):
         fixers.append(f.filename.replace('/', '.')[:-4])
     return fixers
 
-#original_script = open("C:\\Users\\SylvesterKnudsen\\Desktop\\old",'r').read()
 output = transform(code)

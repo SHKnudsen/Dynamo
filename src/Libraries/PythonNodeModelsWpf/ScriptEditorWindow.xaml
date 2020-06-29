@@ -76,6 +76,15 @@
                           Grid.Column="1"
                           Foreground="{StaticResource DynamoStandardLableTextBrush}" 
                           Visibility="Collapsed"/>
+                <Button Content="Migration Assistant"
+                        Style="{DynamicResource ResourceKey=STextButtonWithShapeIcon}"
+                        Name="MigrationAssistantBtn"
+                        Click="OnMigrationAssistantClicked"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Margin="1"
+                        Grid.Column="1"
+                        ToolTip="Migration Assistant" />
                 <Button Content="{x:Static p:Resources.PythonScriptEditorSaveChangesButton}" 
                         Style="{DynamicResource ResourceKey=STextButtonWithShapeIcon}" 
                         Name="SaveScriptChangesButton" 
