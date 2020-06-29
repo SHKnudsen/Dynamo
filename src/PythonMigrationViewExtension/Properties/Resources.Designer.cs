@@ -105,5 +105,14 @@ namespace Dynamo.PythonMigration.Properties {
                 return ResourceManager.GetString("IronPythonNotificationShortMessage", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Python2.
+        /// </summary>
+        public static string PythonMigrationBackupExtension {
+            get {
+                return ResourceManager.GetString("PythonMigrationBackupExtension", resourceCulture);
+            }
+        }
     }
 }

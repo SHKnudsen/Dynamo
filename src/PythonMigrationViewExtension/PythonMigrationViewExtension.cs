@@ -112,7 +112,7 @@ namespace Dynamo.PythonMigration
             var parentWindow = Window.GetWindow(btn) as ScriptEditorWindow;
 
             var node = sender as PythonNode;
-            var viewModel = new PythonMigrationAssistantViewModel(node, parentWindow);
+            var viewModel = new PythonMigrationAssistantViewModel(node, parentWindow, DynamoViewModel);
             var assistantWindow = new VisualDifferenceViewer(viewModel);
             // show modal window so user cant interact with dynamo while migration assistant is open
             assistantWindow.ShowDialog();
@@ -135,7 +135,7 @@ namespace Dynamo.PythonMigration
                 LogIronPythonNotification();
             }
 
-            if (obj.GetType() == typeof(PythonNodeBase))
+            if (obj is PythonNodeBase)
             {
                 SubscribeToPythonNodeEvents(obj as PythonNodeBase);
             }
