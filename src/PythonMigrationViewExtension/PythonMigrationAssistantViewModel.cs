@@ -1,5 +1,6 @@
 ﻿using Dynamo.PythonMigration.MigrationAssistant;
 using PythonNodeModels;
+using PythonNodeModelsWpf;
 using System.Collections.Generic;
 
 namespace Dynamo.PythonMigration
@@ -8,9 +9,13 @@ namespace Dynamo.PythonMigration
     {
         public string OldCode { get; set; }
         public string NewCode { get; set; }
+        public ScriptEditorWindow OwnerWindow { get; set; }
+        private PythonNode PythonNode { get; set; }
 
-        public PythonMigrationAssistantViewModel(PythonNode pythonNode)
+        public PythonMigrationAssistantViewModel(PythonNode pythonNode, ScriptEditorWindow parentWindow)
         {
+            PythonNode = pythonNode;
+            OwnerWindow = parentWindow;
             OldCode = pythonNode.Script;
             MigrateCode();
         }
@@ -28,6 +33,11 @@ namespace Dynamo.PythonMigration
             var migrationOutputVar = "output";
 
             NewCode = ScriptMigrator.MigrateCode(migrationInputs, migrationInputValues, migrationOutputVar);
+        }
+
+        public void ChangeCode()
+        {
+            PythonNode.MigrateCode(NewCode);
         }
     }
 }

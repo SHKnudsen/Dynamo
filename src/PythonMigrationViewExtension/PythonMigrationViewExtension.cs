@@ -6,6 +6,7 @@ using Dynamo.PythonMigration.Properties;
 using Dynamo.ViewModels;
 using Dynamo.Wpf.Extensions;
 using PythonNodeModels;
+using PythonNodeModelsWpf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -108,11 +109,11 @@ namespace Dynamo.PythonMigration
                 throw new NullReferenceException(nameof(e));
 
             var btn = routedEventArgs.OriginalSource as System.Windows.Controls.Button;
-            var parentWindow = Window.GetWindow(btn);
+            var parentWindow = Window.GetWindow(btn) as ScriptEditorWindow;
 
             var node = sender as PythonNode;
-            var viewModel = new PythonMigrationAssistantViewModel(node);
-            var assistantWindow = new VisualDifferenceViewer(viewModel, parentWindow);
+            var viewModel = new PythonMigrationAssistantViewModel(node, parentWindow);
+            var assistantWindow = new VisualDifferenceViewer(viewModel);
             // show modal window so user cant interact with dynamo while migration assistant is open
             assistantWindow.ShowDialog();
         }

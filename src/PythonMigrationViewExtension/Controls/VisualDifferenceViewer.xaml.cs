@@ -9,10 +9,10 @@ namespace Dynamo.PythonMigration.Controls
     public partial class VisualDifferenceViewer : Window
     {
         private PythonMigrationAssistantViewModel ViewModel { get; set; }
-        internal VisualDifferenceViewer(PythonMigrationAssistantViewModel viewModel, Window ownerWindow)
+        internal VisualDifferenceViewer(PythonMigrationAssistantViewModel viewModel)
         {
             ViewModel = viewModel;
-            Owner = ownerWindow;
+            Owner = ViewModel.OwnerWindow;
             InitializeComponent();
             LoadData();
             DiffView.ViewModeChanged += OnViewModeChanged;
@@ -52,6 +52,17 @@ namespace Dynamo.PythonMigration.Controls
             // We need to set the SizeToContent back to manual otherwise it will freeze
             // the GridSplitter on the DiffView
             SizeToContent = SizeToContent.Manual;
+        }
+
+        private void OnAcceptButtonClicked(object sender, RoutedEventArgs e)
+        {
+            ViewModel.ChangeCode();
+            this.Close();
+        }
+
+        private void OnRejectButtonClicked(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

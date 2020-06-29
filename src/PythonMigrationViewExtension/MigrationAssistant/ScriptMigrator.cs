@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Python.Included;
 
 namespace Dynamo.PythonMigration.MigrationAssistant
 {
@@ -10,7 +11,7 @@ namespace Dynamo.PythonMigration.MigrationAssistant
     {
         internal static string MigrateCode(List<string> inputNames, List<object> inputValues, string returnName)
         {
-            Python.Included.Installer.SetupPython().Wait();
+            Installer.SetupPython().Wait();
 
             if (!PythonEngine.IsInitialized)
             {

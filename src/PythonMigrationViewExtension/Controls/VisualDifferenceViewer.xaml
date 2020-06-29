@@ -57,12 +57,14 @@
                         Grid.Column="1">
                 <Button  x:Name="AcceptButton"
                          Content="Accept Changes"
+                         Click="OnAcceptButtonClicked"
                          Style="{StaticResource STextButton}"
                          HorizontalAlignment="Right"
                          VerticalAlignment="Bottom"
                          Margin="1" />
                 <Button  x:Name="RejectButton"
                          Content="Reject Changes"
+                         Click="OnRejectButtonClicked"
                          Style="{StaticResource STextButton}"
                          HorizontalAlignment="Right"
                          VerticalAlignment="Bottom"

@@ -42,6 +42,7 @@ namespace PythonNodeModelsWpf
 
             completionProvider = new SharedCompletionProvider(nodeModel.Engine,dynamoViewModel.Model.PathManager.DynamoCoreDirectory);
             completionProvider.MessageLogged += dynamoViewModel.Model.Logger.Log;
+            nodeModel.CodeMigrated += OnNodeModelCodeMigrated;
 
             InitializeComponent();
 
@@ -130,6 +131,14 @@ namespace PythonNodeModelsWpf
         #endregion
 
         #region Private Event Handlers
+
+        private void OnNodeModelCodeMigrated(object sender, EventArgs e)
+        {
+            var args = e as PythonCodeMigrationEventArgs;
+            originalScript = args.OldCode;
+            editText.Text = args.NewCode;
+            UpdateScript(args.NewCode);
+        }
 
         private void OnSaveClicked(object sender, RoutedEventArgs e)
         {
