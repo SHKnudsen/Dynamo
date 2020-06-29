@@ -157,6 +157,8 @@ namespace Dynamo.PythonMigration
 
         private void OnCurrentWorkspaceChanged(IWorkspaceModel workspace)
         {
+            UnSubscribeWorkspaceEvents();
+            SubscribeToWorkspaceEvents();
             NotificationTracker.Remove(CurrentWorkspace.Guid);
             CurrentWorkspace = workspace as WorkspaceModel;
             PythonDependencies = new GraphPythonDependencies(LoadedParams);
@@ -177,9 +179,14 @@ namespace Dynamo.PythonMigration
         private void SubscribeToDynamoEvents()
         {
             LoadedParams.CurrentWorkspaceChanged += OnCurrentWorkspaceChanged;
+            DynamoViewModel.Model.Logger.NotificationLogged += OnNotificationLogged;
+            SubscribeToWorkspaceEvents();
+        }
+
+        private void SubscribeToWorkspaceEvents()
+        {
             DynamoViewModel.CurrentSpaceViewModel.Model.NodeAdded += OnNodeAdded;
             DynamoViewModel.CurrentSpaceViewModel.Model.NodeRemoved += OnNodeRemoved;
-            DynamoViewModel.Model.Logger.NotificationLogged += OnNotificationLogged;
         }
 
         private void SubscribeToPythonNodeEvents(PythonNodeBase node)
@@ -192,11 +199,17 @@ namespace Dynamo.PythonMigration
             node.MigrationAssistantRequested -= OnMigrationAssistantRequested;
         }
 
+        private void UnSubscribeWorkspaceEvents()
+        {
+            DynamoViewModel.CurrentSpaceViewModel.Model.NodeAdded -= OnNodeAdded;
+            DynamoViewModel.CurrentSpaceViewModel.Model.NodeAdded -= OnNodeRemoved;
+        }
+
         private void UnsubscribeEvents()
         {
             LoadedParams.CurrentWorkspaceChanged -= OnCurrentWorkspaceChanged;
-            DynamoViewModel.CurrentSpaceViewModel.Model.NodeAdded -= OnNodeAdded;
             DynamoViewModel.Model.Logger.NotificationLogged -= OnNotificationLogged;
+            UnSubscribeWorkspaceEvents();
         }
         #endregion
     }
