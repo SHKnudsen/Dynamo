@@ -134,7 +134,7 @@ namespace Dynamo.PythonMigration
                 LogIronPythonNotification();
             }
 
-            if (obj.GetType() == typeof(PythonNodeBase))
+            if (obj is PythonNodeBase)
             {
                 SubscribeToPythonNodeEvents(obj as PythonNodeBase);
             }
@@ -156,7 +156,6 @@ namespace Dynamo.PythonMigration
 
         private void OnCurrentWorkspaceChanged(IWorkspaceModel workspace)
         {
-            UnSubscribeWorkspaceEvents();
             SubscribeToWorkspaceEvents();
             NotificationTracker.Remove(CurrentWorkspace.Guid);
             CurrentWorkspace = workspace as WorkspaceModel;
