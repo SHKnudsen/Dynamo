@@ -127,7 +127,7 @@ namespace PythonNodeModels
         }
 
         public event EventHandler MigrationAssistantRequested;
-        public void OnMigrationAssistantRequested(EventArgs e)
+        public void RequestCodeMigration(EventArgs e)
         {
             MigrationAssistantRequested?.Invoke(this, e);
         }

@@ -22,17 +22,7 @@ namespace Dynamo.PythonMigration
 
         private void MigrateCode()
         {
-            var migrationInputs = new List<string>()
-            {
-                "code"
-            };
-            var migrationInputValues = new List<object>()
-            {
-                OldCode
-            };
-            var migrationOutputVar = "output";
-
-            NewCode = ScriptMigrator.MigrateCode(migrationInputs, migrationInputValues, migrationOutputVar);
+            NewCode = ScriptMigrator.MigrateCode(OldCode);
         }
 
         public void ChangeCode()

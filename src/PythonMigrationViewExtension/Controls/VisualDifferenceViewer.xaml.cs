@@ -17,6 +17,7 @@ namespace Dynamo.PythonMigration.Controls
             LoadData();
             DiffView.ViewModeChanged += OnViewModeChanged;
             DiffView.Loaded += OnDiffViewLoaded;
+            this.Closed += OnVisualDifferenceViewerClosed;
         }
 
         private void OnDiffViewLoaded(object sender, RoutedEventArgs e)
@@ -63,6 +64,13 @@ namespace Dynamo.PythonMigration.Controls
         private void OnRejectButtonClicked(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+        
+        private void OnVisualDifferenceViewerClosed(object sender, System.EventArgs e)
+        {
+            DiffView.ViewModeChanged -= OnViewModeChanged;
+            DiffView.Loaded -= OnDiffViewLoaded;
+            this.Closed -= OnVisualDifferenceViewerClosed;
         }
     }
 }
