@@ -172,7 +172,7 @@ namespace PythonNodeModelsWpf
             if (nodeModel == null)
                 throw new NullReferenceException(nameof(nodeModel));
 
-            nodeModel.OnMigrationAssistantRequested(e);
+            nodeModel.RequestCodeMigration(e);
         }
 
         #endregion
