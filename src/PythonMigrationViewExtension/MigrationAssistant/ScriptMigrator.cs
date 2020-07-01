@@ -8,7 +8,15 @@ namespace Dynamo.PythonMigration.MigrationAssistant
 {
     internal static class ScriptMigrator
     {
-        internal static string MigrateCode(List<string> inputNames, List<object> inputValues, string returnName)
+        private const string INPUT_NAME = "code";
+        private const string RETURN_NAME = "output";
+
+        /// <summary>
+        /// Migrates Python 2 code to Python 3 using Pythons 2to3 library. 
+        /// </summary>
+        /// <param name="code">Python 2 code that needs to be migrated</param>
+        /// <returns></returns>
+        internal static string MigrateCode(string code)
         {
             Python.Included.Installer.SetupPython().Wait();
 
@@ -27,24 +35,11 @@ namespace Dynamo.PythonMigration.MigrationAssistant
 
                     using (PyScope scope = Py.CreateScope())
                     {
-                        int amt = Math.Min(inputNames.Count, inputValues.Count);
+                        scope.Set(INPUT_NAME, code.ToPython());
+                        scope.Exec(GetPythonMigrationScript());
 
-                        for (int i = 0; i < amt; i++)
-                        {
-                            scope.Set(inputNames[i], inputValues[i].ToPython());
-                        }
-
-                        try
-                        {
-                            scope.Exec(GetPythonMigrationScript());
-                            var result = scope.Contains(returnName) ? scope.Get(returnName) : null;
-
-                            return result.ToString();
-                        }
-                        catch (Exception e)
-                        {
-                            throw;
-                        }
+                        var result = scope.Contains(RETURN_NAME) ? scope.Get(RETURN_NAME) : null;
+                        return result.ToString();
                     }
                 }
             }
@@ -62,8 +57,13 @@ namespace Dynamo.PythonMigration.MigrationAssistant
         private static string GetPythonMigrationScript()
         {
             Assembly asm = Assembly.GetExecutingAssembly();
-            var reader = new StreamReader(asm.GetManifestResourceStream("Dynamo.PythonMigration.MigrationAssistant.migrate_2to3.py"));
-            return reader.ReadToEnd();
+            string script;
+            using (var reader = 
+                new StreamReader(asm.GetManifestResourceStream("Dynamo.PythonMigration.MigrationAssistant.migrate_2to3.py")))
+            {
+                script = reader.ReadToEnd();
+            }
+            return script;
         }
     }
 }

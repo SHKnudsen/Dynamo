@@ -17,6 +17,7 @@ namespace Dynamo.PythonMigration.Controls
             LoadData();
             DiffView.ViewModeChanged += OnViewModeChanged;
             DiffView.Loaded += OnDiffViewLoaded;
+            this.Closed += OnVisualDifferenceViewerClosed;
         }
 
         private void OnDiffViewLoaded(object sender, RoutedEventArgs e)
@@ -52,6 +53,13 @@ namespace Dynamo.PythonMigration.Controls
             // We need to set the SizeToContent back to manual otherwise it will freeze
             // the GridSplitter on the DiffView
             SizeToContent = SizeToContent.Manual;
+        }
+
+        private void OnVisualDifferenceViewerClosed(object sender, System.EventArgs e)
+        {
+            DiffView.ViewModeChanged -= OnViewModeChanged;
+            DiffView.Loaded -= OnDiffViewLoaded;
+            this.Closed -= OnVisualDifferenceViewerClosed;
         }
     }
 }
