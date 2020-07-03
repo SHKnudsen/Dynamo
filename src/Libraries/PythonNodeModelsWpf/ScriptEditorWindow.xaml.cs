@@ -135,6 +135,9 @@ namespace PythonNodeModelsWpf
         private void OnNodeModelCodeMigrated(object sender, EventArgs e)
         {
             var args = e as PythonCodeMigrationEventArgs;
+            if (args is null)
+                throw new NullReferenceException(nameof(args));
+
             originalScript = args.OldCode;
             editText.Text = args.NewCode;
             UpdateScript(args.NewCode);
