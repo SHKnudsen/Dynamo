@@ -9,15 +9,19 @@ namespace Dynamo.PythonMigration
     {
         public string OldCode { get; set; }
         public string NewCode { get; set; }
-        public ScriptEditorWindow OwnerWindow { get; set; }
+        internal ScriptEditorWindow OwnerWindow { get; private set; }
         private PythonNode PythonNode { get; set; }
 
-        public PythonMigrationAssistantViewModel(PythonNode pythonNode, ScriptEditorWindow parentWindow)
+        public PythonMigrationAssistantViewModel(PythonNode pythonNode, ScriptEditorWindow parentWindow = null)
         {
             PythonNode = pythonNode;
-            OwnerWindow = parentWindow;
             OldCode = pythonNode.Script;
             MigrateCode();
+            if (parentWindow is null)
+                return;
+
+            SetOwnerWindow(parentWindow);
+
         }
 
         private void MigrateCode()
@@ -28,6 +32,11 @@ namespace Dynamo.PythonMigration
         public void ChangeCode()
         {
             PythonNode.MigrateCode(NewCode);
+        }
+
+        private void SetOwnerWindow(ScriptEditorWindow parentWindow)
+        {
+            OwnerWindow = parentWindow;
         }
     }
 }
