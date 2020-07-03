@@ -3,21 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Documents;
 using Dynamo.Graph.Nodes;
+using Dynamo.Graph.Workspaces;
 using Dynamo.Wpf.Extensions;
 using PythonNodeModels;
 
 namespace Dynamo.PythonMigration
 {
-    public class GraphPythonDependencies
+    internal class GraphPythonDependencies
     {
-        private ViewLoadedParams ViewLoaded { get; set; }
-        public List<PythonNodeBase> GraphPythonNodes { get; set; }
+        private readonly List<PythonNodeBase> graphPythonNodes;
 
-        internal GraphPythonDependencies(ViewLoadedParams viewLoadedParams)
+        internal GraphPythonDependencies(IWorkspaceModel workspace)
         {
-            this.ViewLoaded = viewLoadedParams;
+            if (workspace is null)
+                throw new ArgumentNullException(nameof(workspace));
 
-            GraphPythonNodes = ViewLoaded.CurrentWorkspaceModel.Nodes
+            graphPythonNodes = workspace.Nodes
                 .Where(n => n.GetType().IsSubclassOf(typeof(PythonNodeBase)))
                 .Select(n => n as PythonNodeBase)
                 .ToList();
@@ -25,25 +26,22 @@ namespace Dynamo.PythonMigration
 
         internal bool ContainsPythonDependencies()
         {
-            return GraphPythonNodes.Any();
+            return graphPythonNodes.Any();
+        }
+
+        internal IEnumerable<PythonNodeBase> GetPythonNodes()
+        {
+            return graphPythonNodes.ToList();
         }
 
         internal bool ContainsIronPythonDependencies()
         {
-            var workspace = ViewLoaded.CurrentWorkspaceModel;
-            if (workspace == null)
-                throw new ArgumentNullException(nameof(workspace));
-
-            return GraphPythonNodes.Any(n => IsIronPythonNode(n));
+            return graphPythonNodes.Any(n => IsIronPythonNode(n));
         }
 
         internal bool ContainsCPythonDependencies()
         {
-            var workspace = ViewLoaded.CurrentWorkspaceModel;
-            if (workspace == null)
-                throw new ArgumentNullException(nameof(workspace));
-
-            return GraphPythonNodes.Any(n => IsCPythonNode(n));
+            return graphPythonNodes.Any(n => IsCPythonNode(n));
         }
 
         internal bool IsIronPythonNode(NodeModel obj)
@@ -51,8 +49,8 @@ namespace Dynamo.PythonMigration
             if (!(obj is PythonNodeBase pythonNode))
                 return false;
 
-            if (!GraphPythonNodes.Contains(pythonNode))
-                GraphPythonNodes.Add(pythonNode);
+            if (!graphPythonNodes.Contains(pythonNode))
+                graphPythonNodes.Add(pythonNode);
 
             return pythonNode.Engine == PythonEngineVersion.IronPython2;
         }
@@ -62,8 +60,8 @@ namespace Dynamo.PythonMigration
             if (!(obj is PythonNodeBase pythonNode))
                 return false;
 
-            if (!GraphPythonNodes.Contains(pythonNode))
-                GraphPythonNodes.Add(pythonNode);
+            if (!graphPythonNodes.Contains(pythonNode))
+                graphPythonNodes.Add(pythonNode);
 
             return pythonNode.Engine == PythonEngineVersion.CPython3;
         }
@@ -73,10 +71,10 @@ namespace Dynamo.PythonMigration
             if (!(obj is PythonNodeBase pythonNode))
                 return;
 
-            if (!GraphPythonNodes.Contains(pythonNode))
+            if (!graphPythonNodes.Contains(pythonNode))
                 return;
 
-            GraphPythonNodes.Remove(pythonNode);
+            graphPythonNodes.Remove(pythonNode);
         }
     }
 }

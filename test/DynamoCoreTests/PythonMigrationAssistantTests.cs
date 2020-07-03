@@ -14,17 +14,8 @@ namespace Dynamo.Tests
 
             var python2Code = @"print ""Hello, Dynamo!""";
 
-            var inputNames = new List<string>()
-            {
-                "code"
-            };
-            var inputValues = new List<object>()
-            {
-                python2Code
-            };
-
             // Act
-            var migratedScript = ScriptMigrator.MigrateCode(inputNames, inputValues, "output");
+            var migratedScript = ScriptMigrator.MigrateCode(python2Code);
 
             // Assert
             Assert.AreNotEqual(python2Code, migratedScript);
@@ -37,20 +28,27 @@ namespace Dynamo.Tests
             // Arrange
             var expectedPython3Code = @"for x in range(1, 5): print(x)";
 
-            var inputNames = new List<string>()
-            {
-                "code"
-            };
-            var inputValues = new List<object>()
-            {
-                expectedPython3Code
-            };
-
             // Act
-            var migratedScript = ScriptMigrator.MigrateCode(inputNames, inputValues, "output");
+            var migratedScript = ScriptMigrator.MigrateCode(expectedPython3Code);
 
             // Assert
             Assert.AreEqual(expectedPython3Code, migratedScript);
+        }
+
+        [Test]
+        public void MigrationWillNotChangeCodeAfterBeingConverted()
+        {
+            // Arrange
+            var originalPython2Code = @"for x in xrange(100): continue";
+            var expectedPython3CodeAfterMigration = @"for x in range(100): continue";
+
+            // Act
+            var migratedScript = ScriptMigrator.MigrateCode(originalPython2Code);
+            var migratedScript2 = ScriptMigrator.MigrateCode(migratedScript);
+
+            // Assert
+            Assert.AreEqual(expectedPython3CodeAfterMigration, migratedScript);
+            Assert.AreEqual(expectedPython3CodeAfterMigration, migratedScript2);
         }
     }
 }

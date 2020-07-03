@@ -26,6 +26,7 @@ def refactor_script(source_script, refactoring_tool):
         tree = refactoring_tool.refactor_string(source_script, self.pathname)
     return str(tree)[:-1] # remove added newline 
 
+     
 def get_zip_file(path):
     zip_file = ""
     for f in os.listdir(path):
@@ -34,6 +35,10 @@ def get_zip_file(path):
             break
     return zip_file
 
+# because we are using an embedded version of python, we cant get 2to3's fixers
+# like we normally would useing "get_fixers_from_package('lib2to3.fixes')" 
+# this is a known limitation of 2to3. Instead we are getting the embedded python.zip
+# and manually navigating to the 2to3 fixers from there.
 def get_all_fixers_from_zipfolder(folder):
     fixers = []
     files = folder.filelist

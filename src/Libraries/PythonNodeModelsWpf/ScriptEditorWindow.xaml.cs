@@ -132,12 +132,11 @@ namespace PythonNodeModelsWpf
 
         #region Private Event Handlers
 
-        private void OnNodeModelCodeMigrated(object sender, EventArgs e)
+        private void OnNodeModelCodeMigrated(object sender, PythonCodeMigrationEventArgs e)
         {
-            var args = e as PythonCodeMigrationEventArgs;
-            originalScript = args.OldCode;
-            editText.Text = args.NewCode;
-            UpdateScript(args.NewCode);
+            originalScript = e.OldCode;
+            editText.Text = e.NewCode;
+            UpdateScript(e.NewCode);
         }
 
         private void OnSaveClicked(object sender, RoutedEventArgs e)
@@ -181,7 +180,7 @@ namespace PythonNodeModelsWpf
             if (nodeModel == null)
                 throw new NullReferenceException(nameof(nodeModel));
 
-            nodeModel.OnMigrationAssistantRequested(e);
+            nodeModel.RequestCodeMigration(e);
         }
 
         #endregion
@@ -189,6 +188,17 @@ namespace PythonNodeModelsWpf
         private void OnMoreInfoClicked(object sender, RoutedEventArgs e)
         {
             dynamoViewModel.OpenDocumentationLinkCommand.Execute(new OpenDocumentationLinkEventArgs(new Uri(PythonNodeModels.Properties.Resources.PythonMigrationWarningUriString, UriKind.Relative)));
+        }
+
+        private void OnEngineChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            //removedItems will be empty during the first binding
+            //as the window is constructed, we don't want to execute the node just
+            //as a consequence of opening the editor.
+            if (e.RemovedItems.Count > 0)
+            {
+                UpdateScript(editText.Text);
+            }
         }
     }
 }

@@ -11,32 +11,19 @@ namespace Dynamo.PythonMigration
     {
         public string OldCode { get; set; }
         public string NewCode { get; set; }
-        public ScriptEditorWindow OwnerWindow { get; set; }
         private PythonNode PythonNode { get; set; }
         public DynamoViewModel DynamoViewModel { get; set; }
 
-        public PythonMigrationAssistantViewModel(PythonNode pythonNode, ScriptEditorWindow parentWindow, DynamoViewModel dynamoViewModel)
+        public PythonMigrationAssistantViewModel(PythonNode pythonNode)
         {
             PythonNode = pythonNode;
-            OwnerWindow = parentWindow;
-            DynamoViewModel = dynamoViewModel;
             OldCode = pythonNode.Script;
             MigrateCode();
         }
 
         private void MigrateCode()
         {
-            var migrationInputs = new List<string>()
-            {
-                "code"
-            };
-            var migrationInputValues = new List<object>()
-            {
-                OldCode
-            };
-            var migrationOutputVar = "output";
-
-            NewCode = ScriptMigrator.MigrateCode(migrationInputs, migrationInputValues, migrationOutputVar);
+            NewCode = ScriptMigrator.MigrateCode(OldCode);
         }
 
         public void ChangeCode()
