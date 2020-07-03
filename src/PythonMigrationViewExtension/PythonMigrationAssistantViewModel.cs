@@ -2,6 +2,8 @@
 using Dynamo.ViewModels;
 using PythonNodeModels;
 using System.IO;
+using PythonNodeModelsWpf;
+using System.Collections.Generic;
 
 namespace Dynamo.PythonMigration
 {
