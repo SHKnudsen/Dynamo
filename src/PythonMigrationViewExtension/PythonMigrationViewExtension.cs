@@ -111,8 +111,12 @@ namespace Dynamo.PythonMigration
             var parentWindow = Window.GetWindow(btn) as ScriptEditorWindow;
 
             var node = sender as PythonNode;
-            var viewModel = new PythonMigrationAssistantViewModel(node, parentWindow);
-            var assistantWindow = new VisualDifferenceViewer(viewModel);
+            var viewModel = new PythonMigrationAssistantViewModel(node);
+            var assistantWindow = new VisualDifferenceViewer(viewModel)
+            {
+                Owner = parentWindow
+            };
+
             // show modal window so user cant interact with dynamo while migration assistant is open
             assistantWindow.ShowDialog();
         }

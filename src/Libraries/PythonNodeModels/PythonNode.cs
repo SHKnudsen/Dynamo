@@ -261,7 +261,7 @@ namespace PythonNodeModels
         /// NOTE: This is a temporary event used during the Python 2 to Python 3 transistion period,
         /// it will be removed when the transistion period is over.
         /// </summary>
-        public event EventHandler CodeMigrated;
+        public event EventHandler<PythonCodeMigrationEventArgs> CodeMigrated;
         private void OnCodeMigrated(PythonCodeMigrationEventArgs e)
         {
             CodeMigrated?.Invoke(this, e);

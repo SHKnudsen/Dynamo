@@ -13,7 +13,6 @@ namespace Dynamo.PythonMigration.Controls
         internal VisualDifferenceViewer(PythonMigrationAssistantViewModel viewModel)
         {
             ViewModel = viewModel;
-            Owner = ViewModel.OwnerWindow;
             InitializeComponent();
             LoadData();
             DiffView.ViewModeChanged += OnViewModeChanged;

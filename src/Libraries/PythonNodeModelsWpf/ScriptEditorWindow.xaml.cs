@@ -132,15 +132,11 @@ namespace PythonNodeModelsWpf
 
         #region Private Event Handlers
 
-        private void OnNodeModelCodeMigrated(object sender, EventArgs e)
+        private void OnNodeModelCodeMigrated(object sender, PythonCodeMigrationEventArgs e)
         {
-            var args = e as PythonCodeMigrationEventArgs;
-            if (args is null)
-                throw new NullReferenceException(nameof(args));
-
-            originalScript = args.OldCode;
-            editText.Text = args.NewCode;
-            UpdateScript(args.NewCode);
+            originalScript = e.OldCode;
+            editText.Text = e.NewCode;
+            UpdateScript(e.NewCode);
         }
 
         private void OnSaveClicked(object sender, RoutedEventArgs e)
