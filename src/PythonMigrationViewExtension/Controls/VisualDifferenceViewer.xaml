@@ -79,7 +79,6 @@
                         Grid.Column="1">
                 <Button  x:Name="AcceptButton"
                          Click="OnAcceptButtonClicked"
-                         Style="{StaticResource STextButton}"
                          HorizontalAlignment="Right"
                          ToolTip="{x:Static p:Resources.AcceptButtonTooltip}"
                          Height="44">
@@ -93,7 +92,6 @@
                 </Button>
                 <Button  x:Name="RejectButton"
                          Click="OnRejectButtonClicked"
-                         Style="{StaticResource STextButton}"
                          HorizontalAlignment="Right"
                          ToolTip="{x:Static p:Resources.RejectButtonTooltip}"
                          Height="44">

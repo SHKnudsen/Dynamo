@@ -63,6 +63,7 @@
                           SelectedItem="{Binding nodeModel.Engine, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=dww:ModelessChildWindow}}"
                           Style="{StaticResource ResourceKey=SComboBox}"
                           Name="EngineSelectorComboBox"
+                          SelectionChanged="OnEngineChanged"
                           VerticalAlignment="Bottom"
                           VerticalContentAlignment="Center"
                           HorizontalContentAlignment="Left"

@@ -9,6 +9,7 @@ namespace Dynamo.PythonMigration.Controls
     public partial class VisualDifferenceViewer : Window
     {
         private PythonMigrationAssistantViewModel ViewModel { get; set; }
+        
         internal VisualDifferenceViewer(PythonMigrationAssistantViewModel viewModel)
         {
             ViewModel = viewModel;
