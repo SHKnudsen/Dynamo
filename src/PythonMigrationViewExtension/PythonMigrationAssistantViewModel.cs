@@ -1,8 +1,6 @@
 ﻿using Dynamo.PythonMigration.MigrationAssistant;
 using Dynamo.ViewModels;
 using PythonNodeModels;
-using PythonNodeModelsWpf;
-using System.Collections.Generic;
 using System.IO;
 
 namespace Dynamo.PythonMigration
@@ -14,10 +12,11 @@ namespace Dynamo.PythonMigration
         private PythonNode PythonNode { get; set; }
         public DynamoViewModel DynamoViewModel { get; set; }
 
-        public PythonMigrationAssistantViewModel(PythonNode pythonNode)
+        public PythonMigrationAssistantViewModel(PythonNode pythonNode, DynamoViewModel dynamoViewModel)
         {
             PythonNode = pythonNode;
             OldCode = pythonNode.Script;
+            DynamoViewModel = dynamoViewModel;
             MigrateCode();
         }
 
