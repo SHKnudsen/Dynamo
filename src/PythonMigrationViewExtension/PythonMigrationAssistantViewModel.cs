@@ -9,7 +9,7 @@ namespace Dynamo.PythonMigration
     {
         public string OldCode { get; set; }
         public string NewCode { get; set; }
-        public ScriptEditorWindow OwnerWindow { get; set; }
+        internal ScriptEditorWindow OwnerWindow { get; private set; }
         private PythonNode PythonNode { get; set; }
 
         public PythonMigrationAssistantViewModel(PythonNode pythonNode, ScriptEditorWindow parentWindow = null)
