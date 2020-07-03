@@ -23,7 +23,7 @@ namespace PythonNodeModels
     }
 
     /// <summary>
-    /// EventArgs used to send the original and maigrated code to the ScriptEditor
+    /// Event arguments used to send the original and migrated code to the ScriptEditor
     /// </summary>
     public class PythonCodeMigrationEventArgs : EventArgs
     {
@@ -248,11 +248,12 @@ namespace PythonNodeModels
         /// it will be removed when the transistion period is over.
         /// </summary>
         /// <param name="newCode">The new migrated code</param>
+        [Obsolete("Method will be deprecated after the Python 3 transition period")]
         public void MigrateCode(string newCode)
         {        
-            var e = new PythonCodeMigrationEventArgs(Script, newCode);
-            OnCodeMigrated(e);
+            var e = new PythonCodeMigrationEventArgs(Script, newCode); 
             Script = newCode;
+            OnCodeMigrated(e);
         }
 
         /// <summary>
