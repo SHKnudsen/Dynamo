@@ -46,7 +46,8 @@ namespace Dynamo.PythonMigration
         {
             var workspaceName = DynamoViewModel.CurrentSpace.Name;
             var backupDirectory = DynamoViewModel.Model.PathManager.BackupDirectory;
-            return Path.Combine(backupDirectory, workspaceName) + string.Concat(".", Properties.Resources.PythonMigrationBackupExtension, ".dyn");
+            var fileName = Path.Combine(backupDirectory, workspaceName) + string.Concat(".", Properties.Resources.PythonMigrationBackupExtension, ".dyn");
+            return fileName;
         }
     }
 }
