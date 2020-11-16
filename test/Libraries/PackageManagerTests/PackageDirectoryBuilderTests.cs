@@ -32,7 +32,7 @@ namespace Dynamo.PackageManager.Tests
 
             db.BuildDirectory(pkg, pkgsDir, files);
 
-            Assert.AreEqual(4, fs.DirectoriesCreated.Count());
+            Assert.AreEqual(5, fs.DirectoriesCreated.Count());
             Assert.AreEqual(2, fs.CopiedFiles.Count());
             Assert.AreEqual(2, fs.DeletedFiles.Count());
             Assert.AreEqual(1, fs.NewFilesWritten.Count());
@@ -56,11 +56,13 @@ namespace Dynamo.PackageManager.Tests
             var binDir = Path.Combine(pkgsDir, pkg.Name, PackageDirectoryBuilder.BinaryDirectoryName);
             var dyfDir = Path.Combine(pkgsDir, pkg.Name, PackageDirectoryBuilder.CustomNodeDirectoryName);
             var extraDir = Path.Combine(pkgsDir, pkg.Name, PackageDirectoryBuilder.ExtraDirectoryName);
+            var docDir = Path.Combine(pkgsDir, pkg.Name, PackageDirectoryBuilder.DocumentationDirectoryName);
 
             Assert.IsTrue(fs.DirectoriesCreated.Any(x => x.FullName == rootDir));
             Assert.IsTrue(fs.DirectoriesCreated.Any(x => x.FullName == dyfDir));
             Assert.IsTrue(fs.DirectoriesCreated.Any(x => x.FullName == binDir));
             Assert.IsTrue(fs.DirectoriesCreated.Any(x => x.FullName == extraDir));
+            Assert.IsTrue(fs.DirectoriesCreated.Any(x => x.FullName == docDir));
         }
 
         [Test]
@@ -134,6 +136,7 @@ namespace Dynamo.PackageManager.Tests
             var binDir = Path.Combine(pkgsDir, pkg.Name, PackageDirectoryBuilder.BinaryDirectoryName);
             var dyfDir = Path.Combine(pkgsDir, pkg.Name, PackageDirectoryBuilder.CustomNodeDirectoryName);
             var extraDir = Path.Combine(pkgsDir, pkg.Name, PackageDirectoryBuilder.ExtraDirectoryName);
+            var docDir = Path.Combine(pkgsDir, pkg.Name, PackageDirectoryBuilder.DocumentationDirectoryName);
 
             // The package itself is updated
 
@@ -141,6 +144,7 @@ namespace Dynamo.PackageManager.Tests
             Assert.AreEqual(binDir, pkg.BinaryDirectory);
             Assert.AreEqual(dyfDir, pkg.CustomNodeDirectory);
             Assert.AreEqual(extraDir, pkg.ExtraDirectory);
+            Assert.AreEqual(docDir, pkg.NodeDocumentaionDirectory);
         }
 
         [Test]
@@ -215,7 +219,7 @@ namespace Dynamo.PackageManager.Tests
             var pkgsDir = @"C:\dynamopackages";
             db.BuildDirectory(pkg, pkgsDir, files);
 
-            Assert.AreEqual(4, fs.DirectoriesCreated.Count());
+            Assert.AreEqual(5, fs.DirectoriesCreated.Count());
             Assert.AreEqual(4, fs.CopiedFiles.Count());
             Assert.AreEqual(3, fs.DeletedFiles.Count());
             Assert.AreEqual(2, fs.DeletedDirectories.Count());
