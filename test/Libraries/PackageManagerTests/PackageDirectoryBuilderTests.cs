@@ -221,7 +221,7 @@ namespace Dynamo.PackageManager.Tests
             Assert.AreEqual(2, fs.DeletedDirectories.Count());
             Assert.AreEqual(1, fs.NewFilesWritten.Count());
         }
-        
+
         #endregion
 
         #region CopyFilesIntoPackageDirectory
@@ -229,9 +229,9 @@ namespace Dynamo.PackageManager.Tests
         [Test]
         public void CopyFilesIntoPackageDirectory_DoesNotMoveFilesAlreadyWithinDirectory()
         {
-            var files = new[] { @"C:\foo/dyf\file1.dyf", @"C:\\foo\dyf\file2.dyf", @"C:\\foo\dyf\file3.dyf", 
-                @"C:\foo/bin\file1.dll", @"C:\\foo\bin\file2.dll", @"C:\\foo\bin\file3.dll", 
-                @"C:\foo/extra\file1.pdf", @"C:\\foo\extra\file2.rvt", @"C:\\foo\extra\file3.poo" };
+            var files = new[] { @"C:\foo/dyf\file1.dyf", @"C:\\foo\dyf\file2.dyf", @"C:\\foo\dyf\file3.dyf",
+                @"C:\foo/bin\file1.dll", @"C:\\foo\bin\file2.dll", @"C:\\foo\bin\file3.dll",
+                @"C:\foo/extra\file1.pdf", @"C:\\foo\extra\file2.rvt", @"C:\\foo\extra\file3.poo", @"C:\\foo\doc\file1.md", @"C:\\foo\doc\file2.png" };
 
             var fs = new RecordedFileSystem((fn) => files.Contains(fn), (dn) => true);
             var f = new PackageDirectoryBuilder(fs, new Mock<IPathRemapper>().Object);
@@ -245,7 +245,10 @@ namespace Dynamo.PackageManager.Tests
             var extra = new Mock<IDirectoryInfo>();
             extra.SetupGet((i) => i.FullName).Returns(() => "C:/foo/extra");
 
-            f.CopyFilesIntoPackageDirectory(files, dyf.Object, bin.Object, extra.Object);
+            var doc = new Mock<IDirectoryInfo>();
+            doc.SetupGet((i) => i.FullName).Returns(() => "C:/foo/doc");
+
+            f.CopyFilesIntoPackageDirectory(files, dyf.Object, bin.Object, extra.Object, doc.Object);
 
             // no files should be copied, they are all already within their intended directory
             Assert.IsEmpty(fs.CopiedFiles);
