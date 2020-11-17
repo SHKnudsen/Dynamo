@@ -1,7 +1,5 @@
 ﻿using System.IO;
 using System.Reflection;
-using System.Text.RegularExpressions;
-using Ganss.XSS;
 
 namespace Dynamo.DocumentationBrowser
 {
