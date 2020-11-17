@@ -29,8 +29,7 @@ namespace MD2HTML
             StringWriter data = new StringWriter();
             GetData(ref data);
 
-            string output = data.ToString();
-            MarkdownHandler.RemoveScriptTagsFromString(ref output);
+            var output = MarkdownHandler.Sanitize(data.ToString());
 
             Console.WriteLine(output);
         }

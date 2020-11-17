@@ -38,8 +38,27 @@ namespace Dynamo.Utilities
             process.StandardInput.WriteLine(mdPath);
             process.StandardInput.WriteLine(mdString);
             process.StandardInput.WriteLine("<<<<<Eod>>>>>");
+
+            GetData(ref writer);
+        }
+
+        public string Sanitize(string content)
+        {
+            process.StandardInput.WriteLine("<<<<<Sanitize>>>>>");
+            process.StandardInput.WriteLine(content);
+            process.StandardInput.WriteLine("<<<<<Eod>>>>>");
+
+            var writer = new StringWriter();
+            GetData(ref writer);
+
+            return writer.ToString();
+        }
+
+        private void GetData(ref StringWriter writer)
+        {
             var done = false;
-            while(!done)
+
+            while (!done)
             {
                 var line = process.StandardOutput.ReadLine();
                 if (line == null || line == "<<<<<Eod>>>>>")
@@ -53,8 +72,9 @@ namespace Dynamo.Utilities
                         writer.WriteLine(line);
                     }
                 }
-            } 
+            }
         }
+
 
         private static string ToolPath ()
         {

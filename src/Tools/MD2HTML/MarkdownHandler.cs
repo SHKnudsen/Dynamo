@@ -41,6 +41,7 @@ namespace MD2HTML
         /// </summary>
         /// <param name="writer"></param>
         /// <param name="mdString"></param>
+        /// <param name="mdPath"></param>
         /// <returns>Returns true if any script tags was removed from the string</returns>
         internal void ParseToHtml(ref StringWriter writer, string mdString, string mdPath)
         {
@@ -51,8 +52,6 @@ namespace MD2HTML
                 return;
 
             // Remove scripts from user content for security reasons.
-            RemoveScriptTagsFromString(ref mdString);
-
             var renderer = new HtmlRenderer(writer);
             pipeline.Setup(renderer);
 
@@ -89,21 +88,16 @@ namespace MD2HTML
             }
         }
 
-        private static HtmlSanitizer htmlSanitizer = new HtmlSanitizer();
+        private static readonly HtmlSanitizer HtmlSanitizer = new HtmlSanitizer();
 
         /// <summary>
         /// Clean up possible dangerous HTML content from the content string.
         /// </summary>
         /// <param name="content"></param>
-        /// <returns>Returns true if any content was removed from the content string</returns>
-        internal static bool RemoveScriptTagsFromString(ref string content)
+        /// <returns>return sanitized content string</returns>
+        internal static string Sanitize(string content)
         {
-            var sanitizedContent = htmlSanitizer.Sanitize(content);
-            if (content.Equals(sanitizedContent))
-                return false;
-
-            content = sanitizedContent;
-            return true;
+           return HtmlSanitizer.Sanitize(content);
         }
     }
 }

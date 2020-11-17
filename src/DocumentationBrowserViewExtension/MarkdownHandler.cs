@@ -42,7 +42,7 @@ namespace Dynamo.DocumentationBrowser
             var mdFilePath = PackageDocumentationManager.Instance.GetAnnotationDoc(nodeNamespace);
 
             string mdString;
-            bool scriptTagsRemoved;
+            bool scriptTagsRemoved = false;
 
             if (string.IsNullOrWhiteSpace(mdFilePath) ||
                 !File.Exists(mdFilePath))
@@ -74,14 +74,19 @@ namespace Dynamo.DocumentationBrowser
                 if (DocumentationBrowserUtils.RemoveScriptTagsFromString(ref mdString))
                     scriptTagsRemoved = true;
             }
-            scriptTagsRemoved = false;
 
             converter.ParseToHtml(ref writer, mdString, mdFilePath);
 
             // inject the syntax highlighting script at the bottom at the document.
             writer.WriteLine(DocumentationBrowserUtils.GetDPIScript());
             writer.WriteLine(GetSyntaxHighlighting());
+
             return scriptTagsRemoved;
+        }
+
+        public string Sanitize(string content)
+        {
+            return converter.Sanitize(content);
         }
 
         /// <summary>
