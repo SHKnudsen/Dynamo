@@ -52,15 +52,14 @@ namespace Dynamo.Utilities
         /// <summary>
         /// Converts a markdown string into Html.
         /// </summary>
-        /// <param name="writer"></param>
         /// <param name="mdString"></param>
         /// <param name="mdPath"></param>
-        public void ParseMd2Html(ref StringWriter writer, string mdString, string mdPath)
+        /// <returns>Returns converted markdown as html</returns>
+        public string ParseMd2Html(string mdString, string mdPath)
         {
             if (!started)
             {
-                writer.WriteLine(GetErrorMessage());
-                return;
+                return GetErrorMessage();
             }
 
             process.StandardInput.WriteLine(@"<<<<<Convert>>>>>");
@@ -68,7 +67,10 @@ namespace Dynamo.Utilities
             process.StandardInput.WriteLine(mdString);
             process.StandardInput.WriteLine(@"<<<<<Eod>>>>>");
 
+            var writer = new StringWriter();
             GetData(ref writer);
+
+            return writer.ToString();
         }
 
         /// <summary>

@@ -81,7 +81,8 @@ namespace Dynamo.DocumentationBrowser
                     scriptTagsRemoved = true;
             }
 
-            converter.ParseMd2Html(ref writer, mdString, mdFilePath);
+            var html = converter.ParseMd2Html(mdString, mdFilePath);
+            writer.WriteLine(html);
 
             // inject the syntax highlighting script at the bottom at the document.
             writer.WriteLine(DocumentationBrowserUtils.GetDPIScript());
