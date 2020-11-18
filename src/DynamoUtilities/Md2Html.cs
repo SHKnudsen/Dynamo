@@ -48,10 +48,10 @@ namespace Dynamo.Utilities
         /// <param name="mdPath"></param>
         public void ParseMd2Html(ref StringWriter writer, string mdString, string mdPath)
         {
-            process.StandardInput.WriteLine("<<<<<Convert>>>>>");
+            process.StandardInput.WriteLine(@"<<<<<Convert>>>>>");
             process.StandardInput.WriteLine(mdPath);
             process.StandardInput.WriteLine(mdString);
-            process.StandardInput.WriteLine("<<<<<Eod>>>>>");
+            process.StandardInput.WriteLine(@"<<<<<Eod>>>>>");
 
             GetData(ref writer);
         }
@@ -63,9 +63,9 @@ namespace Dynamo.Utilities
         /// <returns>Returns Sanitized Html</returns>
         public string SanitizeHtml(string content)
         {
-            process.StandardInput.WriteLine("<<<<<Sanitize>>>>>");
+            process.StandardInput.WriteLine(@"<<<<<Sanitize>>>>>");
             process.StandardInput.WriteLine(content);
-            process.StandardInput.WriteLine("<<<<<Eod>>>>>");
+            process.StandardInput.WriteLine(@"<<<<<Eod>>>>>");
 
             var writer = new StringWriter();
             GetData(ref writer);
@@ -84,7 +84,7 @@ namespace Dynamo.Utilities
             while (!done)
             {
                 var line = process.StandardOutput.ReadLine();
-                if (line == null || line == "<<<<<Eod>>>>>")
+                if (line == null || line == @"<<<<<Eod>>>>>")
                 {
                     done = true;
                 }
