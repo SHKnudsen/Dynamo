@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -8,14 +9,13 @@ namespace Dynamo.Utilities
     public class Md2Html
     {
         private readonly Process process = new Process();
+        private readonly bool started;
         /// <summary>
         /// Constructor
         /// Start the CLI tool and keep it around
         /// </summary>
         public Md2Html()
         {
-            AppDomain.CurrentDomain.ProcessExit += new EventHandler(ProcessExit);
-
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
                 CreateNoWindow = true,
@@ -24,11 +24,20 @@ namespace Dynamo.Utilities
 
                 UseShellExecute = false,
                 Arguments = @"",
-                FileName = ToolPath()
+                FileName = GetToolPath()
             };
 
             process.StartInfo = startInfo;
-            process.Start();
+            try
+            {
+                process.Start();
+                AppDomain.CurrentDomain.ProcessExit += new EventHandler(ProcessExit);
+                started = true;
+            }
+            catch(Win32Exception)
+            {
+                // Do nothing
+            }
         }
 
         /// <summary>
@@ -48,6 +57,12 @@ namespace Dynamo.Utilities
         /// <param name="mdPath"></param>
         public void ParseMd2Html(ref StringWriter writer, string mdString, string mdPath)
         {
+            if (!started)
+            {
+                writer.WriteLine(GetErrorMessage());
+                return;
+            }
+
             process.StandardInput.WriteLine(@"<<<<<Convert>>>>>");
             process.StandardInput.WriteLine(mdPath);
             process.StandardInput.WriteLine(mdString);
@@ -63,6 +78,11 @@ namespace Dynamo.Utilities
         /// <returns>Returns Sanitized Html</returns>
         public string SanitizeHtml(string content)
         {
+            if (!started)
+            {
+                return GetErrorMessage();
+            }
+
             process.StandardInput.WriteLine(@"<<<<<Sanitize>>>>>");
             process.StandardInput.WriteLine(content);
             process.StandardInput.WriteLine(@"<<<<<Eod>>>>>");
@@ -103,7 +123,7 @@ namespace Dynamo.Utilities
         /// Compute the location of the CLI tool
         /// </summary>
         /// <returns>Returns full path to the CLI tool</returns>
-        private static string ToolPath ()
+        private static string GetToolPath ()
         {
             var rootPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new ArgumentNullException("Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)");
             var toolPath = Path.Combine(rootPath, @"Md2Html\Md2Html.exe");
@@ -115,7 +135,7 @@ namespace Dynamo.Utilities
         /// </summary>
         private void KillProcess()
         {
-            if (!process.HasExited)
+            if (started && !process.HasExited)
             {
                 process.Kill();
             }
@@ -127,6 +147,15 @@ namespace Dynamo.Utilities
         private void ProcessExit(object sender, EventArgs e)
         {
             KillProcess();
+        }
+
+        /// <summary>
+        /// Error message
+        /// </summary>
+        /// <returns>Returns error message</returns>
+        private string GetErrorMessage()
+        {
+            return @"<p>Can't start '" + GetToolPath() + "'</p>";
         }
     }
 }
