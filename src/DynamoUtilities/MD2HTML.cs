@@ -79,7 +79,7 @@ namespace Dynamo.Utilities
         private static string ToolPath ()
         {
             var rootPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new ArgumentNullException("Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)");
-            var toolPath = Path.Combine(rootPath, @"MD2HTML\MD2HTML.exe");
+            var toolPath = Path.Combine(rootPath, @"Md2Html\Md2Html.exe");
             return toolPath;
         }
 

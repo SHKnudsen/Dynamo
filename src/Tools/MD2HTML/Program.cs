@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace MD2HTML
+namespace Md2Html
 {
     static class Program
     {

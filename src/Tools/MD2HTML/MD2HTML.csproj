@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0893F745-CB1A-427A-8E87-CA927273039A}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>MD2HTML</RootNamespace>
-    <AssemblyName>MD2HTML</AssemblyName>
+    <RootNamespace>Md2Html</RootNamespace>
+    <AssemblyName>Md2Html</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\bin\AnyCPU\Debug\MD2HTML\</OutputPath>
+    <OutputPath>..\..\..\bin\AnyCPU\Debug\Md2Html\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,7 +27,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\bin\AnyCPU\Release\MD2HTML\</OutputPath>
+    <OutputPath>..\..\..\bin\AnyCPU\Release\Md2Html\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

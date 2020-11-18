@@ -8,7 +8,7 @@ using Markdig.Renderers;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 
-namespace MD2HTML
+namespace Md2Html
 {
     /// <summary>
     /// Handles markdown files by converting them to Html, so they can display in a browser
