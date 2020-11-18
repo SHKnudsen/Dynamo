@@ -166,7 +166,7 @@ namespace Dynamo.PackageManager
                 // determine which folder to put the file in
                 string targetFolder = extraDirPath;
 
-                if (Path.GetDirectoryName(file).EndsWith("doc"))
+                if (Path.GetDirectoryName(file).EndsWith(DocumentationDirectoryName))
                 {
                     targetFolder = docDirPath;
                 }
