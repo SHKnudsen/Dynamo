@@ -7,7 +7,7 @@ namespace Dynamo.DocumentationBrowser
     /// <summary>
     /// Handles markdown files by converting them to Html, so they can display in the doc browser.
     /// </summary>
-    internal class MarkdownHandler
+    internal class MarkdownHandler : IDisposable
     {
         private const string NODE_ANNOTATION_NOT_FOUND = "Dynamo.DocumentationBrowser.Docs.NodeAnnotationNotFound.md";
         private const string SYNTAX_HIGHLIGHTING = "Dynamo.DocumentationBrowser.Docs.syntaxHighlight.html";
@@ -16,7 +16,7 @@ namespace Dynamo.DocumentationBrowser
 
         private static MarkdownHandler instance;
         /// <summary>
-        /// Gets Mardownhandler instance
+        /// Gets MarkdownHandler instance
         /// </summary>
         internal static MarkdownHandler Instance
         {
@@ -32,6 +32,24 @@ namespace Dynamo.DocumentationBrowser
         /// </summary>
         private MarkdownHandler()
         {
+        }
+
+        /// <summary>
+        /// Kill the CLI tool, if still running
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            converter.Dispose();
+        }
+
+        /// <summary>
+        /// Kill the CLI tool, if still running
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>

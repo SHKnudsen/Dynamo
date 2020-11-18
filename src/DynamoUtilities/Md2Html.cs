@@ -6,10 +6,10 @@ using System.Reflection;
 
 namespace Dynamo.Utilities
 {
-    internal class Md2Html
+    internal class Md2Html : IDisposable
     {
         private readonly Process process = new Process();
-        private readonly bool started;
+        private bool started;
         /// <summary>
         /// Constructor
         /// Start the CLI tool and keep it around
@@ -31,7 +31,6 @@ namespace Dynamo.Utilities
             try
             {
                 process.Start();
-                AppDomain.CurrentDomain.ProcessExit += new EventHandler(ProcessExit);
                 started = true;
             }
             catch(Win32Exception)
@@ -41,12 +40,21 @@ namespace Dynamo.Utilities
         }
 
         /// <summary>
-        /// Destructor
         /// Kill the CLI tool, if still running
         /// </summary>
-        ~Md2Html()
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
         {
             KillProcess();
+        }
+
+        /// <summary>
+        /// Kill the CLI tool, if still running
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -140,15 +148,8 @@ namespace Dynamo.Utilities
             if (started && !process.HasExited)
             {
                 process.Kill();
+                started = false;
             }
-        }
-        /// <summary>
-        /// Kill the CLI tool - if running - when the process exit
-        /// </summary>
-        /// <returns>Returns full path to the CLI tool</returns>
-        private void ProcessExit(object sender, EventArgs e)
-        {
-            KillProcess();
         }
 
         /// <summary>
