@@ -14,7 +14,7 @@ namespace Dynamo.Utilities
         /// Constructor
         /// Start the CLI tool and keep it around
         /// </summary>
-        public Md2Html()
+        internal Md2Html()
         {
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
@@ -55,7 +55,7 @@ namespace Dynamo.Utilities
         /// <param name="mdString"></param>
         /// <param name="mdPath"></param>
         /// <returns>Returns converted markdown as html</returns>
-        public string ParseMd2Html(string mdString, string mdPath)
+        internal string ParseMd2Html(string mdString, string mdPath)
         {
             if (!started)
             {
@@ -78,7 +78,7 @@ namespace Dynamo.Utilities
         /// </summary>
         /// <param name="content"></param>
         /// <returns>Returns Sanitized Html</returns>
-        public string SanitizeHtml(string content)
+        internal string SanitizeHtml(string content)
         {
             if (!started)
             {
