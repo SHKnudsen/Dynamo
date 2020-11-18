@@ -15,6 +15,9 @@ namespace Dynamo.DocumentationBrowser
 
 
         private static MarkdownHandler instance;
+        /// <summary>
+        /// Gets Mardownhandler instance
+        /// </summary>
         internal static MarkdownHandler Instance
         {
             get
@@ -24,6 +27,9 @@ namespace Dynamo.DocumentationBrowser
             }
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         private MarkdownHandler()
         {
         }
@@ -32,7 +38,7 @@ namespace Dynamo.DocumentationBrowser
         /// Converts a markdown string into Html.
         /// </summary>
         /// <param name="writer"></param>
-        /// <param name="mdFilePath"></param>
+        /// <param name="nodeNamespace"></param>
         /// <returns>Returns true if any script tags was removed from the string</returns>
         internal bool ParseToHtml(ref StringWriter writer, string nodeNamespace)
         {
@@ -84,7 +90,12 @@ namespace Dynamo.DocumentationBrowser
             return scriptTagsRemoved;
         }
 
-        public string SanitizeHtml(string content)
+        /// <summary>
+        /// Sanitize Html
+        /// </summary>
+        /// <param name="content"></param>
+        /// <returns>Returns Sanitized Html</returns>
+        internal string SanitizeHtml(string content)
         {
             return converter.SanitizeHtml(content);
         }

@@ -8,6 +8,10 @@ namespace Dynamo.Utilities
     public class Md2Html
     {
         private readonly Process process = new Process();
+        /// <summary>
+        /// Constructor
+        /// Start the CLI tool and keep it around
+        /// </summary>
         public Md2Html()
         {
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(ProcessExit);
@@ -27,11 +31,21 @@ namespace Dynamo.Utilities
             process.Start();
         }
 
+        /// <summary>
+        /// Destructor
+        /// Kill the CLI tool, if still running
+        /// </summary>
         ~Md2Html()
         {
             KillProcess();
         }
 
+        /// <summary>
+        /// Converts a markdown string into Html.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="mdString"></param>
+        /// <param name="mdPath"></param>
         public void ParseMd2Html(ref StringWriter writer, string mdString, string mdPath)
         {
             process.StandardInput.WriteLine("<<<<<Convert>>>>>");
@@ -42,6 +56,11 @@ namespace Dynamo.Utilities
             GetData(ref writer);
         }
 
+        /// <summary>
+        /// Sanitize Html
+        /// </summary>
+        /// <param name="content"></param>
+        /// <returns>Returns Sanitized Html</returns>
         public string SanitizeHtml(string content)
         {
             process.StandardInput.WriteLine("<<<<<Sanitize>>>>>");
@@ -54,6 +73,10 @@ namespace Dynamo.Utilities
             return writer.ToString();
         }
 
+        /// <summary>
+        /// Read data from CLI tool
+        /// <param name="writer"></param>
+        /// </summary>
         private void GetData(ref StringWriter writer)
         {
             var done = false;
@@ -76,6 +99,10 @@ namespace Dynamo.Utilities
         }
 
 
+        /// <summary>
+        /// Compute the location of the CLI tool
+        /// </summary>
+        /// <returns>Returns full path to the CLI tool</returns>
         private static string ToolPath ()
         {
             var rootPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new ArgumentNullException("Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)");
@@ -83,6 +110,9 @@ namespace Dynamo.Utilities
             return toolPath;
         }
 
+        /// <summary>
+        /// Kill the CLI tool - if running
+        /// </summary>
         private void KillProcess()
         {
             if (!process.HasExited)
@@ -90,6 +120,10 @@ namespace Dynamo.Utilities
                 process.Kill();
             }
         }
+        /// <summary>
+        /// Kill the CLI tool - if running - when the process exit
+        /// </summary>
+        /// <returns>Returns full path to the CLI tool</returns>
         private void ProcessExit(object sender, EventArgs e)
         {
             KillProcess();
