@@ -11,7 +11,7 @@ namespace Dynamo.DocumentationBrowser
     {
         private const string NODE_ANNOTATION_NOT_FOUND = "Dynamo.DocumentationBrowser.Docs.NodeAnnotationNotFound.md";
         private const string SYNTAX_HIGHLIGHTING = "Dynamo.DocumentationBrowser.Docs.syntaxHighlight.html";
-        private readonly MD2HTML converter = new MD2HTML();
+        private readonly Md2Html converter = new Md2Html();
 
 
         private static MarkdownHandler instance;
@@ -75,7 +75,7 @@ namespace Dynamo.DocumentationBrowser
                     scriptTagsRemoved = true;
             }
 
-            converter.ParseToHtml(ref writer, mdString, mdFilePath);
+            converter.ParseMd2Html(ref writer, mdString, mdFilePath);
 
             // inject the syntax highlighting script at the bottom at the document.
             writer.WriteLine(DocumentationBrowserUtils.GetDPIScript());
@@ -84,9 +84,9 @@ namespace Dynamo.DocumentationBrowser
             return scriptTagsRemoved;
         }
 
-        public string Sanitize(string content)
+        public string SanitizeHtml(string content)
         {
-            return converter.Sanitize(content);
+            return converter.SanitizeHtml(content);
         }
 
         /// <summary>

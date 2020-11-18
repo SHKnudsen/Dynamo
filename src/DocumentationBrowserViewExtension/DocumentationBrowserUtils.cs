@@ -45,7 +45,7 @@ namespace Dynamo.DocumentationBrowser
         /// <returns>Returns true if any content was removed from the content string</returns>
         internal static bool RemoveScriptTagsFromString(ref string content)
         {
-            var sanitizedContent = MarkdownHandler.Instance.Sanitize(content);
+            var sanitizedContent = MarkdownHandler.Instance.SanitizeHtml(content);
             if (content.Equals(sanitizedContent))
                 return false;
 

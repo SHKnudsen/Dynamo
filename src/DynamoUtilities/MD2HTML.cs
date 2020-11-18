@@ -5,10 +5,10 @@ using System.Reflection;
 
 namespace Dynamo.Utilities
 {
-    public class MD2HTML
+    public class Md2Html
     {
         private readonly Process process = new Process();
-        public MD2HTML()
+        public Md2Html()
         {
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(ProcessExit);
 
@@ -27,12 +27,12 @@ namespace Dynamo.Utilities
             process.Start();
         }
 
-        ~MD2HTML()
+        ~Md2Html()
         {
             KillProcess();
         }
 
-        public void ParseToHtml(ref StringWriter writer, string mdString, string mdPath)
+        public void ParseMd2Html(ref StringWriter writer, string mdString, string mdPath)
         {
             process.StandardInput.WriteLine("<<<<<Convert>>>>>");
             process.StandardInput.WriteLine(mdPath);
@@ -42,7 +42,7 @@ namespace Dynamo.Utilities
             GetData(ref writer);
         }
 
-        public string Sanitize(string content)
+        public string SanitizeHtml(string content)
         {
             process.StandardInput.WriteLine("<<<<<Sanitize>>>>>");
             process.StandardInput.WriteLine(content);
