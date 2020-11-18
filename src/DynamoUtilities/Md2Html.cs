@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace Dynamo.Utilities
 {
-    public class Md2Html
+    internal class Md2Html
     {
         private readonly Process process = new Process();
         private readonly bool started;
