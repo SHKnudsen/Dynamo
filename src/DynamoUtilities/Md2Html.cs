@@ -158,7 +158,7 @@ namespace Dynamo.Utilities
         /// <returns>Returns error message</returns>
         private string GetErrorMessage()
         {
-            return @"<p>Can't start '" + GetToolPath() + "'</p>";
+            return @"<p>Can't start '" + GetToolPath() + @"'</p>";
         }
     }
 }
