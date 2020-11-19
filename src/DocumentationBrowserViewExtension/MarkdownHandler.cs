@@ -6,6 +6,7 @@ namespace Dynamo.DocumentationBrowser
 {
     /// <summary>
     /// Handles markdown files by converting them to Html, so they can display in the doc browser.
+    /// This class is a singleton that is instantiated at first use by using the Instance property.
     /// </summary>
     internal class MarkdownHandler : IDisposable
     {

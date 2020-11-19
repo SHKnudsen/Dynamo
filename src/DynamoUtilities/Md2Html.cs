@@ -6,6 +6,15 @@ using System.Reflection;
 
 namespace Dynamo.Utilities
 {
+    /// <summary>
+    /// Utilities for converting Markdown to html and for sanitizing html
+    /// The Md2Html command line tool is used for doing the actual conversion/santizing
+    /// (This tool is delivered as part of Dynamo)
+    /// This class is not thread safe so please instantiate this class in the same thread that
+    /// you intend to use.
+    /// But multiple instances of the class is supported.
+    /// </summary>
+
     internal class Md2Html : IDisposable
     {
         private readonly Process process = new Process();
