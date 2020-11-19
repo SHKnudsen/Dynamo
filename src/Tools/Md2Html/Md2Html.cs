@@ -11,24 +11,24 @@ using Markdig.Syntax.Inlines;
 namespace Md2Html
 {
     /// <summary>
-    /// Handles markdown files by converting them to Html, so they can display in a browser
+    /// Utilities for converting Markdown to html and for sanitizing html
     /// </summary>
-    internal class MarkdownHandler
+    internal class Md2Html
     {
         private readonly MarkdownPipeline pipeline;
 
 
-        private static MarkdownHandler instance;
-        internal static MarkdownHandler Instance
+        private static Md2Html instance;
+        internal static Md2Html Instance
         {
             get
             {
-                if (instance is null) { instance = new MarkdownHandler(); }
+                if (instance is null) { instance = new Md2Html(); }
                 return instance;
             }
         }
 
-        private MarkdownHandler()
+        private Md2Html()
         {
             var pipelineBuilder = new MarkdownPipelineBuilder();
             pipeline = pipelineBuilder
