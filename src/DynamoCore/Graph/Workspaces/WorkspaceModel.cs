@@ -31,6 +31,17 @@ using ProtoCore.Namespace;
 
 namespace Dynamo.Graph.Workspaces
 {
+    public enum ValidationStatus
+    {
+        /// <summary>
+        /// Default state
+        /// </summary>
+        none,
+        /// <summary>
+        /// Valid graph
+        /// </summary>
+        Valid
+    }
     /// <summary>
     /// Non view-specific container for additional view information required to
     /// fully construct a WorkspaceModel from JSON
@@ -736,6 +747,25 @@ namespace Dynamo.Graph.Workspaces
                 return DynamoSelection.Instance.Selection.OfType<NodeModel>();
             }
         }
+
+        /// <summary>
+        /// Workspace thumbnail as Base64 string.
+        /// </summary>
+        public string Thumbnail
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Validation status of workspace.
+        /// </summary>
+        public ValidationStatus Validation { get; set; }
+
+        /// <summary>
+        /// Workspace help file link.
+        /// </summary>
+        public string HelpLink { get; set; }
 
         private void AddNode(NodeModel node)
         {

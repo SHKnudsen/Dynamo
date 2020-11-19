@@ -733,6 +733,18 @@ namespace Dynamo.Graph.Workspaces
                 .Select(outputNode => outputNode.OutputData).ToList();
             serializer.Serialize(writer, outputNodeDatas);
 
+            // Thumbnail
+            writer.WritePropertyName("Thumbnail");
+            serializer.Serialize(writer, ws.Thumbnail);
+
+            // Validation
+            writer.WritePropertyName("Validation");
+            serializer.Serialize(writer, ws.Validation.ToString());
+
+            // Helplink
+            writer.WritePropertyName("HelpLink");
+            serializer.Serialize(writer, ws.HelpLink);
+
             // Nodes
             writer.WritePropertyName("Nodes");
             serializer.Serialize(writer, ws.Nodes);
