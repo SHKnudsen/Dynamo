@@ -75,14 +75,14 @@ namespace Md2Html
 
             foreach (var image in imageLinks)
             {
-                if (!image.Url.StartsWith("./"))
+                if (!Uri.IsWellFormedUriString(image.Url, UriKind.Relative))
                     continue;
 
-                var imageName = image.Url.Split(new string[] { "./" }, StringSplitOptions.None);
+                var imageName = Path.GetFileName(image.Url);
                 var dir = Path.GetDirectoryName(mdFilePath);
 
                 var htmlImagePathPrefix = @"file:///";
-                var absoluteImagePath = Path.Combine(dir, imageName.Last());
+                var absoluteImagePath = Path.Combine(dir, imageName);
 
                 image.Url = $"{htmlImagePathPrefix}{absoluteImagePath}";
             }
