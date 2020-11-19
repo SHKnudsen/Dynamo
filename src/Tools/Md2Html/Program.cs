@@ -36,7 +36,7 @@ namespace Md2Html
             StringWriter data = new StringWriter();
             GetData(ref data);
 
-            var output = MarkdownHandler.Sanitize(data.ToString());
+            var output = Md2Html.Sanitize(data.ToString());
 
             Console.WriteLine(output);
         }
@@ -48,7 +48,7 @@ namespace Md2Html
             StringWriter data = new StringWriter();
             GetData(ref data);
 
-            var instance = MarkdownHandler.Instance;
+            var instance = Md2Html.Instance;
             StringWriter output = new StringWriter();
             instance.ParseToHtml(ref output, data.ToString(), mdPath);
 
