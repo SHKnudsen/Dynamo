@@ -14,20 +14,27 @@ namespace Md2Html
                 return;
             }
 
-            Console.WriteLine("");
-
-            while (true)
+            try
             {
-                var line = Console.ReadLine();
-                if (line == @"<<<<<Sanitize>>>>>")
+                Console.WriteLine("");
+
+                while (true)
                 {
-                    Sanitize();
+                    var line = Console.ReadLine();
+                    if (line == @"<<<<<Sanitize>>>>>")
+                    {
+                        Sanitize();
+                    }
+                    else if (line == @"<<<<<Convert>>>>>")
+                    {
+                        Convert();
+                    }
+                    Console.WriteLine(@"<<<<<Eod>>>>>");
                 }
-                else if (line == @"<<<<<Convert>>>>>")
-                {
-                    Convert();
-                }
-                Console.WriteLine(@"<<<<<Eod>>>>>");
+            }
+            catch (Exception e) when (e is IOException || e is OutOfMemoryException || e is ArgumentOutOfRangeException )
+            {
+                // Exit process
             }
         }
 

@@ -76,13 +76,21 @@ namespace Dynamo.Utilities
         {
             if (!started)
             {
-                return GetErrorMessage();
+                return GetCantStartErrorMessage();
             }
 
-            process.StandardInput.WriteLine(@"<<<<<Convert>>>>>");
-            process.StandardInput.WriteLine(mdPath);
-            process.StandardInput.WriteLine(mdString);
-            process.StandardInput.WriteLine(@"<<<<<Eod>>>>>");
+            try
+            {
+                process.StandardInput.WriteLine(@"<<<<<Convert>>>>>");
+                process.StandardInput.WriteLine(mdPath);
+                process.StandardInput.WriteLine(mdString);
+                process.StandardInput.WriteLine(@"<<<<<Eod>>>>>");
+            }
+            catch (Exception e) when (e is IOException || e is ObjectDisposedException)
+            {
+                KillProcess();
+                return GetCantCommunicateErrorMessage();
+            }
 
             var output = GetData();
 
@@ -98,12 +106,20 @@ namespace Dynamo.Utilities
         {
             if (!started)
             {
-                return GetErrorMessage();
+                return GetCantStartErrorMessage();
             }
 
-            process.StandardInput.WriteLine(@"<<<<<Sanitize>>>>>");
-            process.StandardInput.WriteLine(content);
-            process.StandardInput.WriteLine(@"<<<<<Eod>>>>>");
+            try
+            {
+                process.StandardInput.WriteLine(@"<<<<<Sanitize>>>>>");
+                process.StandardInput.WriteLine(content);
+                process.StandardInput.WriteLine(@"<<<<<Eod>>>>>");
+            }
+            catch (Exception e) when (e is IOException || e is ObjectDisposedException)
+            {
+                KillProcess();
+                return GetCantCommunicateErrorMessage();
+            }
 
             var output = GetData();
 
@@ -121,17 +137,26 @@ namespace Dynamo.Utilities
 
             while (!done)
             {
-                var line = process.StandardOutput.ReadLine();
-                if (line == null || line == @"<<<<<Eod>>>>>")
+                try
                 {
-                    done = true;
-                }
-                else
-                {
-                    if (!string.IsNullOrWhiteSpace(line))
+                    var line = process.StandardOutput.ReadLine();
+
+                    if (line == null || line == @"<<<<<Eod>>>>>")
                     {
-                        writer.WriteLine(line);
+                        done = true;
                     }
+                    else
+                    {
+                        if (!string.IsNullOrWhiteSpace(line))
+                        {
+                            writer.WriteLine(line);
+                        }
+                    }
+                }
+                catch (Exception e) when (e is IOException || e is OutOfMemoryException)
+                {
+                    KillProcess();
+                    return GetCantCommunicateErrorMessage();
                 }
             }
 
@@ -155,20 +180,32 @@ namespace Dynamo.Utilities
         /// </summary>
         private void KillProcess()
         {
-            if (started && !process.HasExited)
+            if (started)
             {
-                process.Kill();
+                if (!process.HasExited)
+                {
+                    process.Kill();
+                }
                 started = false;
             }
         }
 
         /// <summary>
-        /// Error message
+        /// Can't start Error message
         /// </summary>
         /// <returns>Returns error message</returns>
-        private string GetErrorMessage()
+        private string GetCantStartErrorMessage()
         {
             return @"<p>Can't start '" + GetToolPath() + @"'</p>";
+        }
+
+        /// <summary>
+        /// Can't communicate Error message
+        /// </summary>
+        /// <returns>Returns error message</returns>
+        private string GetCantCommunicateErrorMessage()
+        {
+            return @"<p>Can't communicate with '" + GetToolPath() + @"'</p>";
         }
     }
 }
