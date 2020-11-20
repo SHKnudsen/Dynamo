@@ -145,8 +145,8 @@ namespace Dynamo.Utilities
         /// <returns>Returns full path to the CLI tool</returns>
         private static string GetToolPath ()
         {
-            var rootPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new ArgumentNullException("Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)");
-            var toolPath = Path.Combine(rootPath, @"Md2Html\Md2Html.exe");
+            var rootPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new ArgumentNullException(nameof(Path.GetDirectoryName));
+            var toolPath = Path.Combine(rootPath, @"Md2Html", @"Md2Html.exe");
             return toolPath;
         }
 
