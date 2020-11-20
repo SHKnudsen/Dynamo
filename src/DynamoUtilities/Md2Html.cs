@@ -84,10 +84,9 @@ namespace Dynamo.Utilities
             process.StandardInput.WriteLine(mdString);
             process.StandardInput.WriteLine(@"<<<<<Eod>>>>>");
 
-            var writer = new StringWriter();
-            GetData(ref writer);
+            var output = GetData();
 
-            return writer.ToString();
+            return output;
         }
 
         /// <summary>
@@ -106,18 +105,18 @@ namespace Dynamo.Utilities
             process.StandardInput.WriteLine(content);
             process.StandardInput.WriteLine(@"<<<<<Eod>>>>>");
 
-            var writer = new StringWriter();
-            GetData(ref writer);
+            var output = GetData();
 
-            return writer.ToString();
+            return output;
         }
 
         /// <summary>
         /// Read data from CLI tool
-        /// <param name="writer"></param>
+        /// <returns>Returns data read from CLI tool</returns>
         /// </summary>
-        private void GetData(ref StringWriter writer)
+        private string GetData()
         {
+            var writer = new StringWriter();
             var done = false;
 
             while (!done)
@@ -135,6 +134,8 @@ namespace Dynamo.Utilities
                     }
                 }
             }
+
+            return writer.ToString();
         }
 
 

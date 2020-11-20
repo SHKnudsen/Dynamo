@@ -39,17 +39,15 @@ namespace Md2Html
         /// <summary>
         /// Converts a markdown string into Html.
         /// </summary>
-        /// <param name="writer"></param>
         /// <param name="mdString"></param>
         /// <param name="mdPath"></param>
-        /// <returns>Returns true if any script tags was removed from the string</returns>
-        internal void ParseToHtml(ref StringWriter writer, string mdString, string mdPath)
+        /// <returns>Returns converted markdown as html</returns>
+        internal string ParseToHtml(string mdString, string mdPath)
         {
-            if (writer is null)
-                throw new ArgumentNullException(nameof(writer));
-
             if (string.IsNullOrWhiteSpace(mdString))
-                return;
+                return string.Empty;
+
+            var writer = new StringWriter();
 
             // Remove scripts from user content for security reasons.
             var renderer = new HtmlRenderer(writer);
@@ -59,6 +57,8 @@ namespace Md2Html
             ConvertRelativeLocalImagePathsToAbsolute(mdPath, document);
 
             renderer.Render(document);
+
+            return writer.ToString();
         }
 
         /// <summary>

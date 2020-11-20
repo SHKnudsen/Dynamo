@@ -33,10 +33,9 @@ namespace Md2Html
 
         static void Sanitize()
         {
-            StringWriter data = new StringWriter();
-            GetData(ref data);
+            var data = GetData(ref data);
 
-            var output = Md2Html.Sanitize(data.ToString());
+            var output = Md2Html.Sanitize(data);
 
             Console.WriteLine(output);
         }
@@ -45,18 +44,18 @@ namespace Md2Html
         {
             var mdPath = Console.ReadLine();
 
-            StringWriter data = new StringWriter();
-            GetData(ref data);
+            var data = GetData();
 
             var instance = Md2Html.Instance;
-            StringWriter output = new StringWriter();
-            instance.ParseToHtml(ref output, data.ToString(), mdPath);
+            var output = instance.ParseToHtml(data, mdPath);
 
-            Console.WriteLine(output.ToString());
+            Console.WriteLine(output);
         }
 
-        static void GetData(ref StringWriter data)
+        static string GetData()
         {
+            StringWriter data = new StringWriter();
+
             while (true)
             {
                 var line = Console.ReadLine();
@@ -66,6 +65,8 @@ namespace Md2Html
                 }
                 data.WriteLine(line);
             }
+
+            return data.ToString();
         }
 
         static bool CheckForHelp(string[] args)
