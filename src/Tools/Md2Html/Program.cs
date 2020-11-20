@@ -33,7 +33,7 @@ namespace Md2Html
 
         static void Sanitize()
         {
-            var data = GetData(ref data);
+            var data = GetData();
 
             var output = Md2Html.Sanitize(data);
 
