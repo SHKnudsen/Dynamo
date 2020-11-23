@@ -73,8 +73,6 @@ namespace Dynamo.DocumentationBrowser
             this.documentationBrowserMenuItem.Unchecked += MenuItemUnCheckedHandler;
             this.viewLoadedParamsReference.AddMenuItem(MenuBarType.View, this.documentationBrowserMenuItem);
 
-            DynamoView.CloseExtension += OnCloseExtension;
-
             // subscribe to the documentation open request event from Dynamo
             this.viewLoadedParamsReference.RequestOpenDocumentationLink += HandleRequestOpenDocumentationLink;
 
