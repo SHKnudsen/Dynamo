@@ -61,7 +61,7 @@ namespace DynamoUtilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;p&gt;Error: Can&apos;t communicate with {0}.&lt;/p&gt;.
+        ///   Looks up a localized string similar to &lt;p&gt;&lt;b&gt;Internal error, please report: Can&apos;t communicate with {0}.&lt;/b&gt;&lt;/p&gt;.
         /// </summary>
         internal static string Md2HtmlCantCommunicateError {
             get {
@@ -70,7 +70,7 @@ namespace DynamoUtilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;p&gt;Error: Can&apos;t start {0}.&lt;/p&gt;.
+        ///   Looks up a localized string similar to &lt;p&gt;&lt;b&gt;Internal error, please report: Can&apos;t start {0}.&lt;/b&gt;&lt;/p&gt;.
         /// </summary>
         internal static string Md2HtmlCantStartError {
             get {
