@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using DynamoUtilities.Properties;
 
 namespace Dynamo.Utilities
 {
@@ -196,7 +197,7 @@ namespace Dynamo.Utilities
         /// <returns>Returns error message</returns>
         private string GetCantStartErrorMessage()
         {
-            return @"<p>Can't start '" + GetToolPath() + @"'</p>";
+            return string.Format(Resources.Md2HtmlCantStartError, GetToolPath());
         }
 
         /// <summary>
@@ -205,7 +206,7 @@ namespace Dynamo.Utilities
         /// <returns>Returns error message</returns>
         private string GetCantCommunicateErrorMessage()
         {
-            return @"<p>Can't communicate with '" + GetToolPath() + @"'</p>";
+            return string.Format(Resources.Md2HtmlCantCommunicateError, GetToolPath());
         }
     }
 }
