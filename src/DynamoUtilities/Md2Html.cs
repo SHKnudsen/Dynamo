@@ -20,6 +20,34 @@ namespace Dynamo.Utilities
     {
         private readonly Process process = new Process();
         private bool started;
+        /// <summary>
+        /// Constructor
+        /// Start the CLI tool and keep it around
+        /// </summary>
+        internal Md2Html()
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardInput = true,
+
+                UseShellExecute = false,
+                Arguments = @"",
+                FileName = GetToolPath()
+            };
+
+            process.StartInfo = startInfo;
+            try
+            {
+                process.Start();
+                started = true;
+            }
+            catch(Win32Exception)
+            {
+                // Do nothing
+            }
+        }
 
         /// <summary>
         /// Kill the CLI tool, if still running
@@ -47,7 +75,7 @@ namespace Dynamo.Utilities
         /// <returns>Returns converted markdown as html</returns>
         internal string ParseMd2Html(string mdString, string mdPath)
         {
-            if (!StartProcess())
+            if (!started)
             {
                 return GetCantStartErrorMessage();
             }
@@ -77,7 +105,7 @@ namespace Dynamo.Utilities
         /// <returns>Returns Sanitized Html</returns>
         internal string SanitizeHtml(string content)
         {
-            if (!StartProcess())
+            if (!started)
             {
                 return GetCantStartErrorMessage();
             }
@@ -146,40 +174,6 @@ namespace Dynamo.Utilities
             var rootPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new ArgumentNullException(nameof(Path.GetDirectoryName));
             var toolPath = Path.Combine(rootPath, @"Md2Html", @"Md2Html.exe");
             return toolPath;
-        }
-
-        /// <summary>
-        /// Start the CLI tool if not started and keep it around
-        /// <returns>Returns true if the process started or was running, false if the process failed to start.</returns>
-        /// </summary>
-        private bool StartProcess()
-        {
-            if (!started)
-            {
-                ProcessStartInfo startInfo = new ProcessStartInfo
-                {
-                    CreateNoWindow = true,
-                    RedirectStandardOutput = true,
-                    RedirectStandardInput = true,
-
-                    UseShellExecute = false,
-                    Arguments = @"",
-                    FileName = GetToolPath()
-                };
-
-                process.StartInfo = startInfo;
-                try
-                {
-                    process.Start();
-                    started = true;
-                }
-                catch (Win32Exception)
-                {
-                    // Do nothing
-                }
-            }
-
-            return started;
         }
 
         /// <summary>
