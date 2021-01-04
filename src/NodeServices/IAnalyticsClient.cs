@@ -194,7 +194,7 @@ namespace Dynamo.Logging
         Switch,
 
         /// <summary>
-        /// Run event, such as Python node run clicked, Graph run Clicked
+        /// Run event, such as Python node run clicked, Graph run Clicked, generic node run during graph execution
         /// </summary>
         Run,
 
@@ -202,6 +202,16 @@ namespace Dynamo.Logging
         /// Load event, such as extensions loaded
         /// </summary>
         Load,
+
+        /// <summary>
+        /// Dock event, such as docking view extension
+        /// </summary>
+        Dock,
+
+        /// <summary>
+        /// Undock event, such as undocking view extension
+        /// </summary>
+        Undock,
     }
 
     /// <summary>
