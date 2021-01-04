@@ -511,6 +511,8 @@ namespace Dynamo.Graph.Workspaces
                     {
                         matchingNode.IsSetAsInput = true;
                         matchingNode.Name = inputData.Name;
+                        if (!(matchingNode is DummyNode))
+                            matchingNode.InputData.Description = inputData.Description;
                     }
                 }
             }
@@ -528,6 +530,7 @@ namespace Dynamo.Graph.Workspaces
                     {
                         matchingNode.IsSetAsOutput = true;
                         matchingNode.Name = outputData.Name;
+                        matchingNode.OutputData.Description = outputData.Description;
                     }
                 }
             }
