@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Dynamo.LintingViewExtension"
              xmlns:converter="clr-namespace:Dynamo.LintingViewExtension.Converters"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800"
@@ -22,7 +23,7 @@
                            Foreground="White"
                            FontSize="16"
                            FontWeight="Bold"
-                           TextDecorations="Underline" />
+                            />
             </DataTemplate>
 
         </ResourceDictionary>
@@ -43,6 +44,7 @@
             <ListView ItemTemplate="{DynamicResource NodeIssueGroupsItemTemplate}"
                       ItemsSource="{Binding NodeIssues}"
                       Style="{StaticResource ListViewStyle}"
+                      ItemContainerStyle="{StaticResource ListViewItemStyle}"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                       HorizontalContentAlignment="Stretch" />
         </HeaderedContentControl>
@@ -57,9 +59,8 @@
             <ListView ItemTemplate="{DynamicResource GraphIssueGroupsItemTemplate}"
                       ItemsSource="{Binding GraphIssues}"
                       Style="{StaticResource ListViewStyle}"
-
+                      ItemContainerStyle="{StaticResource ListViewItemStyle}"    
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-
                       HorizontalContentAlignment="Stretch" />
         </HeaderedContentControl>
 

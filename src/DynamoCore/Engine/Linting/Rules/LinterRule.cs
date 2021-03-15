@@ -65,7 +65,7 @@ namespace Dynamo.Engine.Linting.Rules
             RuleEvaluated?.Invoke(result);
         }
 
-        public void Dispose() { }
+        public virtual void Dispose() { }
     }
 
 

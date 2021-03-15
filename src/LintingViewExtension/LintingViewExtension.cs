@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using Dynamo.Engine.Linting;
-using Dynamo.LintingViewExtension.TestLinters;
-using Dynamo.Wpf.Extensions;
 using Dynamo.LintingViewExtension.Properties;
 using Dynamo.ViewModels;
+using Dynamo.Wpf.Extensions;
 
 namespace Dynamo.LintingViewExtension
 {
@@ -36,7 +29,7 @@ namespace Dynamo.LintingViewExtension
         public void Loaded(ViewLoadedParams viewLoadedParams)
         {
             this.viewLoadedParamsReference = viewLoadedParams;
-            this.linterViewModel = new LinterViewModel((viewLoadedParams.DynamoWindow.DataContext as DynamoViewModel).LinterManager);
+            this.linterViewModel = new LinterViewModel((viewLoadedParams.DynamoWindow.DataContext as DynamoViewModel).LinterManager, viewLoadedParamsReference);
             this.linterView = new LinterView() { DataContext = linterViewModel };
 
             // Add a button to Dynamo View menu to manually show the window

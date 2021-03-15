@@ -33,8 +33,7 @@ namespace Dynamo.LintingViewExtension.Controls
         public static readonly DependencyProperty ResultsProperty = DependencyProperty.Register(
             nameof(Results),
             typeof(IEnumerable<NodeRuleEvaluationResult>),
-            typeof(IssueGroup),
-            new PropertyMetadata(PrintfDebugger)
+            typeof(IssueGroup)
         );
 
         public string Description
@@ -46,21 +45,19 @@ namespace Dynamo.LintingViewExtension.Controls
         public static readonly DependencyProperty DescriptionProperty = DependencyProperty.Register(
             nameof(Description),
             typeof(string),
-            typeof(IssueGroup),
-            new PropertyMetadata(PrintfDebugger)
+            typeof(IssueGroup)
         );
 
         public string CallToAction
         {
-            get{ return (string)GetValue(CallToActionkProperty); }
+            get { return (string)GetValue(CallToActionkProperty); }
             set { SetValue(CallToActionkProperty, value); }
         }
 
         public static readonly DependencyProperty CallToActionkProperty = DependencyProperty.Register(
             nameof(CallToAction),
             typeof(string),
-            typeof(IssueGroup),
-            new PropertyMetadata(PrintfDebugger)
+            typeof(IssueGroup)
         );
 
         #endregion DependencyProperties
@@ -69,13 +66,5 @@ namespace Dynamo.LintingViewExtension.Controls
         {
             InitializeComponent();
         }
-
-        public static void PrintfDebugger(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            Console.WriteLine("{0}.{1}: {2}",
-                d.DependencyObjectType.Name,
-                e.Property.Name,
-                e.NewValue);
-        }
-}
+    }
 }
