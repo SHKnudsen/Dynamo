@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using System.Windows.Threading;
 using Dynamo.Configuration;
 using Dynamo.Engine;
+using Dynamo.Engine.Linting;
 using Dynamo.Exceptions;
 using Dynamo.Graph;
 using Dynamo.Graph.Annotations;
@@ -569,6 +570,8 @@ namespace Dynamo.ViewModels
             }
         }
 
+        public LinterManager LinterManager { get; }
+
         #endregion
 
         public struct StartConfiguration
@@ -672,6 +675,8 @@ namespace Dynamo.ViewModels
             WatchHandler.RequestSelectGeometry += BackgroundPreviewViewModel.AddLabelForPath;
             RegisterWatch3DViewModel(BackgroundPreviewViewModel, RenderPackageFactoryViewModel.Factory);
             model.ComputeModelDeserialized += model_ComputeModelDeserialized;
+
+            LinterManager = new LinterManager(this.Model);
         }
 
         /// <summary>

@@ -151,6 +151,7 @@
     </Compile>
     <Compile Include="Controls\UseLevelPopup.cs" />
     <Compile Include="Controls\UseLevelSpinner.cs" />
+    <Compile Include="Extensions\ILinterExtension.cs" />
     <Compile Include="Extensions\ViewModelCommandExecutive.cs" />
     <Compile Include="Extensions\IViewExtension.cs" />
     <Compile Include="Extensions\ViewExtensionBase.cs" />

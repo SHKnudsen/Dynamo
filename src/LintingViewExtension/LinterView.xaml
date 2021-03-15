@@ -1,0 +1,72 @@
+﻿<UserControl x:Class="Dynamo.LintingViewExtension.LinterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Dynamo.LintingViewExtension"
+             xmlns:converter="clr-namespace:Dynamo.LintingViewExtension.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance Type=local:LinterViewModel, IsDesignTimeCreatable=False}">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/LintingViewExtension;component/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <converter:DataBindingDebugger x:Key="Debug" />
+
+            <DataTemplate x:Key="HeaderItemControlHeaderTemplate">
+                <TextBlock Text="{Binding}"
+                           Foreground="White"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           TextDecorations="Underline" />
+            </DataTemplate>
+
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="10" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+
+        <HeaderedContentControl Header="Node Issues"
+                                Grid.Row="0"
+                                HeaderTemplate="{StaticResource HeaderItemControlHeaderTemplate}"
+                                Margin="5">
+            <ListView ItemTemplate="{DynamicResource NodeIssueGroupsItemTemplate}"
+                      ItemsSource="{Binding NodeIssues}"
+                      Style="{StaticResource ListViewStyle}"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                      HorizontalContentAlignment="Stretch" />
+        </HeaderedContentControl>
+
+
+        <Separator Grid.Row="1" BorderThickness="1" BorderBrush="White" />
+
+        <HeaderedContentControl Header="Graph Issues" 
+                                Grid.Row="2"
+                                HeaderTemplate="{StaticResource HeaderItemControlHeaderTemplate}"
+                                Margin="5">
+            <ListView ItemTemplate="{DynamicResource GraphIssueGroupsItemTemplate}"
+                      ItemsSource="{Binding GraphIssues}"
+                      Style="{StaticResource ListViewStyle}"
+
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+
+                      HorizontalContentAlignment="Stretch" />
+        </HeaderedContentControl>
+
+
+        <ComboBox Grid.Row="3"
+                  Name="LinterSelector"
+                  ItemsSource="{Binding LinterManager.AvailableLinters}"
+                  SelectedItem="{Binding LinterManager.CurrentLinter, Mode=TwoWay}" />
+    </Grid>
+</UserControl>

@@ -183,6 +183,11 @@ namespace Dynamo.Controls
                     }
                     viewExtensionManager.Add(ext);
 
+                    if (ext is ILinterExtension linterExt)
+                    {
+                        this.dynamoViewModel.LinterManager.AddLinter(linterExt.RegisterRuleSet());
+                    }
+
                 }
                 catch (Exception exc)
                 {

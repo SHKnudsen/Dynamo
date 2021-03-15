@@ -111,6 +111,17 @@ limitations under the License.
     <Compile Include="Engine\CodeGeneration\CompiledEventArgs.cs" />
     <Compile Include="Engine\CodeGeneration\CompilingEventArgs.cs" />
     <Compile Include="Engine\CodeGeneration\IAstNodeContainer.cs" />
+    <Compile Include="Engine\Linting\Interfaces\EvaluationRuleResultEnum.cs" />
+    <Compile Include="Engine\Linting\Interfaces\ILinterRuleSet.cs" />
+    <Compile Include="Engine\Linting\Interfaces\SeverityCodesEnum.cs" />
+    <Compile Include="Engine\Linting\LinterManager.cs" />
+    <Compile Include="Engine\Linting\Rules\GraphRuleEvaluationResult.cs" />
+    <Compile Include="Engine\Linting\Rules\GraphLinterRule.cs" />
+    <Compile Include="Engine\Linting\Interfaces\ILinterRule.cs" />
+    <Compile Include="Engine\Linting\Interfaces\IRuleEvaluationResult.cs" />
+    <Compile Include="Engine\Linting\Rules\LinterRule.cs" />
+    <Compile Include="Engine\Linting\Rules\NodeRuleEvaluationResult.cs" />
+    <Compile Include="Engine\Linting\Rules\NodeLinterRule.cs" />
     <Compile Include="Engine\Profiling\IProfilingExecutionTimeData.cs" />
     <Compile Include="Engine\Profiling\NodeProfilingData.cs" />
     <Compile Include="Engine\Profiling\ProfilingData.cs" />
