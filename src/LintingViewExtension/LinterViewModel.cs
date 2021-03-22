@@ -6,14 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dynamo.Core;
-using Dynamo.Engine.Linting;
-using Dynamo.Engine.Linting.Rules;
 using Dynamo.Graph.Nodes;
 using Dynamo.LintingViewExtension.Controls;
 using Dynamo.Models;
 using Dynamo.Wpf.Extensions;
 using Microsoft.Practices.Prism.Commands;
 using Dynamo.ViewModels;
+using Dynamo.Wpf.Linting;
+using Dynamo.Wpf.Linting.Rules;
 
 namespace Dynamo.LintingViewExtension
 {

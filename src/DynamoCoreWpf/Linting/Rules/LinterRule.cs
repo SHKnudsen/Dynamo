@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Dynamo.Engine.Linting.Interfaces;
 using Dynamo.Graph.Nodes;
 using Dynamo.Graph.Workspaces;
+using Dynamo.Wpf.Linting.Interfaces;
 
-namespace Dynamo.Engine.Linting.Rules
+namespace Dynamo.Wpf.Linting.Rules
 {
     /// <summary>
     /// Base class for all linting rules

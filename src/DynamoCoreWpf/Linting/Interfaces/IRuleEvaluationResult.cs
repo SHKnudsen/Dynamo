@@ -1,4 +1,4 @@
-﻿namespace Dynamo.Engine.Linting
+﻿namespace Dynamo.Wpf.Linting
 {
     public interface IRuleEvaluationResult
     {

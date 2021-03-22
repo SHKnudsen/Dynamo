@@ -187,7 +187,6 @@ namespace Dynamo.Controls
                     {
                         this.dynamoViewModel.LinterManager.AddLinter(linterExt.RegisterRuleSet());
                     }
-
                 }
                 catch (Exception exc)
                 {

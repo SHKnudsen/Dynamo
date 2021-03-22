@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
-using Dynamo.Engine.Linting;
-using Dynamo.Engine.Linting.Rules;
+using Dynamo.Wpf.Linting;
+using Dynamo.Wpf.Linting.Rules;
 
 namespace Dynamo.LintingViewExtension.Controls
 {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dynamo.Engine.Linting.Interfaces;
+using Dynamo.Wpf.Linting.Interfaces;
 using Dynamo.Graph.Nodes;
 using Dynamo.Graph.Workspaces;
 
-namespace Dynamo.Engine.Linting
+namespace Dynamo.Wpf.Linting
 {
     /// <summary>
     /// Represents the method that will handle rule evaluated related events.

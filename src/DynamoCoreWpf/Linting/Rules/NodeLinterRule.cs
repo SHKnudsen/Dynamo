@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dynamo.Engine.Linting.Interfaces;
 using Dynamo.Graph.Nodes;
 using Dynamo.Graph.Workspaces;
 
-namespace Dynamo.Engine.Linting.Rules
+namespace Dynamo.Wpf.Linting.Rules
 {
     /// <summary>
     /// Base class for creating Node related linter rules

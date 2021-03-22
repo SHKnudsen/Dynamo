@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Dynamo.Engine.Linting.Interfaces;
+using Dynamo.Wpf.Linting.Interfaces;
 using Dynamo.Graph.Workspaces;
 
-namespace Dynamo.Engine.Linting.Rules
+namespace Dynamo.Wpf.Linting.Rules
 {
     /// <summary>
     /// Base class for creating Graph related linter rules

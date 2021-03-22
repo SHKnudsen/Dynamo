@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Dynamo.Engine.Linting.Rules;
+using Dynamo.Wpf.Linting.Rules;
 
-namespace Dynamo.Engine.Linting
+namespace Dynamo.Wpf.Linting
 {
     public interface ILinterRuleSet
     {

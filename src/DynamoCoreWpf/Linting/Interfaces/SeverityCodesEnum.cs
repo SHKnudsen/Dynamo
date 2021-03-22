@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dynamo.Engine.Linting
+namespace Dynamo.Wpf.Linting.Interfaces
 {
-    public class GraphRuleEvaluationResult : IRuleEvaluationResult
+    public enum SeverityCodesEnum
     {
+        Warning,
+        Error
     }
 }

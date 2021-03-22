@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dynamo.Engine.Linting
+namespace Dynamo.Wpf.Linting
 {
-    public class NodeRuleEvaluationResult : IRuleEvaluationResult
+    public enum EvaluationRuleResultEnum
     {
+        Passed,
+        Failed
     }
 }

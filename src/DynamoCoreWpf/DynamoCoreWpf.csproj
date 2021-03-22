@@ -167,6 +167,17 @@
     <Compile Include="Extensions\ViewStartupParams.cs" />
     <Compile Include="Interfaces\ILibraryViewCustomization.cs" />
     <Compile Include="Interfaces\LayoutSpecification.cs" />
+    <Compile Include="Linting\Interfaces\EvaluationRuleResultEnum.cs" />
+    <Compile Include="Linting\Interfaces\ILinterRule.cs" />
+    <Compile Include="Linting\Interfaces\ILinterRuleSet.cs" />
+    <Compile Include="Linting\Interfaces\IRuleEvaluationResult.cs" />
+    <Compile Include="Linting\Interfaces\SeverityCodesEnum.cs" />
+    <Compile Include="Linting\LinterManager.cs" />
+    <Compile Include="Linting\Rules\GraphLinterRule.cs" />
+    <Compile Include="Linting\Rules\GraphRuleEvaluationResult.cs" />
+    <Compile Include="Linting\Rules\LinterRule.cs" />
+    <Compile Include="Linting\Rules\NodeLinterRule.cs" />
+    <Compile Include="Linting\Rules\NodeRuleEvaluationResult.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

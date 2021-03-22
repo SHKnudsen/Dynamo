@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Dynamo.Engine.Linting;
+using Dynamo.Wpf.Linting;
 
 namespace Dynamo.Wpf.Extensions
 {

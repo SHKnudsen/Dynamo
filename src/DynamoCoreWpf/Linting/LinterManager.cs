@@ -5,11 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dynamo.Core;
-using Dynamo.Engine.Linting.Rules;
+using Dynamo.Wpf.Linting.Rules;
 using Dynamo.Graph.Workspaces;
 using Dynamo.Models;
+using Dynamo.ViewModels;
 
-namespace Dynamo.Engine.Linting
+namespace Dynamo.Wpf.Linting
 {
     public class LinterManager : NotificationObject
     {
@@ -18,7 +19,7 @@ namespace Dynamo.Engine.Linting
         public List<ILinterRuleSet> AvailableLinters { get; internal set; }
 
         private ILinterRuleSet currentLinter;
-        private readonly DynamoModel dynamoModel;
+        private readonly DynamoViewModel dynamoViewModel;
 
         public ILinterRuleSet CurrentLinter 
         {
@@ -39,23 +40,23 @@ namespace Dynamo.Engine.Linting
 
         public WorkspaceModel CurrentWorkspace { get; private set; }
 
-        public LinterManager(DynamoModel dynamoModel)
+        public LinterManager(DynamoViewModel dynamoViewModel)
         {
-            this.dynamoModel = dynamoModel;
+            this.dynamoViewModel = dynamoViewModel;
             AvailableLinters = new List<ILinterRuleSet>();
             RuleEvaluationResults = new ObservableCollection<IRuleEvaluationResult>();
 
-            dynamoModel.PropertyChanged += OnCurrentWorkspaceChanged;
+            dynamoViewModel.PropertyChanged += OnCurrentWorkspaceChanged;
         }
 
         private void OnCurrentWorkspaceChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(DynamoModel.CurrentWorkspace))
+            if (e.PropertyName == nameof(DynamoViewModel.CurrentSpace))
             {
                 if (this.CurrentWorkspace != null)
                     this.CurrentWorkspace.NodeRemoved -= OnNodeRemoved;
 
-                this.CurrentWorkspace = dynamoModel.CurrentWorkspace;
+                this.CurrentWorkspace = dynamoViewModel.CurrentSpace;
                 this.CurrentWorkspace.NodeRemoved += OnNodeRemoved;
             }
         }
@@ -122,7 +123,7 @@ namespace Dynamo.Engine.Linting
             foreach (var rule in currentLinter.LinterRules)
             {
                 LinterRule.RuleEvaluated += OnLinterRuleEvaluated;
-                rule.Initialize(dynamoModel.CurrentWorkspace);
+                rule.Initialize(dynamoViewModel.CurrentSpace);
             }
         }
 
