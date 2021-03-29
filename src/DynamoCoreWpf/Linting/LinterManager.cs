@@ -9,46 +9,110 @@ using Dynamo.Wpf.Linting.Rules;
 using Dynamo.Graph.Workspaces;
 using Dynamo.Models;
 using Dynamo.ViewModels;
+using Dynamo.Wpf.Extensions;
 
 namespace Dynamo.Wpf.Linting
 {
     public class LinterManager : NotificationObject
     {
+        #region Private fields
+        private ILinterExtension currentLinter;
+        private ILinterRuleSet currentRuleSet;
+        private readonly DynamoViewModel dynamoViewModel;
+        #endregion
+
+        #region Public properties
+        /// <summary>
+        /// Results from evaluated rules
+        /// </summary>
         public ObservableCollection<IRuleEvaluationResult> RuleEvaluationResults { get; set; }
 
-        public List<ILinterRuleSet> AvailableLinters { get; internal set; }
+        /// <summary>
+        /// Available linters
+        /// </summary>
+        public List<ILinterExtension> AvailableLinters { get; internal set; }
 
-        private ILinterRuleSet currentLinter;
-        private readonly DynamoViewModel dynamoViewModel;
-
-        public ILinterRuleSet CurrentLinter 
+        /// <summary>
+        /// The linter currently selected
+        /// </summary>
+        public ILinterExtension CurrentLinter
         {
             get { return currentLinter; }
             set
             {
-                if (currentLinter == value)
-                    return;
-
-                if (currentLinter != null && currentLinter != value)
-                    DisposeCurrentLinter(currentLinter);
-                
                 currentLinter = value;
-                InitializeCurrentLinter(currentLinter);
-                RaisePropertyChanged(nameof(CurrentLinter));
-            } 
+                var ruleset = value.RegisterRuleSet();
+                ActiveRuleSet = ruleset;
+            }
         }
 
+        /// <summary>
+        /// The Ruleset currently being used to validate graphs
+        /// </summary>
+        public ILinterRuleSet ActiveRuleSet
+        {
+            get { return currentRuleSet; }
+            set 
+            {
+                if (currentRuleSet == value)
+                    return;
+
+                if (currentRuleSet != null && currentRuleSet != value)
+                    DisposeCurrentLinter(currentRuleSet);
+
+                currentRuleSet = value;
+                InitializeCurrentLinter(currentRuleSet);
+                RaisePropertyChanged(nameof(ActiveRuleSet));
+            }
+        }
+
+
         public WorkspaceModel CurrentWorkspace { get; private set; }
+        #endregion
 
         public LinterManager(DynamoViewModel dynamoViewModel)
         {
             this.dynamoViewModel = dynamoViewModel;
-            AvailableLinters = new List<ILinterRuleSet>();
+            AvailableLinters = new List<ILinterExtension>();
             RuleEvaluationResults = new ObservableCollection<IRuleEvaluationResult>();
-
             dynamoViewModel.PropertyChanged += OnCurrentWorkspaceChanged;
         }
 
+
+
+        /// <summary>
+        /// Add new linter to the LinterManager
+        /// </summary>
+        /// <param name="linter"></param>
+        public void AddLinter(ILinterExtension linter)
+        {
+            if (AvailableLinters is null)
+                return;
+
+            if (AvailableLinters.Find(x => x.UniqueId == linter.UniqueId) is null)
+            {
+                AvailableLinters.Add(linter);
+                RaisePropertyChanged(nameof(AvailableLinters));
+            }
+        }
+
+        /// <summary>
+        /// Remove linter if it already exists
+        /// </summary>
+        /// <param name="linter"></param>
+        public void RemoveLinter(ILinterExtension linter)
+        {
+            if (AvailableLinters is null)
+                return;
+
+            if (AvailableLinters.Find(x => x.UniqueId == linter.UniqueId) != null)
+            {
+                AvailableLinters.Remove(linter);
+                RaisePropertyChanged(nameof(AvailableLinters));
+            }
+        }
+
+        #region Private methods
         private void OnCurrentWorkspaceChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(DynamoViewModel.CurrentSpace))
@@ -67,51 +131,26 @@ namespace Dynamo.Wpf.Linting
                 Where(x => x is NodeRuleEvaluationResult).
                 Cast<NodeRuleEvaluationResult>().
                 ToList().
-                Where(x=>x.NodeId == obj.GUID.ToString()).
+                Where(x => x.NodeId == obj.GUID.ToString()).
                 ToList();
 
             foreach (var item in nodeRuleEvaluations)
             {
                 RuleEvaluationResults.Remove(item);
             }
-
         }
 
-        public void AddLinter(ILinterRuleSet linter)
-        {
-            if (AvailableLinters is null)
-                return;
-
-            if (AvailableLinters.Find(x => x.Id == linter.Id) is null)
-            {
-                AvailableLinters.Add(linter);
-                RaisePropertyChanged(nameof(AvailableLinters));
-            }
-        }
-
-        public void RemoveLinter(ILinterRuleSet linter)
-        {
-            if (AvailableLinters is null)
-                return;
-
-            if (AvailableLinters.Find(x => x.Id == linter.Id) != null)
-            {
-                AvailableLinters.Remove(linter);
-                RaisePropertyChanged(nameof(AvailableLinters));
-            }
-        }
-
-        private void DisposeCurrentLinter(ILinterRuleSet currentLinter)
+        private void DisposeCurrentLinter(ILinterRuleSet currentRuleSet)
         {
             RuleEvaluationResults.Clear();
 
-            if (currentLinter.LinterRules is null || currentLinter.LinterRules.Count() <= 0)
+            if (currentRuleSet.LinterRules is null || currentRuleSet.LinterRules.Count() <= 0)
                 return;
 
-            currentLinter.LinterRules.ToList().ForEach(x => x.Dispose());
-            foreach (var rule in currentLinter.LinterRules)
+            currentRuleSet.LinterRules.ToList().ForEach(x => x.Dispose());
+            foreach (var rule in currentRuleSet.LinterRules)
             {
-                LinterRule.RuleEvaluated -= OnLinterRuleEvaluated;
+                rule.RuleEvaluated -= OnLinterRuleEvaluated;
             }
         }
 
@@ -122,7 +161,7 @@ namespace Dynamo.Wpf.Linting
 
             foreach (var rule in currentLinter.LinterRules)
             {
-                LinterRule.RuleEvaluated += OnLinterRuleEvaluated;
+                rule.RuleEvaluated += OnLinterRuleEvaluated;
                 rule.Initialize(dynamoViewModel.CurrentSpace);
             }
         }
@@ -146,5 +185,7 @@ namespace Dynamo.Wpf.Linting
                 RuleEvaluationResults.Add(result);
             }
         }
+
+        #endregion
     }
 }

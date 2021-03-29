@@ -1,12 +1,15 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
+using Dynamo.Extensions;
+using Dynamo.Graph;
 using Dynamo.LintingViewExtension.Properties;
 using Dynamo.ViewModels;
 using Dynamo.Wpf.Extensions;
 
 namespace Dynamo.LintingViewExtension
 {
-    public class LintingViewExtension : IViewExtension
+    public class LintingViewExtension : IViewExtension, IExtensionStorageAccess
     {
         private const string EXTENSION_NAME = "Dynamo Linter";
         private const string EXTENSION_GUID = "3467481b-d20d-4918-a454-bf19fc5c25d7";
@@ -56,6 +59,16 @@ namespace Dynamo.LintingViewExtension
         public void Dispose()
         {
             // Do nothing for now 
+        }
+
+        public void OnWorkspaceOpen(Dictionary<string, string> extensionData)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnWorkspaceSaving(Dictionary<string, string> extensionData, SaveContext saveContext)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

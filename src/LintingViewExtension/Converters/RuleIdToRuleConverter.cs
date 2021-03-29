@@ -18,7 +18,7 @@ namespace Dynamo.LintingViewExtension.Converters
             if (!(parameter is LinterManager linter))
                 return null;
 
-            var linterRule = GetLinterRuleById(ruleId, linter.CurrentLinter);
+            var linterRule = GetLinterRuleById(ruleId, linter.ActiveRuleSet);
             return linterRule;
             
         }

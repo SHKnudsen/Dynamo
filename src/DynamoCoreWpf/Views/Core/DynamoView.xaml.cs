@@ -185,7 +185,7 @@ namespace Dynamo.Controls
 
                     if (ext is ILinterExtension linterExt)
                     {
-                        this.dynamoViewModel.LinterManager.AddLinter(linterExt.RegisterRuleSet());
+                        this.dynamoViewModel.LinterManager.AddLinter(linterExt);
                     }
                 }
                 catch (Exception exc)
@@ -203,6 +203,9 @@ namespace Dynamo.Controls
                      DynamoLoadedViewExtensionHandler(new ViewLoadedParams(this, this.dynamoViewModel),
                          new List<IViewExtension>() { extension });
                  }
+
+                 if (extension is ILinterExtension linterExtension && this.dynamoViewModel.LinterManager != null)
+                     this.dynamoViewModel.LinterManager.AddLinter(linterExtension);
              };
 
             // Add an event handler to check if the collection is modified.   

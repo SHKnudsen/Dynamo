@@ -123,7 +123,11 @@ namespace Dynamo.LintingViewExtension
 
         private LinterRule GetLinterRule(string id)
         {
-            return LinterManager.CurrentLinter.LinterRules.Where(x => x.Id == id).FirstOrDefault();
+            return LinterManager.
+                ActiveRuleSet.
+                LinterRules.
+                Where(x => x.Id == id).
+                FirstOrDefault();
         }
 
         private void RuleEvaluationResultsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
