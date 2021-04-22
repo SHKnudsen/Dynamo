@@ -7,6 +7,15 @@
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="200">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Styles/StyleDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
     <Grid 
         DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:CustomPropertyControl}}}"
         HorizontalAlignment="Stretch">
@@ -20,31 +29,39 @@
                 <TextBlock x:Name="propertyNameText" 
                            Grid.Column="0"
                            IsEnabled="False"
-                           Text="{Binding PropertyName, Mode=TwoWay}" />
-                <Button Grid.Column="1" 
-                        Background="Transparent" 
-                        BorderThickness="0"
+                           Text="{Binding PropertyName, Mode=TwoWay}" 
+                           Foreground="{StaticResource tittleTextColor}"
+                           />
+
+                <!--EDIT BUTTON-->
+                <Button Grid.Column="1"
+                        Style="{StaticResource buttonWithFontAwesome}"
                         Command="{Binding EditPropertyNameCmd}">
-                    <Button.Content>
-                        <fa:ImageAwesome Icon="Pencil"
-                                         Height="15"
-                                         Grid.Column="1" />
-                    </Button.Content>
+                    <Button.Template>
+                        <ControlTemplate>
+                            <fa:ImageAwesome Grid.Column="1"
+                                Icon="Pencil"  
+                                Style="{StaticResource imageAwesomeButton}"/>
+                        </ControlTemplate>  
+                    </Button.Template>
                 </Button>
+
+                <!--REMOVE BUTTON-->
                 <Button Grid.Column="2"
-                        Background="Transparent"
-                        BorderThickness="0">
-                    <Button.Content>
-                        <fa:ImageAwesome Icon="Remove"
-                                         Height="15"
-                                         Grid.Column="1" />
-                    </Button.Content>
+                        Style="{StaticResource buttonWithFontAwesome}">
+                    <Button.Template>
+                        <ControlTemplate>
+                            <fa:ImageAwesome Grid.Column="1" 
+                                        Icon="Remove"
+                                        Style="{StaticResource imageAwesomeButton}"
+                                         />
+                        </ControlTemplate>
+                    </Button.Template>
                 </Button>
             </Grid>
-            <TextBox BorderBrush="Gray"
-                     Background="Black"
-                     Foreground="White"
-                     Margin="0,5" />
+
+            <!--TEXT BOX-->
+            <TextBox Style="{StaticResource smallTextBox}" Margin="0,5"/>
         </StackPanel>
     </Grid>
 </UserControl>

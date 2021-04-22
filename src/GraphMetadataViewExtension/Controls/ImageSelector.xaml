@@ -10,15 +10,14 @@
              d:DesignHeight="198" d:DesignWidth="314">
     <UserControl.Resources>
         <ResourceDictionary>
-            <convertes:BooleanInverseConverter x:Key="BooleanInverseConverter" />
-            <convertes:BooleansToVisibilityConverter x:Key="BooleansToVisibilityConverter" />
-
-            <SolidColorBrush x:Key="ButtonOverlayBrush" Color="Black" Opacity="0.5" />
-            <SolidColorBrush x:Key="ButtonOverlayPressedBrush" Color="Black" Opacity="0.3" />
-
-            <Style x:Key="OverlayButton" TargetType="Button">
-                <Setter Property="Background" Value="{StaticResource ButtonOverlayBrush}" />
-                <Setter Property="Template">
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Styles/StyleDictionary.xaml" />
+                <ResourceDictionary>
+                    <convertes:BooleanInverseConverter x:Key="BooleanInverseConverter" />
+                    <convertes:BooleansToVisibilityConverter x:Key="BooleansToVisibilityConverter" />
+                    <Style x:Key="OverlayButton" TargetType="Button">
+                        <Setter Property="Background" Value="{StaticResource ButtonOverlayBrush}" />
+                    <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Border Background="{TemplateBinding Background}" BorderBrush="Black" BorderThickness="1">
@@ -42,21 +41,30 @@
                 </Style.Triggers>
             </Style>
         </ResourceDictionary>
+
+
+
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+
+
     </UserControl.Resources>
 
     <Border
         DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:ImageSelector}}}"
         BorderThickness="1"
-        BorderBrush="Gray">
+        BorderBrush="{StaticResource boxBorderColor}">
         <Grid
-            Background="Black">
+            Background="{StaticResource boxColor}">
             <Image
                 Source="{Binding Image}"
                 Stretch="Uniform" />
                 <TextBlock
                     Text="{x:Static properties:Resources.ImageSelector_Message_NoImageSelected}"
                     VerticalAlignment="Center"
-                    HorizontalAlignment="Center">
+                    HorizontalAlignment="Center"
+                    Foreground="{StaticResource boxTextColor}"
+                    >
                 <TextBlock.Visibility>
                     <MultiBinding Converter="{StaticResource BooleansToVisibilityConverter}">
                         <Binding Path="IsMouseOver" Converter="{StaticResource BooleanInverseConverter}" />
