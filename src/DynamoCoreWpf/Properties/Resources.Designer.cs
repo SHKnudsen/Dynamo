@@ -5789,6 +5789,42 @@ namespace Dynamo.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Break Connections.
+        /// </summary>
+        public static string WireContextMenuHeaderBreakConnections {
+            get {
+                return ResourceManager.GetString("WireContextMenuHeaderBreakConnections", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pin Wire.
+        /// </summary>
+        public static string WireContextMenuHeaderPinWire {
+            get {
+                return ResourceManager.GetString("WireContextMenuHeaderPinWire", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Connected.
+        /// </summary>
+        public static string WireContextMenuHeaderSelectConnected {
+            get {
+                return ResourceManager.GetString("WireContextMenuHeaderSelectConnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unpin Wire.
+        /// </summary>
+        public static string WireContextMenuHeaderUnpinWire {
+            get {
+                return ResourceManager.GetString("WireContextMenuHeaderUnpinWire", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DLL.
         /// </summary>
         public static string ZeroTouchTypeShortString {

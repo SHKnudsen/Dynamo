@@ -1,15 +1,20 @@
 ﻿<ResourceDictionary   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
                       xmlns:viewModels="clr-namespace:Dynamo.ViewModels;assembly=DynamoCoreWpf"
-                      xmlns:ui="clr-namespace:Dynamo.UI;assembly=DynamoCoreWpf">
+                      xmlns:ui="clr-namespace:Dynamo.UI;assembly=DynamoCoreWpf"
+                      xmlns:converters="clr-namespace:Dynamo.Controls;assembly=DynamoCoreWpf"
+                      xmlns:props="clr-namespace:Dynamo.Wpf.Properties;assembly=DynamoCoreWpf">
 
     <ResourceDictionary.MergedDictionaries>
         <ui:SharedResourceDictionary Source="{x:Static ui:SharedDictionaryManager.DynamoConvertersDictionaryUri}" />
+       
     </ResourceDictionary.MergedDictionaries>
+    <converters:HeaderVizConverter x:Key="HeaderVizConvert"/>
+
 
     <Style x:Key="SConnector" TargetType="Path">
         <Style.Triggers>
-            <!--<EventTrigger RoutedEvent="MouseEnter">
+            <EventTrigger RoutedEvent="MouseEnter">
                 <BeginStoryboard>
                     <Storyboard>
                         <DoubleAnimation From="3" To="6" Duration="0" Storyboard.TargetProperty="StrokeThickness"></DoubleAnimation>
@@ -22,21 +27,42 @@
                         <DoubleAnimation From="6" To="3" Duration="0" Storyboard.TargetProperty="StrokeThickness"></DoubleAnimation>
                     </Storyboard>
                 </BeginStoryboard>
-            </EventTrigger>-->
+            </EventTrigger>
             <DataTrigger Binding="{Binding Path=IsConnecting, Mode=OneWay}" Value="True">
                 <Setter Property="StrokeDashArray" Value="2"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding Path=IsFrozen, Mode=OneWay}" Value="True">
                 <Setter Property="StrokeDashArray" Value="2"/>
-                <Setter Property="Opacity" Value="0.5"/>               
+                <Setter Property="Opacity" Value="0.5"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Path=IsVisible, Mode=OneWay}" Value="True">
+                <Setter Property="Opacity" Value="1.0"/>
+                <Setter Property="ToolTipService.IsEnabled" Value="True"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Path=IsVisible, Mode=OneWay}" Value="False">
+                <Setter Property="Opacity" Value="0.0"/>
+                <Setter Property="ToolTipService.IsEnabled" Value="False"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Path=IsPartlyVisible, Mode=OneWay}" Value="True">
+                <Setter Property="Opacity" Value="0.4"/>
+                <Setter Property="ToolTipService.IsEnabled" Value="True"/>
             </DataTrigger>
         </Style.Triggers>
     </Style>
     
     <DataTemplate DataType="{x:Type viewModels:ConnectorViewModel}">
         <Grid>
+            <Grid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="{x:Static props:Resources.WireContextMenuHeaderBreakConnections}" Command="{Binding BreakConnectionCommand}"/>
+                    <MenuItem Header="{x:Static props:Resources.WireContextMenuHeaderSelectConnected}" Command="{Binding SelectConnectedCommand}"/>
+                    <MenuItem Header="{Binding Path=IsVisible, Converter={StaticResource HeaderVizConvert}}" Command="{Binding HideWireCommand}"/>
+                    <MenuItem Header="{x:Static props:Resources.WireContextMenuHeaderPinWire}" Command="{Binding PinWireCommand}"/>
+                    <MenuItem Header="{x:Static props:Resources.WireContextMenuHeaderUnpinWire}"/>
+                </ContextMenu>
+            </Grid.ContextMenu>
             <Grid.Resources>
-                    <SolidColorBrush x:Key="BConnectorSelection"
+                <SolidColorBrush x:Key="BConnectorSelection"
                                  Color="{Binding PreviewState, Converter={StaticResource ConnectionStateToColorConverter}}">
                 </SolidColorBrush>
             </Grid.Resources>
@@ -50,11 +76,11 @@
                  Canvas.Top="{Binding CurvePoint0.Y}" Canvas.Left="{Binding CurvePoint0.X}" Canvas.ZIndex="1"/>
                              
             </Canvas>
-
+         
             <Path Stroke="{DynamicResource BConnectorSelection}" StrokeThickness="3" IsHitTestVisible="{Binding IsHitTestVisible}"
               Name="connector"
               Visibility="{Binding BezVisibility, Converter={StaticResource BooleanToVisibilityConverter}}" 
-              Style="{StaticResource SConnector}" Canvas.ZIndex="0">
+              Style="{StaticResource SConnector}" Canvas.ZIndex="0" ToolTip="{Binding WireDataTooltip}">
                 <Path.Data>
                     <PathGeometry>
                         <PathGeometry.Figures>
@@ -93,6 +119,7 @@
                     </PathGeometry>
                 </Path.Data>
             </Path>
+     
 
         </Grid>
         <DataTemplate.Triggers>
@@ -100,7 +127,12 @@
                 <Setter TargetName="endDot"  Property="Opacity" Value="0.5"/>
                 <Setter TargetName="startDot" Property="Opacity" Value="0.5"/>
             </DataTrigger>
-         </DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Path=IsFrozen, Mode=OneWay}" Value="True">
+                <Setter TargetName="endDot"  Property="Opacity" Value="0.5"/>
+                <Setter TargetName="startDot" Property="Opacity" Value="0.5"/>
+            </DataTrigger>
+
+        </DataTemplate.Triggers>
 
     </DataTemplate>
 

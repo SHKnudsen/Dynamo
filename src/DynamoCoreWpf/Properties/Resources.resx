@@ -2315,4 +2315,16 @@ Uninstall the following packages: {0}?</value>
     <value>_Extensions</value>
     <comment>Extensions menu</comment>
   </data>
+  <data name="WireContextMenuHeaderBreakConnections" xml:space="preserve">
+    <value>Break Connections</value>
+  </data>
+  <data name="WireContextMenuHeaderPinWire" xml:space="preserve">
+    <value>Pin Wire</value>
+  </data>
+  <data name="WireContextMenuHeaderSelectConnected" xml:space="preserve">
+    <value>Select Connected</value>
+  </data>
+  <data name="WireContextMenuHeaderUnpinWire" xml:space="preserve">
+    <value>Unpin Wire</value>
+  </data>
 </root>

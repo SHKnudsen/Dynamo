@@ -3,8 +3,13 @@ using System.Linq;
 using Dynamo.Graph.Connectors;
 using Dynamo.Graph.Nodes;
 using Dynamo.Utilities;
+using Dynamo.UI.Commands;
+using Newtonsoft.Json;
 
 using Point = System.Windows.Point;
+using Dynamo.Selection;
+using Dynamo.Engine;
+using System.ComponentModel;
 
 namespace Dynamo.ViewModels
 {
@@ -45,6 +50,136 @@ namespace Dynamo.ViewModels
                 _isHitTestVisible = value;
                 RaisePropertyChanged("IsHitTestVisible");
             }
+        }
+
+        private bool _isVisible = true;
+        public bool IsVisible
+        {
+            get { return _isVisible; }
+            set
+            {
+                _isVisible = value;
+                RaisePropertyChanged(nameof(IsVisible));
+            }
+        }
+        private bool _isPartlyVisible = false;
+        public bool IsPartlyVisible
+        {
+            get { return _isPartlyVisible; }
+            set
+            {
+                _isPartlyVisible = value;
+                RaisePropertyChanged(nameof(IsPartlyVisible));
+            }
+        }
+
+        private string _wireDataToolTip;
+        public string WireDataTooltip 
+        {
+            get
+            {
+                return _wireDataToolTip;
+            }
+            set
+            {
+                _wireDataToolTip = value;
+                RaisePropertyChanged(nameof(WireDataTooltip));
+            }
+        }
+
+        private void UpdateWireDataToolTip()
+        {
+            if(_model != null)
+            {
+                var portValue = _model.Start.Owner.GetValue(_model.Start.Index, workspaceViewModel.DynamoViewModel.EngineController);
+                if (portValue is null)
+                {
+                    WireDataTooltip = "N/A";
+                    return;
+                }
+
+                var isColl = portValue.IsCollection;
+                if (isColl)
+                {
+                    var counter = portValue.GetElements().Count();
+                    if (isColl && portValue.GetElements().Count() > 5)
+                    {
+                        string formatted = string.Empty;
+                        for (int i = 0; i < 5; i++)
+                        {
+                            formatted += portValue.GetElements().ElementAt(i).StringData;
+                            formatted += Environment.NewLine;
+                        }
+                        formatted += "...";
+                        formatted += Environment.NewLine;
+                        formatted += portValue.GetElements().Last().StringData;
+                        WireDataTooltip = $"{_model.Start.Owner.Name} -> {_model.End.Owner.Name}" + Environment.NewLine +
+                      formatted;
+                    }
+                    else
+                    {
+                        string formatted = string.Empty;
+                        for (int i = 0; i < portValue.GetElements().Count(); i++)
+                        {
+                            formatted += portValue.GetElements().ElementAt(i).StringData;
+                            if(i!= portValue.GetElements().Count()-1)
+                                formatted += Environment.NewLine;
+                        }
+                        WireDataTooltip = $"{_model.Start.Owner.Name} -> {_model.End.Owner.Name}" + Environment.NewLine +
+                      formatted;
+                    }
+                }
+                else
+                {
+                    WireDataTooltip = $"{_model.Start.Owner.Name} -> {_model.End.Owner.Name}" + Environment.NewLine + portValue.StringData;
+                }
+            }
+        }
+
+        public DelegateCommand BreakConnectionCommand { get; set; }
+        public DelegateCommand HideWireCommand { get; set; }
+        public DelegateCommand SelectConnectedCommand { get; set; }
+
+        /// <summary>
+        /// Breaks connections between node models it is connected to.
+        /// </summary>
+        /// <param name="parameter"></param>
+        private void BreakConnectionCommandExecute(object parameter)
+        {
+            this.Dispose();
+            ConnectorModel.Delete();           
+        }
+        /// <summary>
+        /// Toggles wire viz on/off. This can be overwritten when a node is selected in hidden mode.
+        /// </summary>
+        /// <param name="parameter"></param>
+        private void HideWireCommandExecute(object parameter)
+        {
+            IsVisible = !IsVisible;
+        }
+        /// <summary>
+        /// Selects nodes connected to this wire.
+        /// </summary>
+        /// <param name="parameter"></param>
+        private void SelectConnectedCommandExecute(object parameter)
+        {
+            var leftSideNode = _model.Start.Owner;
+            var rightSideNode = _model.End.Owner;
+
+            DynamoSelection.Instance.Selection.Add(leftSideNode);
+            DynamoSelection.Instance.Selection.Add(rightSideNode);
+        }
+
+        bool CanRun(object parameter)
+        {
+            return true;
+        }
+
+        private void InitializeCommands()
+        {
+            BreakConnectionCommand = new DelegateCommand(BreakConnectionCommandExecute, CanRun);
+            HideWireCommand = new DelegateCommand(HideWireCommandExecute, CanRun);
+            SelectConnectedCommand = new DelegateCommand(SelectConnectedCommandExecute, CanRun);
         }
 
         public double Left
@@ -156,8 +291,9 @@ namespace Dynamo.ViewModels
         {
             get
             {
-                if (workspaceViewModel.DynamoViewModel.ConnectorType == ConnectorType.BEZIER &&
-                    workspaceViewModel.DynamoViewModel.IsShowingConnectors)
+                //if (workspaceViewModel.DynamoViewModel.ConnectorType == ConnectorType.BEZIER &&
+                //    workspaceViewModel.DynamoViewModel.IsShowingConnectors)
+                if (workspaceViewModel.DynamoViewModel.ConnectorType == ConnectorType.BEZIER)
                     return true;
                 return false;
             }
@@ -175,8 +311,9 @@ namespace Dynamo.ViewModels
         {
             get
             {
-                if (workspaceViewModel.DynamoViewModel.ConnectorType == ConnectorType.POLYLINE &&
-                    workspaceViewModel.DynamoViewModel.IsShowingConnectors)
+                //if (workspaceViewModel.DynamoViewModel.ConnectorType == ConnectorType.POLYLINE &&
+                //    workspaceViewModel.DynamoViewModel.IsShowingConnectors)
+                    if (workspaceViewModel.DynamoViewModel.ConnectorType == ConnectorType.POLYLINE)
                     return true;
                 return false;
             }
@@ -225,6 +362,8 @@ namespace Dynamo.ViewModels
 
         #endregion
 
+   
+
         /// <summary>
         /// Construct a view and start drawing.
         /// </summary>
@@ -232,11 +371,16 @@ namespace Dynamo.ViewModels
         public ConnectorViewModel(WorkspaceViewModel workspace, PortModel port)
         {
             this.workspaceViewModel = workspace;
+            IsVisible = workspaceViewModel.DynamoViewModel.IsShowingConnectors;
             IsConnecting = true;
             _activeStartPort = port;
 
             Redraw(port.Center);
+
+            InitializeCommands();
         }
+
+    
 
         /// <summary>
         /// Construct a view and respond to property changes on the model. 
@@ -247,14 +391,32 @@ namespace Dynamo.ViewModels
             this.workspaceViewModel = workspace;
             _model = model;
 
+            IsVisible = workspaceViewModel.DynamoViewModel.IsShowingConnectors;
+            string preppedString = $"{_model.Start.Owner.Name} -> {_model.End.Owner.Name}" + Environment.NewLine;
+
             _model.PropertyChanged += Model_PropertyChanged;
             _model.Start.Owner.PropertyChanged += StartOwner_PropertyChanged;
             _model.End.Owner.PropertyChanged += EndOwner_PropertyChanged;
 
             workspaceViewModel.DynamoViewModel.PropertyChanged += DynamoViewModel_PropertyChanged;
+           // workspaceViewModel.DynamoViewModel. += HandlePreferenceChanges;
             Nodevm.PropertyChanged += nodeViewModel_PropertyChanged;
             Redraw();
+            InitializeCommands();
+
+            UpdateWireDataToolTip();
         }
+
+        //private void HandlePreferenceChanges(object sender, PropertyChangedEventArgs e)
+        //{
+        //    switch (e.PropertyName)
+        //    {
+        //        case "IsShowingConnectors":
+        //            var s = sender as DynamoViewModel;
+        //            IsVisible = s.IsShowingConnectors;
+        //            break;
+        //    }
+        //}
 
         public virtual void Dispose()
         {
@@ -262,7 +424,8 @@ namespace Dynamo.ViewModels
             _model.Start.Owner.PropertyChanged -= StartOwner_PropertyChanged;
             _model.End.Owner.PropertyChanged -= EndOwner_PropertyChanged;
 
-            workspaceViewModel.DynamoViewModel.PropertyChanged -= DynamoViewModel_PropertyChanged;
+            //workspaceViewModel.DynamoViewModel.Model.PropertyChanged -= HandlePreferenceChanges;
+            workspaceViewModel.DynamoViewModel.Model.PreferenceSettings.PropertyChanged -= DynamoViewModel_PropertyChanged;
             Nodevm.PropertyChanged -= nodeViewModel_PropertyChanged;
         }
 
@@ -286,10 +449,12 @@ namespace Dynamo.ViewModels
         /// <param name="e"></param>
         void StartOwner_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+           
             switch (e.PropertyName)
             {
                 case "IsSelected":
                     RaisePropertyChanged("PreviewState");
+                    IsPartlyVisible = _model.Start.Owner.IsSelected && IsVisible == false? true : false;
                     break;
                 case "Position":
                     RaisePropertyChanged("CurvePoint0");
@@ -302,6 +467,9 @@ namespace Dynamo.ViewModels
                 case "ShowExecutionPreview":
                     RaisePropertyChanged("PreviewState");
                     break;
+                case "CachedValue":
+                    UpdateWireDataToolTip();
+                    break;
             }
         }
 
@@ -312,10 +480,12 @@ namespace Dynamo.ViewModels
         /// <param name="e"></param>
         void EndOwner_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            
             switch (e.PropertyName)
             {
                 case "IsSelected":
                     RaisePropertyChanged("PreviewState");
+                    IsPartlyVisible = _model.End.Owner.IsSelected && IsVisible == false? true : false;
                     break;
                 case "Position":
                     RaisePropertyChanged("CurvePoint0");
@@ -351,7 +521,9 @@ namespace Dynamo.ViewModels
                 case "IsShowingConnectors":
                     RaisePropertyChanged("BezVisibility");
                     RaisePropertyChanged("PlineVisibility");
-                break;               
+                    var dynModel = sender as DynamoViewModel;
+                    IsVisible = dynModel.IsShowingConnectors;
+                    break;               
             }
         }
 
@@ -362,6 +534,8 @@ namespace Dynamo.ViewModels
                 case "CurrentWorkspace":
                     RaisePropertyChanged("BezVisibility");
                     RaisePropertyChanged("PlineVisibility");
+                    var dynModel = sender as DynamoViewModel;
+                    IsVisible = dynModel.IsShowingConnectors;
                     break;
             }
         }
