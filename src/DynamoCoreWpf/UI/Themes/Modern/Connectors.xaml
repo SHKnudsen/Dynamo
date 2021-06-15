@@ -3,14 +3,21 @@
                       xmlns:viewModels="clr-namespace:Dynamo.ViewModels;assembly=DynamoCoreWpf"
                       xmlns:ui="clr-namespace:Dynamo.UI;assembly=DynamoCoreWpf"
                       xmlns:converters="clr-namespace:Dynamo.Controls;assembly=DynamoCoreWpf"
-                      xmlns:props="clr-namespace:Dynamo.Wpf.Properties;assembly=DynamoCoreWpf">
+                      xmlns:props="clr-namespace:Dynamo.Wpf.Properties;assembly=DynamoCoreWpf"
+                      xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                      xmlns:views="clr-namespace:Dynamo.Controls;assembly=DynamoCoreWpf">
 
     <ResourceDictionary.MergedDictionaries>
         <ui:SharedResourceDictionary Source="{x:Static ui:SharedDictionaryManager.DynamoConvertersDictionaryUri}" />
+      
        
     </ResourceDictionary.MergedDictionaries>
     <converters:HeaderVizConverter x:Key="HeaderVizConvert"/>
-
+    <DataTemplate DataType="{x:Type viewModels:WatchHoverIconViewModel}">
+        <!--Add ConnectorViewViews here-->
+        <views:WatchHoverIconView DataContext="{Binding}" />
+        <!--<views:WatchHoverIconView></views:WatchHoverIconView>-->
+    </DataTemplate>
 
     <Style x:Key="SConnector" TargetType="Path">
         <Style.Triggers>
@@ -77,10 +84,10 @@
                              
             </Canvas>
          
-            <Path Stroke="{DynamicResource BConnectorSelection}" StrokeThickness="3" IsHitTestVisible="{Binding IsHitTestVisible}"
+            <Path Stroke="{DynamicResource BConnectorSelection}" StrokeThickness="3" IsHitTestVisible="{Binding IsHitTestVisible, Mode=OneWay}"
               Name="connector"
               Visibility="{Binding BezVisibility, Converter={StaticResource BooleanToVisibilityConverter}}" 
-              Style="{StaticResource SConnector}" Canvas.ZIndex="0" ToolTip="{Binding WireDataTooltip}">
+              Style="{StaticResource SConnector}" Canvas.ZIndex="0" ToolTip="{Binding WireDataTooltip}" >
                 <Path.Data>
                     <PathGeometry>
                         <PathGeometry.Figures>
@@ -96,7 +103,17 @@
                         </PathGeometry.Figures>
                     </PathGeometry>
                 </Path.Data>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger  EventName="MouseEnter">
+                        <i:InvokeCommandAction Command="{Binding MouseHoverCommand}"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger  EventName="MouseLeave">
+                        <i:InvokeCommandAction Command="{Binding MouseUnhoverCommand}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
             </Path>
+           
 
             <Path Stroke="{DynamicResource BConnectorSelection}" StrokeThickness="3" IsHitTestVisible="{Binding IsHitTestVisible}"
               Name="plineConnector" Style="{StaticResource SConnector}"
@@ -118,8 +135,21 @@
                         </PathGeometry.Figures>
                     </PathGeometry>
                 </Path.Data>
+
+                <i:Interaction.Triggers>
+                    <i:EventTrigger  EventName="MouseEnter">
+                        <i:InvokeCommandAction Command="{Binding MouseHoverCommand}"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger  EventName="MouseLeave">
+                        <i:InvokeCommandAction Command="{Binding MouseUnhoverCommand}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
             </Path>
-     
+
+            <ContentControl Canvas.ZIndex="2"  Content="{Binding WatchHoverViewModel}"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch" />
+
 
         </Grid>
         <DataTemplate.Triggers>

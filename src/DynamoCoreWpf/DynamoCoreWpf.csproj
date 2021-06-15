@@ -295,6 +295,7 @@
     <Compile Include="ViewModels\PackageManager\IPackageInstaller.cs" />
     <Compile Include="ViewModels\PackageManager\PackagePathViewModel.cs" />
     <Compile Include="ViewModels\Preview\CompactBubbleViewModel.cs" />
+    <Compile Include="ViewModels\Preview\WatchHoverIconViewModel.cs" />
     <Compile Include="ViewModels\RunSettingsViewModel.cs" />
     <Compile Include="ViewModels\Search\BrowserInternalElementViewModel.cs" />
     <Compile Include="ViewModels\Search\BrowserItemViewModel.cs" />
@@ -350,6 +351,9 @@
     </Compile>
     <Compile Include="Views\Preview\Watch3DSettingsControl.xaml.cs">
       <DependentUpon>Watch3DSettingsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Preview\WatchHoverIconView.xaml.cs">
+      <DependentUpon>WatchHoverIconView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\BrowserWindow.xaml.cs">
       <DependentUpon>BrowserWindow.xaml</DependentUpon>
@@ -447,6 +451,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Preview\ConnectorDataPreview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Preview\WatchHoverIconView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1258,6 +1266,11 @@
       <Project>{7A9E0314-966F-4584-BAA3-7339CBB849D1}</Project>
       <Name>ProtoCore</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Libraries\CoreNodeModels\CoreNodeModels.csproj">
+      <Project>{d8262d40-4880-41e4-91e4-af8f480c8637}</Project>
+      <Name>CoreNodeModels</Name>
+      <Private>False</Private>
+    </ProjectReference>
     <ProjectReference Include="..\Libraries\DesignScriptBuiltin\DesignScriptBuiltin.csproj">
       <Project>{c0d6dee5-5532-4345-9c66-4c00d7fdb8be}</Project>
       <Name>DesignScriptBuiltin</Name>
@@ -1320,6 +1333,9 @@
     <Content Include="sharpdx_direct3d11_effects_x86.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="UI\Images\add_icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="UI\Images\undock_hover.png" />
     <Resource Include="UI\Images\undock_normal.png" />
     <None Include="ViewModels\Watch3D\shaderSource\helix_shader_defs\COMMON\Common.hlsl" />

@@ -10,6 +10,8 @@ using Point = System.Windows.Point;
 using Dynamo.Selection;
 using Dynamo.Engine;
 using System.ComponentModel;
+using Dynamo.ViewModels;
+using System.Windows.Threading;
 
 namespace Dynamo.ViewModels
 {
@@ -19,6 +21,18 @@ namespace Dynamo.ViewModels
     {
 
         #region Properties
+
+        /// <summary>
+        /// Required timer for 'watch placement' button desirable behaviour.
+        /// </summary>
+        private System.Windows.Threading.DispatcherTimer timer;
+  
+        private WatchHoverIconViewModel watchHoverViewModel;
+        public WatchHoverIconViewModel WatchHoverViewModel
+        {
+            get { return watchHoverViewModel; }
+            private set { watchHoverViewModel = value; RaisePropertyChanged(nameof(WatchHoverViewModel)); }
+        }
 
         private readonly WorkspaceViewModel workspaceViewModel;
         private PortModel _activeStartPort;
@@ -42,16 +56,9 @@ namespace Dynamo.ViewModels
             }
         }
 
-        private bool _isHitTestVisible = true;
-        public bool IsHitTestVisible
-        {
-            get { return _isHitTestVisible;  } 
-            set { 
-                _isHitTestVisible = value;
-                RaisePropertyChanged("IsHitTestVisible");
-            }
-        }
-
+        /// <summary>
+        /// Controls wire visibility: on/off. When wire is off, additional styling xaml turns off tooltips.
+        /// </summary>
         private bool _isVisible = true;
         public bool IsVisible
         {
@@ -62,6 +69,11 @@ namespace Dynamo.ViewModels
                 RaisePropertyChanged(nameof(IsVisible));
             }
         }
+
+        /// <summary>
+        /// Property which overrides 'isVisible==false' condition. When this prop is set to true, wires are set to 
+        /// 40% opacity.
+        /// </summary>
         private bool _isPartlyVisible = false;
         public bool IsPartlyVisible
         {
@@ -73,6 +85,9 @@ namespace Dynamo.ViewModels
             }
         }
 
+        /// <summary>
+        /// Contains up-to-date tooltip corresponding to wire you are hovering over.
+        /// </summary>
         private string _wireDataToolTip;
         public string WireDataTooltip 
         {
@@ -87,6 +102,40 @@ namespace Dynamo.ViewModels
             }
         }
 
+        /// <summary>
+        /// Property to determine whether the data corresponding to this wire hold a collection or a single value.
+        /// </summary>
+        private bool isHoveredACollection;
+        public bool IsHoveredACollection
+        {
+            get
+            {
+                return isHoveredACollection;
+            }
+            set
+            {
+                isHoveredACollection = value;
+                RaisePropertyChanged(nameof(IsHoveredACollection));
+            }
+        }
+
+        private bool _mouseHoverOn;
+        public bool MouseHoverOn
+        {
+            get
+            {
+                return _mouseHoverOn;
+            }
+            set
+            {
+                _mouseHoverOn = value;
+                RaisePropertyChanged(nameof(MouseHoverOn));
+            }
+        }
+
+        /// <summary>
+        /// Updates 'WireDataTooltip' to reflect data of wire being hovered over.
+        /// </summary>
         private void UpdateWireDataToolTip()
         {
             if(_model != null)
@@ -99,6 +148,7 @@ namespace Dynamo.ViewModels
                 }
 
                 var isColl = portValue.IsCollection;
+                IsHoveredACollection = isColl;
                 if (isColl)
                 {
                     var counter = portValue.GetElements().Count();
@@ -135,10 +185,48 @@ namespace Dynamo.ViewModels
                 }
             }
         }
+        #region Commands
 
         public DelegateCommand BreakConnectionCommand { get; set; }
         public DelegateCommand HideWireCommand { get; set; }
         public DelegateCommand SelectConnectedCommand { get; set; }
+        public DelegateCommand MouseHoverCommand { get; set; }
+        public DelegateCommand MouseUnhoverCommand { get; set; }
+
+        public void MouseHoverCommandExecute(object parameter)
+        {
+            if (WatchHoverViewModel == null && isHoveredACollection && timer==null)
+            {
+                MouseHoverOn = true;
+                WatchHoverViewModel = new WatchHoverIconViewModel(this, workspaceViewModel.DynamoViewModel);
+                RaisePropertyChanged(nameof(WatchHoverIconViewModel));
+            }
+           
+        }
+        public void MouseUnhoverCommandExecute(object parameter)
+        {
+            if (WatchHoverViewModel != null && timer == null)
+            {
+                timer = new System.Windows.Threading.DispatcherTimer();
+                timer.Interval = new TimeSpan(0, 0, 1);
+                timer.Start();
+                timer.Tick += TimerDone;
+               
+            }
+        }
+        /// <summary>
+        /// Turns timer off.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TimerDone(object sender, EventArgs e)
+        {
+            timer.Stop();
+            timer = null;
+            WatchHoverViewModel = null;
+            RaisePropertyChanged(nameof(WatchHoverIconViewModel));
+        }
+
 
         /// <summary>
         /// Breaks connections between node models it is connected to.
@@ -170,9 +258,24 @@ namespace Dynamo.ViewModels
             DynamoSelection.Instance.Selection.Add(rightSideNode);
         }
 
+
         bool CanRun(object parameter)
         {
             return true;
+        }
+        bool CanRunMouseHover(object parameter)
+        {
+            if (IsConnecting == false)
+                return true;
+            else
+                return false;
+        }
+        bool CanRunMouseUnhover(object parameter)
+        {
+            if (MouseHoverOn == true)
+                return true;
+            else
+                return false;
         }
 
         private void InitializeCommands()
@@ -180,7 +283,11 @@ namespace Dynamo.ViewModels
             BreakConnectionCommand = new DelegateCommand(BreakConnectionCommandExecute, CanRun);
             HideWireCommand = new DelegateCommand(HideWireCommandExecute, CanRun);
             SelectConnectedCommand = new DelegateCommand(SelectConnectedCommandExecute, CanRun);
+            MouseHoverCommand = new DelegateCommand(MouseHoverCommandExecute, CanRunMouseHover);
+            MouseUnhoverCommand = new DelegateCommand(MouseUnhoverCommandExecute, CanRunMouseUnhover);
         }
+
+        #endregion
 
         public double Left
         {
@@ -293,7 +400,7 @@ namespace Dynamo.ViewModels
             {
                 //if (workspaceViewModel.DynamoViewModel.ConnectorType == ConnectorType.BEZIER &&
                 //    workspaceViewModel.DynamoViewModel.IsShowingConnectors)
-                if (workspaceViewModel.DynamoViewModel.ConnectorType == ConnectorType.BEZIER)
+                    if (workspaceViewModel.DynamoViewModel.ConnectorType == ConnectorType.BEZIER)
                     return true;
                 return false;
             }
@@ -373,6 +480,7 @@ namespace Dynamo.ViewModels
             this.workspaceViewModel = workspace;
             IsVisible = workspaceViewModel.DynamoViewModel.IsShowingConnectors;
             IsConnecting = true;
+            MouseHoverOn = false;
             _activeStartPort = port;
 
             Redraw(port.Center);
@@ -392,14 +500,13 @@ namespace Dynamo.ViewModels
             _model = model;
 
             IsVisible = workspaceViewModel.DynamoViewModel.IsShowingConnectors;
-            string preppedString = $"{_model.Start.Owner.Name} -> {_model.End.Owner.Name}" + Environment.NewLine;
+            MouseHoverOn = false;
 
             _model.PropertyChanged += Model_PropertyChanged;
             _model.Start.Owner.PropertyChanged += StartOwner_PropertyChanged;
             _model.End.Owner.PropertyChanged += EndOwner_PropertyChanged;
 
             workspaceViewModel.DynamoViewModel.PropertyChanged += DynamoViewModel_PropertyChanged;
-           // workspaceViewModel.DynamoViewModel. += HandlePreferenceChanges;
             Nodevm.PropertyChanged += nodeViewModel_PropertyChanged;
             Redraw();
             InitializeCommands();
@@ -407,24 +514,12 @@ namespace Dynamo.ViewModels
             UpdateWireDataToolTip();
         }
 
-        //private void HandlePreferenceChanges(object sender, PropertyChangedEventArgs e)
-        //{
-        //    switch (e.PropertyName)
-        //    {
-        //        case "IsShowingConnectors":
-        //            var s = sender as DynamoViewModel;
-        //            IsVisible = s.IsShowingConnectors;
-        //            break;
-        //    }
-        //}
-
         public virtual void Dispose()
         {
             _model.PropertyChanged -= Model_PropertyChanged;
             _model.Start.Owner.PropertyChanged -= StartOwner_PropertyChanged;
             _model.End.Owner.PropertyChanged -= EndOwner_PropertyChanged;
 
-            //workspaceViewModel.DynamoViewModel.Model.PropertyChanged -= HandlePreferenceChanges;
             workspaceViewModel.DynamoViewModel.Model.PreferenceSettings.PropertyChanged -= DynamoViewModel_PropertyChanged;
             Nodevm.PropertyChanged -= nodeViewModel_PropertyChanged;
         }
