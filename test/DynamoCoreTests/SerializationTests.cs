@@ -4,18 +4,24 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using CoreNodeModels;
 using Dynamo.Engine;
 using Dynamo.Engine.NodeToCode;
 using Dynamo.Events;
+using Dynamo.Exceptions;
+using Dynamo.Graph;
 using Dynamo.Graph.Nodes;
 using Dynamo.Graph.Nodes.CustomNodes;
 using Dynamo.Graph.Nodes.ZeroTouch;
 using Dynamo.Graph.Workspaces;
 using Dynamo.Models;
+using Dynamo.PackageManager;
 using Dynamo.Utilities;
+using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using TestUINodes;
 
 namespace Dynamo.Tests
 {
@@ -694,7 +700,7 @@ namespace Dynamo.Tests
             OpenModel(testFile);
 
             var ztNode = this.CurrentDynamoModel.CurrentWorkspace.Nodes.Where(x => x.GUID == new Guid("bda3e3e4c18c461dae5598df465035b2")).First();
-            Assert.AreEqual(ztNode.OutPorts.First().ToolTip, "An Arc");
+            Assert.AreEqual(ztNode.OutPorts.First().ToolTip, "Arc created from three points");
 
             var nodeModelNode = this.CurrentDynamoModel.CurrentWorkspace.Nodes.Where(x => x.GUID == new Guid("c848cc3cb24a477f8248e53fc9304cc1")).First();
             Assert.AreEqual(nodeModelNode.OutPorts.First().ToolTip, "Selected colors");
@@ -720,7 +726,7 @@ namespace Dynamo.Tests
             OpenModel(testFile);
 
             var ztNode = this.CurrentDynamoModel.CurrentWorkspace.Nodes.Where(x => x.GUID == new Guid("bda3e3e4c18c461dae5598df465035b2")).First();
-            Assert.AreEqual(ztNode.InPorts.First().ToolTip, "First point along the curve\n\nPoint");
+            Assert.AreEqual(ztNode.InPorts.First().ToolTip, "1st point of arc\n\nPoint");
 
             var nodeModelNode = this.CurrentDynamoModel.CurrentWorkspace.Nodes.Where(x => x.GUID == new Guid("c848cc3cb24a477f8248e53fc9304cc1")).First();
             Assert.AreEqual(nodeModelNode.InPorts.First().ToolTip, "List of colors to include in the range");
@@ -788,6 +794,70 @@ namespace Dynamo.Tests
             OpenModel(testFile);
             var node = this.CurrentDynamoModel.CurrentWorkspace.Nodes.First();
             Assert.AreEqual(node.Name, "List Create");
+        }
+
+        [Test]
+        public void DropDownNodesNodeInputDataSerializationTest()
+        {
+            // Arrange
+            var pkgDir = Path.Combine(TestDirectory, "pkgs\\Dynamo Samples");
+            this.LoadPackage(pkgDir);
+
+            var filePath = @"core\NodeInputOutputData\dropDownInputData.dyn";
+
+            // Act
+            // Assert
+            DoWorkspaceOpenAndCompare(
+                filePath, 
+                jsonFolderName, 
+                ConvertCurrentWorkspaceToJsonAndSave, 
+                serializationTestUtils.CompareWorkspaceModels,
+                serializationTestUtils.SaveWorkspaceComparisonData);
+        }
+
+        [Test]
+        public void ColorPaletteNodeInputDataSerializationTest()
+        {
+            // Arrange
+            var filePath = @"core\NodeInputOutputData\colorPaletteInputData.dyn";
+
+            // Act
+            // Assert
+            DoWorkspaceOpenAndCompare(
+                filePath,
+                jsonFolderName,
+                ConvertCurrentWorkspaceToJsonAndSave,
+                serializationTestUtils.CompareWorkspaceModels,
+                serializationTestUtils.SaveWorkspaceComparisonData);
+
+        }
+
+
+        [Test]
+        public void SelectionNodeInputDataSerializationTest()
+        {
+            // Arrange
+            var filePath = Path.Combine(TestDirectory, @"core\NodeInputOutputData\selectionNodeInputData.dyn");
+            if (!File.Exists(filePath))
+            {
+                var savePath = Path.ChangeExtension(filePath, null);
+                var selectionHelperMock = new Mock<IModelSelectionHelper<ModelBase>>(MockBehavior.Strict);
+                var selectionNode = new SelectionConcrete(SelectionType.Many, SelectionObjectType.Element, "testMessage", "testPrefix", selectionHelperMock.Object);
+                selectionNode.Name = "selectionTestName";
+                selectionNode.IsSetAsInput = true;
+
+                this.CurrentDynamoModel.CurrentWorkspace.AddAndRegisterNode(selectionNode);
+                ConvertCurrentWorkspaceToJsonAndSave(this.CurrentDynamoModel, savePath);
+            }
+
+            // Act
+            // Assert
+            DoWorkspaceOpenAndCompare(
+                filePath,
+                jsonFolderName,
+                ConvertCurrentWorkspaceToJsonAndSave,
+                serializationTestUtils.CompareWorkspaceModels,
+                serializationTestUtils.SaveWorkspaceComparisonData);
         }
 
         [Test, Category("JsonTestExclude")]

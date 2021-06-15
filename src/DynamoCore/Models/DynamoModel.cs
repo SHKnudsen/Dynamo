@@ -26,6 +26,7 @@ using Dynamo.Graph.Nodes.ZeroTouch;
 using Dynamo.Graph.Notes;
 using Dynamo.Graph.Workspaces;
 using Dynamo.Interfaces;
+using Dynamo.Linting;
 using Dynamo.Logging;
 using Dynamo.Migration;
 using Dynamo.Properties;
@@ -118,123 +119,6 @@ namespace Dynamo.Models
 
         #endregion
 
-        #region events
-
-        internal delegate void FunctionNamePromptRequestHandler(object sender, FunctionNamePromptEventArgs e);
-        internal event FunctionNamePromptRequestHandler RequestsFunctionNamePrompt;
-        internal void OnRequestsFunctionNamePrompt(Object sender, FunctionNamePromptEventArgs e)
-        {
-            if (RequestsFunctionNamePrompt != null)
-                RequestsFunctionNamePrompt(this, e);
-        }
-
-        internal event Action<PresetsNamePromptEventArgs> RequestPresetsNamePrompt;
-        internal void OnRequestPresetNamePrompt(PresetsNamePromptEventArgs e)
-        {
-            if (RequestPresetsNamePrompt != null)
-                RequestPresetsNamePrompt(e);
-        }
-
-        /// <summary>
-        /// Occurs when a workspace is saved to a file.
-        /// </summary>
-        public event WorkspaceHandler WorkspaceSaved;
-        internal void OnWorkspaceSaved(WorkspaceModel workspace)
-        {
-            if (WorkspaceSaved != null)
-            {
-                WorkspaceSaved(workspace);
-            }
-        }
-
-        /// <summary>
-        /// Occurs when a workspace is about to be saved to a file.
-        /// </summary>
-        public event WorkspaceSaveHandler WorkspaceSaving;
-        internal void OnWorkspaceSaving(WorkspaceModel workspace, SaveContext saveContext)
-        {
-            if (WorkspaceSaving != null)
-            {
-                WorkspaceSaving(workspace, saveContext);
-                HandleStorageExtensionsOnWorkspaceSaving(workspace, saveContext);
-            }
-        }
-
-        /// <summary>
-        /// Occurs when a workspace is scheduled to be saved to a backup file.
-        /// </summary>
-        public event Action<string, bool> RequestWorkspaceBackUpSave;
-        internal void OnRequestWorkspaceBackUpSave(string path, bool isBackUp)
-        {
-            if (RequestWorkspaceBackUpSave != null)
-            {
-                RequestWorkspaceBackUpSave(path, isBackUp);
-            }
-        }
-
-        /// <summary>
-        /// Event that is fired during the opening of the workspace.
-        ///
-        /// Use the XmlDocument object provided to conduct additional
-        /// workspace opening operations.
-        /// </summary>
-        public event Action<object> WorkspaceOpening;
-        internal void OnWorkspaceOpening(object obj)
-        {
-            var handler = WorkspaceOpening;
-            if (handler != null) handler(obj);
-        }
-
-        /// <summary>
-        /// Occurs when a workspaces is opened
-        /// </summary>
-        public event WorkspaceHandler WorkspaceOpened;
-        internal void OnWorkspaceOpened(WorkspaceModel workspace)
-        {
-            if(WorkspaceOpened != null)
-            {
-                WorkspaceOpened.Invoke(workspace);
-                HandleStorageExtensionsOnWorkspaceOpened(workspace);
-            }
-        }
-
-        /// <summary>
-        /// This event is raised right before the shutdown of DynamoModel started.
-        /// When this event is raised, the shutdown is guaranteed to take place
-        /// (i.e. user has had a chance to save the work and decided to proceed
-        /// with shutting down Dynamo). Handlers of this event can still safely
-        /// access the DynamoModel, the WorkspaceModel (along with its contents),
-        /// and the DynamoScheduler.
-        /// </summary>
-        public event DynamoModelHandler ShutdownStarted;
-
-        private void OnShutdownStarted()
-        {
-            if (ShutdownStarted != null)
-                ShutdownStarted(this);
-        }
-
-        /// <summary>
-        /// This event is raised after DynamoModel has been shut down. At this
-        /// point the DynamoModel is no longer valid and access to it should be
-        /// avoided.
-        /// </summary>
-        public event DynamoModelHandler ShutdownCompleted;
-
-        private void OnShutdownCompleted()
-        {
-            if (ShutdownCompleted != null)
-                ShutdownCompleted(this);
-        }
-
-        /// <summary>
-        /// This event is raised when Dynamo is ready for user interaction.
-        /// </summary>
-        public event Action<ReadyParams> DynamoReady;
-        private bool dynamoReady;
-
-        #endregion
-
         #region static properties
 
         /// <summary>
@@ -320,6 +204,11 @@ namespace Dynamo.Models
         ///     Manages all extensions for Dynamo
         /// </summary>
         public IExtensionManager ExtensionManager { get { return extensionManager; } }
+
+        /// <summary>
+        ///     Manages the active linter
+        /// </summary>
+        public LinterManager LinterManager { get; }
 
         private readonly ExtensionManager extensionManager;
 
@@ -584,6 +473,9 @@ namespace Dynamo.Models
             return new DynamoModel(configuration);
         }
 
+        // Token representing the standard library directory
+        internal static readonly string StandardLibraryToken = @"%StandardLibrary%";
+
         /// <summary>
         /// Default constructor for DynamoModel
         /// </summary>
@@ -722,7 +614,12 @@ namespace Dynamo.Models
             // is no additional location specified. Otherwise, update pathManager.PackageDirectories to include
             // PackageFolders
             if (PreferenceSettings.CustomPackageFolders.Count == 0)
-                PreferenceSettings.CustomPackageFolders = new List<string> { pathManager.UserDataDirectory };
+                PreferenceSettings.CustomPackageFolders = new List<string> { StandardLibraryToken, pathManager.UserDataDirectory };
+
+            if (!PreferenceSettings.CustomPackageFolders.Contains(StandardLibraryToken))
+            {
+                PreferenceSettings.CustomPackageFolders.Insert(0, StandardLibraryToken);
+            }
 
             // Make sure that the default package folder is added in the list if custom packages folder.
             var userDataFolder = pathManager.GetUserDataFolder(); // Get the default user data path
@@ -790,6 +687,8 @@ namespace Dynamo.Models
             extensionManager = new ExtensionManager(new[] { PathManager.CommonDataDirectory });
             extensionManager.MessageLogged += LogMessage;
             var extensions = config.Extensions ?? LoadExtensions();
+
+            LinterManager = new LinterManager(this.ExtensionManager);
 
             // when dynamo is ready, alert the loaded extensions
             DynamoReady += (readyParams) =>
@@ -859,6 +758,11 @@ namespace Dynamo.Models
 
                     try
                     {
+                        if (ext is LinterExtensionBase linter)
+                        {
+                            linter.InitializeBase(this.LinterManager);
+                        }
+
                         ext.Startup(startupParams);
                         // if we are starting extension (A) which is a source of other extensions (like packageManager)
                         // then we can start the extension(s) (B) that it requested be loaded.
@@ -868,6 +772,11 @@ namespace Dynamo.Models
                             {
                                 if (loadedExtension is IExtension)
                                 {
+                                    if (loadedExtension is LinterExtensionBase loadedLinter)
+                                    {
+                                        loadedLinter.InitializeBase(this.LinterManager);
+                                    }
+                                    
                                     (loadedExtension as IExtension).Startup(startupParams);
                                 }
                             }
@@ -972,7 +881,7 @@ namespace Dynamo.Models
         }
 
 
-        private void HandleStorageExtensionsOnWorkspaceOpened(WorkspaceModel workspace)
+        private void HandleStorageExtensionsOnWorkspaceOpened(HomeWorkspaceModel workspace)
         {
             foreach (var extension in extensionManager.StorageAccessExtensions)
             {
@@ -980,7 +889,7 @@ namespace Dynamo.Models
             }
         }
 
-        private void HandleStorageExtensionsOnWorkspaceSaving(WorkspaceModel workspace, SaveContext saveContext)
+        private void HandleStorageExtensionsOnWorkspaceSaving(HomeWorkspaceModel workspace, SaveContext saveContext)
         {
             foreach (var extension in extensionManager.StorageAccessExtensions)
             {
@@ -988,7 +897,7 @@ namespace Dynamo.Models
             }
         }
 
-        internal static void RaiseIExtensionStorageAccessWorkspaceOpened(WorkspaceModel workspace, IExtensionStorageAccess extension, ILogger logger)
+        internal static void RaiseIExtensionStorageAccessWorkspaceOpened(HomeWorkspaceModel workspace, IExtensionStorageAccess extension, ILogger logger)
         {
             workspace.TryGetMatchingWorkspaceData(extension.UniqueId, out Dictionary<string, string> data);
             var extensionDataCopy = new Dictionary<string, string>(data);
@@ -1004,7 +913,7 @@ namespace Dynamo.Models
             }
         }
 
-        internal static void RaiseIExtensionStorageAccessWorkspaceSaving(WorkspaceModel workspace, IExtensionStorageAccess extension, SaveContext saveContext, ILogger logger)
+        internal static void RaiseIExtensionStorageAccessWorkspaceSaving(HomeWorkspaceModel workspace, IExtensionStorageAccess extension, SaveContext saveContext, ILogger logger)
         {
             var assemblyName = Assembly.GetAssembly(extension.GetType()).GetName();
             var version = $"{assemblyName.Version.Major}.{assemblyName.Version.Minor}";
@@ -1020,8 +929,8 @@ namespace Dynamo.Models
                 logger.Log(ex.Message + " : " + ex.StackTrace);
                 return;
             }
-            
-            
+
+
             if (hasMatchingExtensionData)
             {
                 workspace.UpdateExtensionData(extension.UniqueId, data);
@@ -1153,7 +1062,7 @@ namespace Dynamo.Models
                                     // Tracking node execution as generic event
                                     // it is distinguished with the legacy aggregated performance event
                                     Dynamo.Logging.Analytics.TrackEvent(
-                                        Actions.Run, 
+                                        Actions.Run,
                                         Categories.NodeOperations,
                                         node.GetOriginalName());
                                 }
@@ -1179,6 +1088,8 @@ namespace Dynamo.Models
 
             ExtensionManager.Dispose();
             extensionManager.MessageLogged -= LogMessage;
+
+            LinterManager.Dispose();
 
             LibraryServices.Dispose();
             LibraryServices.LibraryManagementCore.Cleanup();
@@ -1441,7 +1352,7 @@ namespace Dynamo.Models
 
         private void InitializeAnalyticsService()
         {
-           AnalyticsService.Start(this,disableADP, IsHeadless, IsTestMode);
+            AnalyticsService.Start(this, disableADP, IsHeadless, IsTestMode);
         }
 
         private IPreferences CreateOrLoadPreferences(IPreferences preferences)
@@ -1849,7 +1760,8 @@ namespace Dynamo.Models
                 NodeFactory,
                 IsTestMode,
                 false,
-                CustomNodeManager);
+                CustomNodeManager,
+                this.LinterManager);
 
             workspace.FileName = filePath;
             workspace.ScaleFactor = dynamoPreferences.ScaleFactor;
@@ -1989,7 +1901,8 @@ namespace Dynamo.Models
                 nodeGraph.ElementResolver,
                 workspaceInfo,
                 DebugSettings.VerboseLogging,
-                IsTestMode
+                IsTestMode,
+                LinterManager
                );
 
             RegisterHomeWorkspace(newWorkspace);
@@ -2211,7 +2124,9 @@ namespace Dynamo.Models
                 Scheduler,
                 NodeFactory,
                 DebugSettings.VerboseLogging,
-                IsTestMode, string.Empty);
+                IsTestMode, LinterManager, string.Empty);
+
+            defaultWorkspace.RunSettings.RunType = PreferenceSettings.DefaultRunType;
 
             RegisterHomeWorkspace(defaultWorkspace);
             AddWorkspace(defaultWorkspace);
@@ -2418,7 +2333,7 @@ namespace Dynamo.Models
 
             // Create the new NodeModel's
             var newNodeModels = new List<NodeModel>();
-            using(CurrentWorkspace.BeginDelayedGraphExecution())
+            using (CurrentWorkspace.BeginDelayedGraphExecution())
             {
                 foreach (var node in nodes)
                 {
@@ -2487,17 +2402,17 @@ namespace Dynamo.Models
 
                         // If the guid is in nodeLookup, then we connect to the new pasted node. Otherwise we
                         // re-connect to the original.
-                let startNode =
-                        modelLookup.TryGetValue(c.Start.Owner.GUID, out start)
-                            ? start as NodeModel
-                            : CurrentWorkspace.Nodes.FirstOrDefault(x => x.GUID == c.Start.Owner.GUID)
+                    let startNode =
+                            modelLookup.TryGetValue(c.Start.Owner.GUID, out start)
+                                ? start as NodeModel
+                                : CurrentWorkspace.Nodes.FirstOrDefault(x => x.GUID == c.Start.Owner.GUID)
                     let endNode =
                         modelLookup.TryGetValue(c.End.Owner.GUID, out end)
                             ? end as NodeModel
                             : CurrentWorkspace.Nodes.FirstOrDefault(x => x.GUID == c.End.Owner.GUID)
 
-                // Don't make a connector if either end is null.
-                where startNode != null && endNode != null
+                    // Don't make a connector if either end is null.
+                    where startNode != null && endNode != null
                     select
                         ConnectorModel.Make(startNode, endNode, c.Start.Index, c.End.Index);
 
@@ -2557,7 +2472,7 @@ namespace Dynamo.Models
 
                 // Record models that are created as part of the command.
                 CurrentWorkspace.RecordCreatedModels(createdModels);
-            }    
+            }
         }
 
         /// <summary>
@@ -2578,14 +2493,22 @@ namespace Dynamo.Models
         /// </summary>
         public void ClearCurrentWorkspace()
         {
+            OnWorkspaceClearingStarted(CurrentWorkspace);
             OnWorkspaceClearing();
 
             CurrentWorkspace.Clear();
+            if (CurrentWorkspace is HomeWorkspaceModel)
+            {
+                //Sets the home workspace run type based on the preferences settings value
+                ((HomeWorkspaceModel)CurrentWorkspace).RunSettings.RunType = PreferenceSettings.DefaultRunType;
+            }
 
             //don't save the file path
             CurrentWorkspace.FileName = "";
             CurrentWorkspace.HasUnsavedChanges = false;
             CurrentWorkspace.WorkspaceVersion = AssemblyHelper.GetDynamoVersion();
+
+            this.LinterManager?.SetDefaultLinter();
 
             OnWorkspaceCleared(CurrentWorkspace);
         }
@@ -2693,7 +2616,7 @@ namespace Dynamo.Models
 
             Action savedHandler = () => OnWorkspaceSaved(workspace);
             workspace.Saved += savedHandler;
-            Action<SaveContext> savingHandler = (c) => OnWorkspaceSaving(workspace,c);
+            Action<SaveContext> savingHandler = (c) => OnWorkspaceSaving(workspace, c);
             workspace.WorkspaceSaving += savingHandler;
             workspace.MessageLogged += LogMessage;
             workspace.PropertyChanged += OnWorkspacePropertyChanged;
