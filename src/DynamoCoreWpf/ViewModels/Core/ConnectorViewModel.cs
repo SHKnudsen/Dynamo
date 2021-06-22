@@ -138,6 +138,8 @@ namespace Dynamo.ViewModels
         /// </summary>
         private void UpdateWireDataToolTip()
         {
+            bool isCollectionofFiveorMore = false;
+
             if(_model != null)
             {
                 var portValue = _model.Start.Owner.GetValue(_model.Start.Index, workspaceViewModel.DynamoViewModel.EngineController);
@@ -148,12 +150,13 @@ namespace Dynamo.ViewModels
                 }
 
                 var isColl = portValue.IsCollection;
-                IsHoveredACollection = isColl;
                 if (isColl)
                 {
                     var counter = portValue.GetElements().Count();
                     if (isColl && portValue.GetElements().Count() > 5)
                     {
+                        ///only sets 'is a collection' to true if the collection meets a size of 5
+                        isCollectionofFiveorMore = true;
                         string formatted = string.Empty;
                         for (int i = 0; i < 5; i++)
                         {
@@ -183,6 +186,7 @@ namespace Dynamo.ViewModels
                 {
                     WireDataTooltip = $"{_model.Start.Owner.Name} -> {_model.End.Owner.Name}" + Environment.NewLine + portValue.StringData;
                 }
+                isHoveredACollection = isCollectionofFiveorMore;
             }
         }
         #region Commands
@@ -265,7 +269,7 @@ namespace Dynamo.ViewModels
         }
         bool CanRunMouseHover(object parameter)
         {
-            if (IsConnecting == false)
+            if (IsConnecting == false && IsHoveredACollection == true)
                 return true;
             else
                 return false;
@@ -564,6 +568,8 @@ namespace Dynamo.ViewModels
                     break;
                 case "CachedValue":
                     UpdateWireDataToolTip();
+                    break;
+                default:
                     break;
             }
         }

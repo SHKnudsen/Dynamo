@@ -17,9 +17,9 @@
                 Canvas.Left="{Binding MidPoint.X}"
                 Height="{Binding MarkerSize}"
                 Width="{Binding MarkerSize}"
-                Command="{Binding PlaceWatchNodeCommand}" >
+                Command="{Binding PlaceWatchNodeCommand}">
             <StackPanel Background="Transparent">
-                <Image Source="/DynamoCoreWpf;component/UI/Images/add_icon.png" />
+                <Image Source="/DynamoCoreWpf;component/UI/Images/Watch_16px.png"/>
             </StackPanel>
         </Button>
     </Canvas>
