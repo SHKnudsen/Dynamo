@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using Dynamo.Graph.Connectors;
 using Dynamo.Graph.Nodes;
@@ -12,6 +14,11 @@ using Dynamo.Engine;
 using System.ComponentModel;
 using Dynamo.ViewModels;
 using System.Windows.Threading;
+using System.Windows.Shapes;
+using System.Windows.Controls;
+using System.Windows.Input;
+using Dynamo.Graph;
+using Dynamo.Nodes;
 
 namespace Dynamo.ViewModels
 {
@@ -22,11 +29,60 @@ namespace Dynamo.ViewModels
 
         #region Properties
 
+        public ObservableCollection<WirePinViewModel> WirePinViewCollection { get; set; }
+
+        private WirePinViewModel wirePinViewModel { get; set; }
+        private double _panelX;
+        private double _panelY;
+
+        public double PanelX
+        {
+            get { return _panelX; }
+            set
+            {
+                if (value.Equals(_panelX)) return;
+                _panelX = value;
+                RaisePropertyChanged(nameof(PanelX));
+            }
+        }
+
+        public double PanelY
+        {
+            get { return _panelY; }
+            set
+            {
+                if (value.Equals(_panelY)) return;
+                _panelY = value;
+                RaisePropertyChanged(nameof(PanelY));
+            }
+        }
+
+        private Point _mousePosition;
+        Point MousePosition
+        {
+            get
+            {
+                return _mousePosition;
+            }
+            set
+            {
+                _mousePosition = value;
+                RaisePropertyChanged(nameof(MousePosition));
+            }
+        }
+
         /// <summary>
         /// Required timer for 'watch placement' button desirable behaviour.
         /// </summary>
         private System.Windows.Threading.DispatcherTimer timer;
-  
+
+        //private WirePinViewModel wirePinViewModel;
+        //public WirePinViewModel WirePinVM
+        //{
+        //    get { return wirePinViewModel; }
+        //    private set { wirePinViewModel = value; RaisePropertyChanged(nameof(WirePinVM)); }
+        //}
+
         private WatchHoverIconViewModel watchHoverViewModel;
         public WatchHoverIconViewModel WatchHoverViewModel
         {
@@ -196,16 +252,19 @@ namespace Dynamo.ViewModels
         public DelegateCommand SelectConnectedCommand { get; set; }
         public DelegateCommand MouseHoverCommand { get; set; }
         public DelegateCommand MouseUnhoverCommand { get; set; }
+        public DelegateCommand PinWireCommand { get; set; }
 
         public void MouseHoverCommandExecute(object parameter)
         {
-            if (WatchHoverViewModel == null && isHoveredACollection && timer==null)
+            var pX = PanelX;
+            var pY = PanelY;
+            if (WatchHoverViewModel == null && isHoveredACollection && timer == null)
             {
                 MouseHoverOn = true;
                 WatchHoverViewModel = new WatchHoverIconViewModel(this, workspaceViewModel.DynamoViewModel);
                 RaisePropertyChanged(nameof(WatchHoverIconViewModel));
             }
-           
+
         }
         public void MouseUnhoverCommandExecute(object parameter)
         {
@@ -215,9 +274,9 @@ namespace Dynamo.ViewModels
                 timer.Interval = new TimeSpan(0, 0, 1);
                 timer.Start();
                 timer.Tick += TimerDone;
-               
             }
         }
+
         /// <summary>
         /// Turns timer off.
         /// </summary>
@@ -262,6 +321,29 @@ namespace Dynamo.ViewModels
             DynamoSelection.Instance.Selection.Add(rightSideNode);
         }
 
+        private void PinWireCommandExecute(object parameters)
+        {
+
+            MousePosition = new Point(PanelX, PanelY);
+            var wirePinModel = new WirePinModel(PanelX, PanelY, Guid.NewGuid());
+            var wirePinVM= new WirePinViewModel(this.workspaceViewModel, wirePinModel);
+            wirePinVM.RequestRemove += HandleWirePinVMRemove;
+
+            workspaceViewModel.Pins.Add(wirePinVM);
+            WirePinViewCollection.Add(wirePinVM);
+        }
+
+        private void HandleWirePinVMRemove(object sender, EventArgs e)
+        {
+           var viewModelSender = sender as WirePinViewModel;
+           if (viewModelSender is null) return;
+
+           var matchingPin = workspaceViewModel.Pins.First(x => x == viewModelSender);
+            workspaceViewModel.Pins.Remove(matchingPin);
+            WirePinViewCollection.Remove(matchingPin);
+
+            matchingPin.Dispose();
+        }
 
         bool CanRun(object parameter)
         {
@@ -269,7 +351,7 @@ namespace Dynamo.ViewModels
         }
         bool CanRunMouseHover(object parameter)
         {
-            if (IsConnecting == false && IsHoveredACollection == true)
+            if (IsConnecting == false)
                 return true;
             else
                 return false;
@@ -289,6 +371,7 @@ namespace Dynamo.ViewModels
             SelectConnectedCommand = new DelegateCommand(SelectConnectedCommandExecute, CanRun);
             MouseHoverCommand = new DelegateCommand(MouseHoverCommandExecute, CanRunMouseHover);
             MouseUnhoverCommand = new DelegateCommand(MouseUnhoverCommandExecute, CanRunMouseUnhover);
+            PinWireCommand = new DelegateCommand(PinWireCommandExecute, CanRun);
         }
 
         #endregion
@@ -486,6 +569,7 @@ namespace Dynamo.ViewModels
             IsConnecting = true;
             MouseHoverOn = false;
             _activeStartPort = port;
+            WirePinViewCollection = new ObservableCollection<WirePinViewModel>();
 
             Redraw(port.Center);
 
@@ -505,6 +589,7 @@ namespace Dynamo.ViewModels
 
             IsVisible = workspaceViewModel.DynamoViewModel.IsShowingConnectors;
             MouseHoverOn = false;
+            WirePinViewCollection = new ObservableCollection<WirePinViewModel>();
 
             _model.PropertyChanged += Model_PropertyChanged;
             _model.Start.Owner.PropertyChanged += StartOwner_PropertyChanged;
@@ -517,6 +602,8 @@ namespace Dynamo.ViewModels
 
             UpdateWireDataToolTip();
         }
+
+
 
         public virtual void Dispose()
         {

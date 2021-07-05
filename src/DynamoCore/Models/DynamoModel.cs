@@ -2426,6 +2426,7 @@ namespace Dynamo.Models
                 {
                     var annotationNodeModel = new List<NodeModel>();
                     var annotationNoteModel = new List<NoteModel>();
+                    var annotationPinModel = new List<WirePinModel>();
                     // some models can be deleted after copying them,
                     // so they need to be in pasted annotation as well
                     var modelsToRestore = annotation.DeletedModelBases.Intersect(ClipBoard);
@@ -2443,9 +2444,13 @@ namespace Dynamo.Models
                         {
                             annotationNoteModel.Add(mbase as NoteModel);
                         }
+                        if (mbase is WirePinModel)
+                        {
+                            annotationPinModel.Add(mbase as WirePinModel);
+                        }
                     }
 
-                    var annotationModel = new AnnotationModel(annotationNodeModel, annotationNoteModel)
+                    var annotationModel = new AnnotationModel(annotationNodeModel, annotationNoteModel, annotationPinModel)
                     {
                         GUID = Guid.NewGuid(),
                         AnnotationText = annotation.AnnotationText,

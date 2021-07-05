@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="Dynamo.Nodes.WirePinView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Dynamo.Wpf.Views.Preview"
+             xmlns:props="clr-namespace:Dynamo.Wpf.Properties;assembly=DynamoCoreWpf"
+             mc:Ignorable="d" 
+             d:DesignHeight="30"
+             d:DesignWidth="30"
+             Visibility="Visible"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             Canvas.Left="{Binding Left, Mode=TwoWay}" 
+             Canvas.Top="{Binding Top, Mode=TwoWay}"
+             MouseLeftButtonDown="OnPinMouseDown">
+    <Canvas>
+        <Canvas.ContextMenu>
+                <ContextMenu>
+                    <!--<MenuItem Header="{x:Static props:Resources.WireContextMenuHeaderBreakConnections}" Command="{Binding BreakConnectionCommand}"/>
+                    <MenuItem Header="{x:Static props:Resources.WireContextMenuHeaderSelectConnected}" Command="{Binding SelectConnectedCommand}"/>
+                    <MenuItem Header="{Binding Path=IsVisible, Converter={StaticResource HeaderVizConvert}}" Command="{Binding HideWireCommand}"/>-->
+                    <!--<MenuItem Header="{x:Static props:Resources.WireContextMenuHeaderPinWire}" Command="{Binding PinWireCommand}"/>-->
+                <MenuItem Header="{x:Static props:Resources.WireContextMenuHeaderUnpinWire}" Command="{Binding UnpinWireCommand}"/>
+                </ContextMenu>
+            </Canvas.ContextMenu>
+        <!--<Button Background="Transparent"
+                BorderBrush="Transparent"
+                x:Name="PinBtn">-->
+            <StackPanel  x:Name="PinBtn"  Background="Transparent">
+                <Image Source="/DynamoCoreWpf;component/UI/Images/Pin_16px.png"/>
+            </StackPanel>
+        <!--</Button>-->
+    </Canvas>
+</UserControl>
+

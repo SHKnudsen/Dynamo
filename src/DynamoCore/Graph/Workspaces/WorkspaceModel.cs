@@ -211,6 +211,7 @@ namespace Dynamo.Graph.Workspaces
         private bool isReadOnly;
         private readonly List<NodeModel> nodes;
         private readonly List<NoteModel> notes;
+        private readonly List<WirePinModel> pins;
         private readonly List<AnnotationModel> annotations;
         internal readonly List<PresetModel> presets;
         private readonly UndoRedoRecorder undoRecorder;
@@ -277,11 +278,7 @@ namespace Dynamo.Graph.Workspaces
 
         #region events
 
-        /// <summary>
-        ///     Function that can be used to respond on a saved workspace.
-        /// </summary>
-        /// <param name="model">The <see cref="WorkspaceModel"/> object which has been saved.</param>
-        public delegate void WorkspaceSavedEvent(WorkspaceModel model);
+ 
 
         /// <summary>
         ///     Event that is fired when a workspace requests that a Node or Note model is
@@ -374,6 +371,36 @@ namespace Dynamo.Graph.Workspaces
         protected virtual void OnNodesCleared()
         {
             var handler = NodesCleared;
+            if (handler != null) handler();
+        }
+
+        /// <summary>
+        ///     Event that is fired when a PIN is added to the workspace.
+        /// </summary>
+        public event Action<WirePinModel> WirePinAdded;
+        protected virtual void OnWirePinAdded(WirePinModel pin)
+        {
+            var handler = WirePinAdded;
+            if (handler != null) handler(pin);
+        }
+
+        /// <summary>
+        ///     Event that is fired when a pin is removed from the workspace.
+        /// </summary>
+        public event Action<WirePinModel> WirePinRemoved;
+        protected virtual void OnWirePinRemoved(WirePinModel pin)
+        {
+            var handler = WirePinRemoved;
+            if (handler != null) handler(pin);
+        }
+
+        /// <summary>
+        ///     Event that is fired when pins are cleared from the workspace.
+        /// </summary>
+        public event Action WirePinsCleared;
+        protected virtual void OnWirePinsCleared()
+        {
+            var handler = WirePinsCleared;
             if (handler != null) handler();
         }
 
@@ -840,6 +867,22 @@ namespace Dynamo.Graph.Workspaces
                 return notesClone;
             }
         }
+        /// <summary>
+        ///     Returns the notes <see cref="NoteModel"/> collection.
+        /// </summary>
+        public IEnumerable<WirePinModel> Pins
+        {
+            get
+            {
+                IEnumerable<WirePinModel> pinsClone;
+                lock (pins)
+                {
+                    pinsClone = pins.ToList();
+                }
+
+                return pinsClone;
+            }
+        }
 
         /// <summary>
         ///     Returns all of the annotations currently present in the workspace.
@@ -1037,6 +1080,7 @@ namespace Dynamo.Graph.Workspaces
 
             this.nodes = new List<NodeModel>(nodes);
             this.notes = new List<NoteModel>(notes);
+            this.pins = new List<WirePinModel>();
 
             this.annotations = new List<AnnotationModel>(annotations);
 
@@ -1338,6 +1382,36 @@ namespace Dynamo.Graph.Workspaces
             node.Dispose();
         }
 
+        //private void AddWirePin(WirePinModel pin)
+        //{
+        //    lock (pins)
+        //    {
+        //        pins.Add(pin);
+        //    }
+
+        //    OnWirePinAdded(pin);
+        //}
+
+        //internal void AddWirePin(WirePinModel pin, bool centered)
+        //{
+        //    if (centered)
+        //    {
+        //        var args = new ModelEventArgs(pin, true);
+        //        OnRequestNodeCentered(this, args);
+        //    }
+        //    AddWirePin(pin);
+        //}
+
+        //internal WirePinModel AddWirePin(bool centerPin, double xPos, double yPos, string text, Guid id)
+        //{
+        //    var wirePinModel = new WirePinModel(xPos, yPos, string.IsNullOrEmpty(text) ? Resources.NewNoteString : text, id);
+
+
+        //    AddWirePin(wirePinModel, centerPin);
+        //    return wirePinModel;
+        //}
+
+
         private void AddNote(NoteModel note)
         {
             lock (notes)
@@ -1428,10 +1502,12 @@ namespace Dynamo.Graph.Workspaces
         {
             var selectedNodes = this.Nodes == null ? null:this.Nodes.Where(s => s.IsSelected);
             var selectedNotes = this.Notes == null ? null: this.Notes.Where(s => s.IsSelected);
+            var selectedPins = this.Pins == null ? null : this.Pins.Where(s => s.IsSelected);
 
-            if (!CheckIfModelExistsInSomeGroup(selectedNodes, selectedNotes))
+
+            if (!CheckIfModelExistsInSomeGroup(selectedNodes, selectedNotes, selectedPins))
             {
-                var annotationModel = new AnnotationModel(selectedNodes, selectedNotes)
+                var annotationModel = new AnnotationModel(selectedNodes, selectedNotes, selectedPins)
                 {
                     GUID = id,
                     AnnotationText = text
@@ -1484,9 +1560,9 @@ namespace Dynamo.Graph.Workspaces
         /// <param name="selectNodes">The select nodes.</param>
         /// <param name="selectNotes">The select notes.</param>
         /// <returns>true if any of the models are already in a group</returns>
-        private bool CheckIfModelExistsInSomeGroup(IEnumerable<NodeModel> selectNodes, IEnumerable<NoteModel> selectNotes)
+        private bool CheckIfModelExistsInSomeGroup(IEnumerable<NodeModel> selectNodes, IEnumerable<NoteModel> selectNotes, IEnumerable<WirePinModel> selectPins)
         {
-            var selectedModels = selectNodes.Concat(selectNotes.Cast<ModelBase>()).ToList();
+            var selectedModels = selectNodes.Concat(selectNotes.Cast<ModelBase>()).Concat(selectPins.Cast<ModelBase>()).ToList();
             bool nodesInSomeGroup = false;
             foreach (var group in this.Annotations)
             {
@@ -2179,7 +2255,23 @@ namespace Dynamo.Graph.Workspaces
                     notes.Add(noteModel);
                 }
 
-                var annotationModel = new AnnotationModel(nodes, notes);
+                // Create a collection of pins in the given annotation
+                var pins = new List<WirePinModel>();
+                foreach (string pinId in annotationViewInfo.Nodes)
+                {
+                    var guidValue = IdToGuidConverter(pinId);
+                    if (guidValue == null)
+                        continue;
+
+                    // NOTE: Some nodes may not be annotations and not be found here
+                    var pinModel = Pins.FirstOrDefault(note => note.GUID == guidValue);
+                    if (pinModel == null)
+                        continue;
+
+                    pins.Add(pinModel);
+                }
+
+                var annotationModel = new AnnotationModel(nodes, notes, pins);
                 annotationModel.AnnotationText = text;
                 annotationModel.FontSize = annotationViewInfo.FontSize;
                 annotationModel.Background = annotationViewInfo.Background;

@@ -5,18 +5,31 @@
                       xmlns:converters="clr-namespace:Dynamo.Controls;assembly=DynamoCoreWpf"
                       xmlns:props="clr-namespace:Dynamo.Wpf.Properties;assembly=DynamoCoreWpf"
                       xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                      xmlns:views="clr-namespace:Dynamo.Controls;assembly=DynamoCoreWpf">
+                      xmlns:views="clr-namespace:Dynamo.Controls;assembly=DynamoCoreWpf"
+                      xmlns:nodes="clr-namespace:Dynamo.Nodes;assembly=DynamoCoreWpf"
+                      xmlns:mouse="clr-namespace:Dynamo.Wpf.UI;assembly=DynamoCoreWpf">
 
     <ResourceDictionary.MergedDictionaries>
         <ui:SharedResourceDictionary Source="{x:Static ui:SharedDictionaryManager.DynamoConvertersDictionaryUri}" />
-      
-       
     </ResourceDictionary.MergedDictionaries>
     <converters:HeaderVizConverter x:Key="HeaderVizConvert"/>
     <DataTemplate DataType="{x:Type viewModels:WatchHoverIconViewModel}">
         <!--Add ConnectorViewViews here-->
         <views:WatchHoverIconView DataContext="{Binding}" />
-        <!--<views:WatchHoverIconView></views:WatchHoverIconView>-->
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type viewModels:WirePinViewModel}">
+        <!--Add ConnectorViewViews here-->
+        <nodes:WirePinView DataContext="{Binding}" />
+    </DataTemplate>
+    <!--used for displaying pins-->
+    <DataTemplate x:Key="ShowItemIfExactlyOneItem">
+        <ItemsControl x:Name="ic" ItemsSource="{Binding}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
     </DataTemplate>
 
     <Style x:Key="SConnector" TargetType="Path">
@@ -58,7 +71,7 @@
     </Style>
     
     <DataTemplate DataType="{x:Type viewModels:ConnectorViewModel}">
-        <Grid>
+        <Grid x:Name="MainGrid">
             <Grid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="{x:Static props:Resources.WireContextMenuHeaderBreakConnections}" Command="{Binding BreakConnectionCommand}"/>
@@ -74,20 +87,22 @@
                 </SolidColorBrush>
             </Grid.Resources>
 
-            <Canvas Canvas.Top="0" Canvas.Left="0" ZIndex="1">
+            <Canvas x:Name="MainCanvas" Canvas.Top="0" Canvas.Left="0" ZIndex="1">
                 
                 <Ellipse  Name="endDot" Width="8" Height="8" Margin="-5"  Fill="{Binding PreviewState, Converter={StaticResource ConnectionStateToBrushConverter}}" IsHitTestVisible="False"
                  Canvas.Top="{Binding CurvePoint3.Y}" Canvas.Left="{Binding CurvePoint3.X}" Canvas.ZIndex="1"/>
 
                 <Ellipse  Name="startDot" Width="8" Height="8" Margin="-5"  Fill="{Binding PreviewState, Converter={StaticResource ConnectionStateToBrushConverter}}" IsHitTestVisible="False"
                  Canvas.Top="{Binding CurvePoint0.Y}" Canvas.Left="{Binding CurvePoint0.X}" Canvas.ZIndex="1"/>
-                             
+
+             
+
             </Canvas>
          
             <Path Stroke="{DynamicResource BConnectorSelection}" StrokeThickness="3" IsHitTestVisible="{Binding IsHitTestVisible, Mode=OneWay}"
               Name="connector"
               Visibility="{Binding BezVisibility, Converter={StaticResource BooleanToVisibilityConverter}}" 
-              Style="{StaticResource SConnector}" Canvas.ZIndex="0" ToolTip="{Binding WireDataTooltip}" >
+              Style="{StaticResource SConnector}" Canvas.ZIndex="0" ToolTip="{Binding WireDataTooltip}">
                 <Path.Data>
                     <PathGeometry>
                         <PathGeometry.Figures>
@@ -103,6 +118,9 @@
                         </PathGeometry.Figures>
                     </PathGeometry>
                 </Path.Data>
+                <i:Interaction.Behaviors>
+                    <mouse:MouseBehaviour MouseX="{Binding PanelX, Mode=OneWayToSource}" MouseY="{Binding PanelY, Mode=OneWayToSource}" />
+                </i:Interaction.Behaviors>
                 <i:Interaction.Triggers>
                     <i:EventTrigger  EventName="MouseEnter">
                         <i:InvokeCommandAction Command="{Binding MouseHoverCommand}"/>
@@ -135,6 +153,9 @@
                         </PathGeometry.Figures>
                     </PathGeometry>
                 </Path.Data>
+                <i:Interaction.Behaviors>
+                    <mouse:MouseBehaviour MouseX="{Binding PanelX, Mode=OneWayToSource}" MouseY="{Binding PanelY, Mode=OneWayToSource}" />
+                </i:Interaction.Behaviors>
 
                 <i:Interaction.Triggers>
                     <i:EventTrigger  EventName="MouseEnter">
@@ -150,6 +171,9 @@
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch" />
 
+            <ContentControl Canvas.ZIndex="1"  Content="{Binding WirePinViewCollection}" ContentTemplate="{StaticResource ShowItemIfExactlyOneItem}"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch" />
 
         </Grid>
         <DataTemplate.Triggers>

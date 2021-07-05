@@ -1,4 +1,5 @@
 ﻿using System;
+using Dynamo.Graph;
 using Dynamo.Graph.Annotations;
 using Dynamo.Graph.Nodes;
 using Dynamo.Graph.Notes;
@@ -57,6 +58,16 @@ namespace Dynamo.Wpf.ViewModels.Core.Converters
 
                 serializer.Serialize(writer, new AnnotationViewModel(workspaceView, convertedNote));
             }
+            //foreach (var pin in workspaceView.Pins)
+            //{
+            //    AnnotationModel convertedPin = new AnnotationModel(new NodeModel[0], new WirePinModel[0]);
+            //    convertedPin.GUID = pin.Model.GUID;
+            //    convertedPin.X = pin.Left;
+            //    convertedPin.Y = pin.Top;
+            //    convertedPin.AnnotationText = pin.Text;
+
+            //    serializer.Serialize(writer, new AnnotationViewModel(workspaceView, convertedPin));
+            //}
             writer.WriteEndArray();
 
             writer.WritePropertyName("X");

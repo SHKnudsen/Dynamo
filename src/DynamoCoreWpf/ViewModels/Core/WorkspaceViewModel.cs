@@ -272,6 +272,10 @@ namespace Dynamo.ViewModels
         // Do not serialize notes, they will be converted to annotations during serialization
         [JsonIgnore]
         public ObservableCollection<NoteViewModel> Notes { get; } = new ObservableCollection<NoteViewModel>();
+
+        [JsonIgnore]
+        public ObservableCollection<WirePinViewModel> Pins { get; } = new ObservableCollection<WirePinViewModel>();
+
         [JsonIgnore]
         public ObservableCollection<InfoBubbleViewModel> Errors { get; } = new ObservableCollection<InfoBubbleViewModel>();
         public ObservableCollection<AnnotationViewModel> Annotations { get; } = new ObservableCollection<AnnotationViewModel>();
@@ -428,6 +432,9 @@ namespace Dynamo.ViewModels
             var notesColl = new CollectionContainer { Collection = Notes };
             WorkspaceElements.Add(notesColl);
 
+            var pinsColl = new CollectionContainer { Collection = Pins };
+            WorkspaceElements.Add(pinsColl);
+
             var errorsColl = new CollectionContainer { Collection = Errors };
             WorkspaceElements.Add(errorsColl);
 
@@ -445,6 +452,10 @@ namespace Dynamo.ViewModels
             Model.NoteAdded += Model_NoteAdded;
             Model.NoteRemoved += Model_NoteRemoved;
             Model.NotesCleared += Model_NotesCleared;
+
+            //Model.WirePinAdded += Model_PinAdded;
+            //Model.WirePinRemoved += Model_PinRemoved;
+            //Model.WirePinsCleared += Model_PinsCleared;
 
             Model.AnnotationAdded += Model_AnnotationAdded;
             Model.AnnotationRemoved += Model_AnnotationRemoved;
@@ -464,6 +475,7 @@ namespace Dynamo.ViewModels
 
             foreach (NodeModel node in Model.Nodes) Model_NodeAdded(node);
             foreach (NoteModel note in Model.Notes) Model_NoteAdded(note);
+            //foreach (WirePinModel pin in Model.Pins) Model_PinAdded(pin);
             foreach (AnnotationModel annotation in Model.Annotations) Model_AnnotationAdded(annotation);
             foreach (ConnectorModel connector in Model.Connectors) Connectors_ConnectorAdded(connector);
 
@@ -497,6 +509,10 @@ namespace Dynamo.ViewModels
             Model.NoteRemoved -= Model_NoteRemoved;
             Model.NotesCleared -= Model_NotesCleared;
 
+            //Model.WirePinAdded -= Model_PinAdded;
+            //Model.WirePinRemoved -= Model_PinRemoved;
+            //Model.WirePinsCleared -= Model_PinsCleared;
+
             Model.AnnotationAdded -= Model_AnnotationAdded;
             Model.AnnotationRemoved -= Model_AnnotationRemoved;
             Model.AnnotationsCleared -= Model_AnnotationsCleared;
@@ -519,6 +535,7 @@ namespace Dynamo.ViewModels
             Connectors.ToList().ForEach(connectorViewmModel => connectorViewmModel.Dispose());
             Nodes.Clear();
             Notes.Clear();
+            Pins.Clear();
             Connectors.Clear();
             Errors.Clear();
             InCanvasSearchViewModel.Dispose();
@@ -647,6 +664,28 @@ namespace Dynamo.ViewModels
             }
         }
 
+        //private void Model_PinAdded(WirePinModel pin)
+        //{
+        //    var viewModel = new WirePinViewModel(this, pin);
+        //    Pins.Add(viewModel);
+        //}
+
+        //private void Model_PinRemoved(WirePinModel pin)
+        //{
+        //    var matchingPinViewModel = Pins.First(x => x.Model == pin);
+        //    Pins.Remove(matchingPinViewModel);
+        //    matchingPinViewModel.Dispose();
+        //}
+
+        //private void Model_PinsCleared()
+        //{
+        //    foreach (var pinViewModel in Pins)
+        //    {
+        //        pinViewModel.Dispose();
+        //    }
+        //    Pins.Clear();
+        //}
+
         private void Model_NoteAdded(NoteModel note)
         {
             var viewModel = new NoteViewModel(this, note);
@@ -737,6 +776,8 @@ namespace Dynamo.ViewModels
 
             PostNodeChangeActions();
         }
+
+
 
         void PostNodeChangeActions()
         {

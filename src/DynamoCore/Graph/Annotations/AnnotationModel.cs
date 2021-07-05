@@ -233,12 +233,30 @@ namespace Dynamo.Graph.Annotations
         /// </summary>
         /// <param name="nodes">The nodes.</param>
         /// <param name="notes">The notes.</param>
-        public AnnotationModel(IEnumerable<NodeModel> nodes, IEnumerable<NoteModel> notes)
+        public AnnotationModel(IEnumerable<NodeModel> nodes, IEnumerable<NoteModel> notes, IEnumerable<WirePinModel> pins)
         {                                 
             var nodeModels = nodes as NodeModel[] ?? nodes.ToArray();           
             var noteModels = notes as NoteModel[] ?? notes.ToArray();
+            var pinModels = pins as WirePinModel[] ?? pins.ToArray();
             DeletedModelBases = new List<ModelBase>(); 
-            this.Nodes = nodeModels.Concat(noteModels.Cast<ModelBase>()).ToList();      
+            this.Nodes = nodeModels.Concat(noteModels.Cast<ModelBase>()).Concat(pinModels.Cast<ModelBase>()).ToList();      
+            UpdateBoundaryFromSelection();
+        }
+
+        public AnnotationModel(IEnumerable<NodeModel> nodes, IEnumerable<NoteModel> notes)
+        {
+            var nodeModels = nodes as NodeModel[] ?? nodes.ToArray();
+            var noteModels = notes as NoteModel[] ?? notes.ToArray();
+            DeletedModelBases = new List<ModelBase>();
+            this.Nodes = nodeModels.Concat(noteModels.Cast<ModelBase>()).ToList();
+            UpdateBoundaryFromSelection();
+        }
+        public AnnotationModel(IEnumerable<NodeModel> nodes, IEnumerable<WirePinModel> pins)
+        {
+            var nodeModels = nodes as NodeModel[] ?? nodes.ToArray();
+            var pinModels = pins as WirePinModel[] ?? pins.ToArray();
+            DeletedModelBases = new List<ModelBase>();
+            this.Nodes = nodeModels.Concat(pinModels.Cast<ModelBase>()).ToList();
             UpdateBoundaryFromSelection();
         }
 
