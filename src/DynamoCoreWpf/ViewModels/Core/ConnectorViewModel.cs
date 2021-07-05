@@ -19,6 +19,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Dynamo.Graph;
 using Dynamo.Nodes;
+using HelixToolkit.Wpf.SharpDX;
 
 namespace Dynamo.ViewModels
 {
@@ -733,9 +734,18 @@ namespace Dynamo.ViewModels
         /// </summary>
         public void Redraw()
         {
-            //Debug.WriteLine("Redrawing...");
-            if (this.ConnectorModel.End != null)
+            if (this.ConnectorModel.End != null && WirePinViewCollection.Count > 0)
+            {
+                RedrawBezierManyPoints();
+            }
+                //Debug.WriteLine("Redrawing...");
+                if (this.ConnectorModel.End != null)
                 this.Redraw(this.ConnectorModel.End.Center);
+        }
+
+        public void RedrawBezierManyPoints()
+        {
+
         }
 
         /// <summary>
