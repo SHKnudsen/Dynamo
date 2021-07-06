@@ -453,10 +453,6 @@ namespace Dynamo.ViewModels
             Model.NoteRemoved += Model_NoteRemoved;
             Model.NotesCleared += Model_NotesCleared;
 
-            //Model.WirePinAdded += Model_PinAdded;
-            //Model.WirePinRemoved += Model_PinRemoved;
-            //Model.WirePinsCleared += Model_PinsCleared;
-
             Model.AnnotationAdded += Model_AnnotationAdded;
             Model.AnnotationRemoved += Model_AnnotationRemoved;
             Model.AnnotationsCleared += Model_AnnotationsCleared;
@@ -508,10 +504,6 @@ namespace Dynamo.ViewModels
             Model.NoteAdded -= Model_NoteAdded;
             Model.NoteRemoved -= Model_NoteRemoved;
             Model.NotesCleared -= Model_NotesCleared;
-
-            //Model.WirePinAdded -= Model_PinAdded;
-            //Model.WirePinRemoved -= Model_PinRemoved;
-            //Model.WirePinsCleared -= Model_PinsCleared;
 
             Model.AnnotationAdded -= Model_AnnotationAdded;
             Model.AnnotationRemoved -= Model_AnnotationRemoved;

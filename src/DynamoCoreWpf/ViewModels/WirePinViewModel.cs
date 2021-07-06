@@ -22,6 +22,15 @@ namespace Dynamo.ViewModels
             }
         }
 
+        public event EventHandler RequestRedraw;
+        public virtual void OnRequestRedraw(Object sender, EventArgs e)
+        {
+            if (RequestRedraw != null)
+            {
+                RequestRedraw(this, e);
+            }
+        }
+
         public event EventHandler RequestRemove;
         public virtual void OnRequestRemove(Object sender, EventArgs e)
         {
@@ -74,7 +83,7 @@ namespace Dynamo.ViewModels
             set
             {
                 _model.Y = value;
-                RaisePropertyChanged("Top");
+                RaisePropertyChanged(nameof(Top));
             }
         }
 
@@ -129,22 +138,6 @@ namespace Dynamo.ViewModels
         {
             _model.PropertyChanged -= pin_PropertyChanged;
 
-            //if (IsDebugBuild)
-            //{
-            //    DynamoViewModel.EngineController.AstBuilt -= EngineController_AstBuilt;
-            //}
-
-            //foreach (var p in WirePin)
-            //{
-            //    p.Dispose();
-            //}
-
-            //foreach (var p in OutPorts)
-            //{
-            //    p.Dispose();
-            //}
-            //ErrorBubble.Dispose();
-            //DynamoSelection.Instance.Selection.CollectionChanged -= SelectionOnCollectionChanged;
             base.Dispose();
         }
 
@@ -181,9 +174,11 @@ namespace Dynamo.ViewModels
             {
                 case "X":
                     RaisePropertyChanged(nameof(Left));
+                    OnRequestRedraw(this, EventArgs.Empty);
                     break;
                 case "Y":
                     RaisePropertyChanged(nameof(Top));
+                    OnRequestRedraw(this, EventArgs.Empty);
                     break;
                 case "IsSelected":
                     RaisePropertyChanged(nameof(IsSelected));

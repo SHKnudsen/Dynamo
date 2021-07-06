@@ -102,24 +102,24 @@
             <Path Stroke="{DynamicResource BConnectorSelection}" StrokeThickness="3" IsHitTestVisible="{Binding IsHitTestVisible, Mode=OneWay}"
               Name="connector"
               Visibility="{Binding BezVisibility, Converter={StaticResource BooleanToVisibilityConverter}}" 
-              Style="{StaticResource SConnector}" Canvas.ZIndex="0" ToolTip="{Binding WireDataTooltip}">
-                <Path.Data>
+              Style="{StaticResource SConnector}" Canvas.ZIndex="0" ToolTip="{Binding WireDataTooltip}" Data="{Binding ComputedBezierPathGeometry, UpdateSourceTrigger=PropertyChanged}">
+                <!--<Path.Data>
                     <PathGeometry>
                         <PathGeometry.Figures>
                             <PathFigureCollection>
                                 <PathFigure x:Name="BezFigure" StartPoint="{Binding CurvePoint0}">
                                     <PathFigure.Segments>
                                         <PathSegmentCollection>
-                                            <BezierSegment Point1="{Binding CurvePoint1}" Point2="{Binding CurvePoint2}" Point3="{Binding CurvePoint3}" />
+                                            <BezierSegment Point1="{Binding CurvePoint1}" Point2="{Binding CurvePoint2}" Point3="{Binding CurvePoint3}"/>
                                         </PathSegmentCollection>
                                     </PathFigure.Segments>
                                 </PathFigure>
                             </PathFigureCollection>
                         </PathGeometry.Figures>
                     </PathGeometry>
-                </Path.Data>
+                </Path.Data>-->
                 <i:Interaction.Behaviors>
-                    <mouse:MouseBehaviour MouseX="{Binding PanelX, Mode=OneWayToSource}" MouseY="{Binding PanelY, Mode=OneWayToSource}" />
+                    <mouse:MouseBehaviour MouseX="{Binding PanelX, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" MouseY="{Binding PanelY, Mode=OneWayToSource,  UpdateSourceTrigger=PropertyChanged}" />
                 </i:Interaction.Behaviors>
                 <i:Interaction.Triggers>
                     <i:EventTrigger  EventName="MouseEnter">

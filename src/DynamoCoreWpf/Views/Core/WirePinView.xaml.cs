@@ -20,22 +20,9 @@ namespace Dynamo.Nodes
     {
         public WirePinViewModel ViewModel { get; private set; }
 
-        public WirePinView(WirePinViewModel vm)
-        {
-            InitializeComponent();
-            ViewModel = vm;
-            DataContext = ViewModel;
-
-            //PinBtn.PreviewMouseDown += OnPinPreviewMouseDown;
-
-            Loaded += OnPinViewLoaded;
-            Unloaded += OnPinViewUnloaded;
-        }
         public WirePinView()
         {
             InitializeComponent();
-
-           // PinBtn.PreviewMouseDown += OnPinPreviewMouseDown;
 
             Loaded += OnPinViewLoaded;
             Unloaded += OnPinViewUnloaded;
@@ -45,13 +32,13 @@ namespace Dynamo.Nodes
         void OnPinViewLoaded(object sender, RoutedEventArgs e)
         {
             ViewModel = this.DataContext as WirePinViewModel;
-            ViewModel.RequestsSelection += OnViewModelRequestsSelection;
+            // ViewModel.RequestsSelection += OnViewModelRequestsSelection;
 
         }
 
         void OnPinViewUnloaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.RequestsSelection -= OnViewModelRequestsSelection;
+            //ViewModel.RequestsSelection -= OnViewModelRequestsSelection;
         }
 
         void OnViewModelRequestsSelection(object sender, EventArgs e)
@@ -116,7 +103,7 @@ namespace Dynamo.Nodes
 
         private void OnPinMouseDown(object sender, MouseButtonEventArgs e)
         {
-            System.Guid pinGuid = this.ViewModel.Model.GUID;
+          //  System.Guid pinGuid = this.ViewModel.Model.GUID;
            
             //ViewModel.WorkspaceViewModel.DynamoViewModel.ExecuteCommand(
             //    new DynCmd.SelectModelCommand(pinGuid, Keyboard.Modifiers.AsDynamoType()));

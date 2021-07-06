@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -17,6 +18,7 @@ using System.Windows.Threading;
 using System.Windows.Shapes;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using Dynamo.Graph;
 using Dynamo.Nodes;
 using HelixToolkit.Wpf.SharpDX;
@@ -190,192 +192,6 @@ namespace Dynamo.ViewModels
             }
         }
 
-        /// <summary>
-        /// Updates 'WireDataTooltip' to reflect data of wire being hovered over.
-        /// </summary>
-        private void UpdateWireDataToolTip()
-        {
-            bool isCollectionofFiveorMore = false;
-
-            if(_model != null)
-            {
-                var portValue = _model.Start.Owner.GetValue(_model.Start.Index, workspaceViewModel.DynamoViewModel.EngineController);
-                if (portValue is null)
-                {
-                    WireDataTooltip = "N/A";
-                    return;
-                }
-
-                var isColl = portValue.IsCollection;
-                if (isColl)
-                {
-                    var counter = portValue.GetElements().Count();
-                    if (isColl && portValue.GetElements().Count() > 5)
-                    {
-                        ///only sets 'is a collection' to true if the collection meets a size of 5
-                        isCollectionofFiveorMore = true;
-                        string formatted = string.Empty;
-                        for (int i = 0; i < 5; i++)
-                        {
-                            formatted += portValue.GetElements().ElementAt(i).StringData;
-                            formatted += Environment.NewLine;
-                        }
-                        formatted += "...";
-                        formatted += Environment.NewLine;
-                        formatted += portValue.GetElements().Last().StringData;
-                        WireDataTooltip = $"{_model.Start.Owner.Name} -> {_model.End.Owner.Name}" + Environment.NewLine +
-                      formatted;
-                    }
-                    else
-                    {
-                        string formatted = string.Empty;
-                        for (int i = 0; i < portValue.GetElements().Count(); i++)
-                        {
-                            formatted += portValue.GetElements().ElementAt(i).StringData;
-                            if(i!= portValue.GetElements().Count()-1)
-                                formatted += Environment.NewLine;
-                        }
-                        WireDataTooltip = $"{_model.Start.Owner.Name} -> {_model.End.Owner.Name}" + Environment.NewLine +
-                      formatted;
-                    }
-                }
-                else
-                {
-                    WireDataTooltip = $"{_model.Start.Owner.Name} -> {_model.End.Owner.Name}" + Environment.NewLine + portValue.StringData;
-                }
-                isHoveredACollection = isCollectionofFiveorMore;
-            }
-        }
-        #region Commands
-
-        public DelegateCommand BreakConnectionCommand { get; set; }
-        public DelegateCommand HideWireCommand { get; set; }
-        public DelegateCommand SelectConnectedCommand { get; set; }
-        public DelegateCommand MouseHoverCommand { get; set; }
-        public DelegateCommand MouseUnhoverCommand { get; set; }
-        public DelegateCommand PinWireCommand { get; set; }
-
-        public void MouseHoverCommandExecute(object parameter)
-        {
-            var pX = PanelX;
-            var pY = PanelY;
-            if (WatchHoverViewModel == null && isHoveredACollection && timer == null)
-            {
-                MouseHoverOn = true;
-                WatchHoverViewModel = new WatchHoverIconViewModel(this, workspaceViewModel.DynamoViewModel);
-                RaisePropertyChanged(nameof(WatchHoverIconViewModel));
-            }
-
-        }
-        public void MouseUnhoverCommandExecute(object parameter)
-        {
-            if (WatchHoverViewModel != null && timer == null)
-            {
-                timer = new System.Windows.Threading.DispatcherTimer();
-                timer.Interval = new TimeSpan(0, 0, 1);
-                timer.Start();
-                timer.Tick += TimerDone;
-            }
-        }
-
-        /// <summary>
-        /// Turns timer off.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TimerDone(object sender, EventArgs e)
-        {
-            timer.Stop();
-            timer = null;
-            WatchHoverViewModel = null;
-            RaisePropertyChanged(nameof(WatchHoverIconViewModel));
-        }
-
-
-        /// <summary>
-        /// Breaks connections between node models it is connected to.
-        /// </summary>
-        /// <param name="parameter"></param>
-        private void BreakConnectionCommandExecute(object parameter)
-        {
-            this.Dispose();
-            ConnectorModel.Delete();           
-        }
-        /// <summary>
-        /// Toggles wire viz on/off. This can be overwritten when a node is selected in hidden mode.
-        /// </summary>
-        /// <param name="parameter"></param>
-        private void HideWireCommandExecute(object parameter)
-        {
-            IsVisible = !IsVisible;
-        }
-        /// <summary>
-        /// Selects nodes connected to this wire.
-        /// </summary>
-        /// <param name="parameter"></param>
-        private void SelectConnectedCommandExecute(object parameter)
-        {
-            var leftSideNode = _model.Start.Owner;
-            var rightSideNode = _model.End.Owner;
-
-            DynamoSelection.Instance.Selection.Add(leftSideNode);
-            DynamoSelection.Instance.Selection.Add(rightSideNode);
-        }
-
-        private void PinWireCommandExecute(object parameters)
-        {
-
-            MousePosition = new Point(PanelX, PanelY);
-            var wirePinModel = new WirePinModel(PanelX, PanelY, Guid.NewGuid());
-            var wirePinVM= new WirePinViewModel(this.workspaceViewModel, wirePinModel);
-            wirePinVM.RequestRemove += HandleWirePinVMRemove;
-
-            workspaceViewModel.Pins.Add(wirePinVM);
-            WirePinViewCollection.Add(wirePinVM);
-        }
-
-        private void HandleWirePinVMRemove(object sender, EventArgs e)
-        {
-           var viewModelSender = sender as WirePinViewModel;
-           if (viewModelSender is null) return;
-
-           var matchingPin = workspaceViewModel.Pins.First(x => x == viewModelSender);
-            workspaceViewModel.Pins.Remove(matchingPin);
-            WirePinViewCollection.Remove(matchingPin);
-
-            matchingPin.Dispose();
-        }
-
-        bool CanRun(object parameter)
-        {
-            return true;
-        }
-        bool CanRunMouseHover(object parameter)
-        {
-            if (IsConnecting == false)
-                return true;
-            else
-                return false;
-        }
-        bool CanRunMouseUnhover(object parameter)
-        {
-            if (MouseHoverOn == true)
-                return true;
-            else
-                return false;
-        }
-
-        private void InitializeCommands()
-        {
-            BreakConnectionCommand = new DelegateCommand(BreakConnectionCommandExecute, CanRun);
-            HideWireCommand = new DelegateCommand(HideWireCommandExecute, CanRun);
-            SelectConnectedCommand = new DelegateCommand(SelectConnectedCommandExecute, CanRun);
-            MouseHoverCommand = new DelegateCommand(MouseHoverCommandExecute, CanRunMouseHover);
-            MouseUnhoverCommand = new DelegateCommand(MouseUnhoverCommandExecute, CanRunMouseUnhover);
-            PinWireCommand = new DelegateCommand(PinWireCommandExecute, CanRun);
-        }
-
-        #endregion
 
         public double Left
         {
@@ -557,7 +373,205 @@ namespace Dynamo.ViewModels
 
         #endregion
 
-   
+        /// <summary>
+        /// Updates 'WireDataTooltip' to reflect data of wire being hovered over.
+        /// </summary>
+        private void UpdateWireDataToolTip()
+        {
+            bool isCollectionofFiveorMore = false;
+
+            if (_model != null)
+            {
+                var portValue = _model.Start.Owner.GetValue(_model.Start.Index, workspaceViewModel.DynamoViewModel.EngineController);
+                if (portValue is null)
+                {
+                    WireDataTooltip = "N/A";
+                    return;
+                }
+
+                var isColl = portValue.IsCollection;
+                if (isColl)
+                {
+                    var counter = portValue.GetElements().Count();
+                    if (isColl && portValue.GetElements().Count() > 5)
+                    {
+                        ///only sets 'is a collection' to true if the collection meets a size of 5
+                        isCollectionofFiveorMore = true;
+                        string formatted = string.Empty;
+                        for (int i = 0; i < 5; i++)
+                        {
+                            formatted += portValue.GetElements().ElementAt(i).StringData;
+                            formatted += Environment.NewLine;
+                        }
+                        formatted += "...";
+                        formatted += Environment.NewLine;
+                        formatted += portValue.GetElements().Last().StringData;
+                        WireDataTooltip = $"{_model.Start.Owner.Name} -> {_model.End.Owner.Name}" + Environment.NewLine +
+                      formatted;
+                    }
+                    else
+                    {
+                        string formatted = string.Empty;
+                        for (int i = 0; i < portValue.GetElements().Count(); i++)
+                        {
+                            formatted += portValue.GetElements().ElementAt(i).StringData;
+                            if (i != portValue.GetElements().Count() - 1)
+                                formatted += Environment.NewLine;
+                        }
+                        WireDataTooltip = $"{_model.Start.Owner.Name} -> {_model.End.Owner.Name}" + Environment.NewLine +
+                      formatted;
+                    }
+                }
+                else
+                {
+                    WireDataTooltip = $"{_model.Start.Owner.Name} -> {_model.End.Owner.Name}" + Environment.NewLine + portValue.StringData;
+                }
+                isHoveredACollection = isCollectionofFiveorMore;
+            }
+        }
+        #region Commands
+
+        public DelegateCommand BreakConnectionCommand { get; set; }
+        public DelegateCommand HideWireCommand { get; set; }
+        public DelegateCommand SelectConnectedCommand { get; set; }
+        public DelegateCommand MouseHoverCommand { get; set; }
+        public DelegateCommand MouseUnhoverCommand { get; set; }
+        public DelegateCommand PinWireCommand { get; set; }
+
+        public void MouseHoverCommandExecute(object parameter)
+        {
+            var pX = PanelX;
+            var pY = PanelY;
+            if (WatchHoverViewModel == null && isHoveredACollection && timer == null)
+            {
+                MouseHoverOn = true;
+                WatchHoverViewModel = new WatchHoverIconViewModel(this, workspaceViewModel.DynamoViewModel);
+                RaisePropertyChanged(nameof(WatchHoverIconViewModel));
+            }
+
+        }
+        public void MouseUnhoverCommandExecute(object parameter)
+        {
+            if (WatchHoverViewModel != null && timer == null)
+            {
+                timer = new System.Windows.Threading.DispatcherTimer();
+                timer.Interval = new TimeSpan(0, 0, 1);
+                timer.Start();
+                timer.Tick += TimerDone;
+            }
+        }
+
+        /// <summary>
+        /// Turns timer off.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TimerDone(object sender, EventArgs e)
+        {
+            timer.Stop();
+            timer = null;
+            WatchHoverViewModel = null;
+            RaisePropertyChanged(nameof(WatchHoverIconViewModel));
+        }
+
+
+        /// <summary>
+        /// Breaks connections between node models it is connected to.
+        /// </summary>
+        /// <param name="parameter"></param>
+        private void BreakConnectionCommandExecute(object parameter)
+        {
+            this.Dispose();
+            ConnectorModel.Delete();
+        }
+        /// <summary>
+        /// Toggles wire viz on/off. This can be overwritten when a node is selected in hidden mode.
+        /// </summary>
+        /// <param name="parameter"></param>
+        private void HideWireCommandExecute(object parameter)
+        {
+            IsVisible = !IsVisible;
+        }
+        /// <summary>
+        /// Selects nodes connected to this wire.
+        /// </summary>
+        /// <param name="parameter"></param>
+        private void SelectConnectedCommandExecute(object parameter)
+        {
+            var leftSideNode = _model.Start.Owner;
+            var rightSideNode = _model.End.Owner;
+
+            DynamoSelection.Instance.Selection.Add(leftSideNode);
+            DynamoSelection.Instance.Selection.Add(rightSideNode);
+        }
+
+        private void PinWireCommandExecute(object parameters)
+        {
+            
+            MousePosition = new Point(PanelX, PanelY);
+            if (MousePosition == new Point(0, 0)) return;
+            var wirePinModel = new WirePinModel(PanelX, PanelY, Guid.NewGuid());
+            var wirePinVM = new WirePinViewModel(this.workspaceViewModel, wirePinModel);
+            wirePinVM.RequestRedraw += HandlerRedrawRequest;
+            wirePinVM.RequestRemove += HandleWirePinVMRemove;
+
+            workspaceViewModel.Pins.Add(wirePinVM);
+            WirePinViewCollection.Add(wirePinVM);
+        }
+
+        private void HandlerRedrawRequest(object sender, EventArgs e)
+        {
+            Redraw();
+            //var viewModelSender = sender as WirePinViewModel;
+            //if (viewModelSender is null) return;
+            //viewModelSender.RequestRedraw -= HandlerRedrawRequest;
+        }
+
+        private void HandleWirePinVMRemove(object sender, EventArgs e)
+        {
+            var viewModelSender = sender as WirePinViewModel;
+            if (viewModelSender is null) return;
+
+            var matchingPin = workspaceViewModel.Pins.First(x => x == viewModelSender);
+            matchingPin.RequestRedraw -= HandlerRedrawRequest;
+            workspaceViewModel.Pins.Remove(matchingPin);
+            WirePinViewCollection.Remove(matchingPin);
+
+            matchingPin.Dispose();
+        }
+
+        bool CanRun(object parameter)
+        {
+            return true;
+        }
+        bool CanRunMouseHover(object parameter)
+        {
+            if (IsConnecting == false)
+                return true;
+            else
+                return false;
+        }
+        bool CanRunMouseUnhover(object parameter)
+        {
+            if (MouseHoverOn == true)
+                return true;
+            else
+                return false;
+        }
+
+        private void InitializeCommands()
+        {
+            BreakConnectionCommand = new DelegateCommand(BreakConnectionCommandExecute, CanRun);
+            HideWireCommand = new DelegateCommand(HideWireCommandExecute, CanRun);
+            SelectConnectedCommand = new DelegateCommand(SelectConnectedCommandExecute, CanRun);
+            MouseHoverCommand = new DelegateCommand(MouseHoverCommandExecute, CanRunMouseHover);
+            MouseUnhoverCommand = new DelegateCommand(MouseUnhoverCommandExecute, CanRunMouseUnhover);
+            PinWireCommand = new DelegateCommand(PinWireCommandExecute, CanRun);
+        }
+
+        #endregion
+
+
 
         /// <summary>
         /// Construct a view and start drawing.
@@ -571,13 +585,18 @@ namespace Dynamo.ViewModels
             MouseHoverOn = false;
             _activeStartPort = port;
             WirePinViewCollection = new ObservableCollection<WirePinViewModel>();
+            WirePinViewCollection.CollectionChanged += HandleCollectionChanged;
 
             Redraw(port.Center);
 
             InitializeCommands();
         }
 
-    
+        private void HandleCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            Redraw();
+        }
+
 
         /// <summary>
         /// Construct a view and respond to property changes on the model. 
@@ -591,6 +610,7 @@ namespace Dynamo.ViewModels
             IsVisible = workspaceViewModel.DynamoViewModel.IsShowingConnectors;
             MouseHoverOn = false;
             WirePinViewCollection = new ObservableCollection<WirePinViewModel>();
+            WirePinViewCollection.CollectionChanged += HandleCollectionChanged;
 
             _model.PropertyChanged += Model_PropertyChanged;
             _model.Start.Owner.PropertyChanged += StartOwner_PropertyChanged;
@@ -614,6 +634,9 @@ namespace Dynamo.ViewModels
 
             workspaceViewModel.DynamoViewModel.Model.PreferenceSettings.PropertyChanged -= DynamoViewModel_PropertyChanged;
             Nodevm.PropertyChanged -= nodeViewModel_PropertyChanged;
+
+            foreach (var pin in WirePinViewCollection)
+                pin.RequestRedraw -= HandlerRedrawRequest;
         }
 
         private void nodeViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -738,15 +761,11 @@ namespace Dynamo.ViewModels
             {
                 RedrawBezierManyPoints();
             }
-                //Debug.WriteLine("Redrawing...");
-                if (this.ConnectorModel.End != null)
+            else if (this.ConnectorModel.End != null)
                 this.Redraw(this.ConnectorModel.End.Center);
         }
 
-        public void RedrawBezierManyPoints()
-        {
-
-        }
+       
 
         /// <summary>
         /// Recalculate the connector's points given the end point
@@ -795,7 +814,131 @@ namespace Dynamo.ViewModels
             //Update all the bindings at once.
             //http://stackoverflow.com/questions/4651466/good-way-to-refresh-databinding-on-all-properties-of-a-viewmodel-when-model-chan
             //RaisePropertyChanged(string.Empty);
+
+         
+            PathFigure pathFigure = new PathFigure();
+            pathFigure.StartPoint = CurvePoint0;
+
+            BezierSegment segment = new BezierSegment(CurvePoint1, CurvePoint2, CurvePoint3, true);
+            var segmentCollection = new PathSegmentCollection(1);
+            segmentCollection.Add(segment);
+            pathFigure.Segments = segmentCollection;
+            PathFigureCollection pathFigureCollection = new PathFigureCollection();
+            pathFigureCollection.Add(pathFigure);
+
+            ComputedBezierPathGeometry = new PathGeometry();
+            ComputedBezierPathGeometry.Figures = pathFigureCollection;
+            ComputedBezierPath = new Path();
+            ComputedBezierPath.Data = ComputedBezierPathGeometry;
         }
+
+        public Path ComputedBezierPath { get; set; }
+        private PathGeometry _computedPathGeometry;
+        public PathGeometry ComputedBezierPathGeometry { 
+            get
+            {
+                return _computedPathGeometry;
+            }
+            set
+            {
+                _computedPathGeometry = value;
+                RaisePropertyChanged(nameof(ComputedBezierPathGeometry));
+            }
+        }
+
+        public void RedrawBezierManyPoints()
+        {
+            var parameter = this.ConnectorModel.End.Center;
+            var param = parameter as object;
+
+            var p2 = new Point();
+
+            if (parameter is Point)
+            {
+                p2 = (Point)param;
+            }
+            else if (parameter is Point2D)
+            {
+                p2 = ((Point2D)param).AsWindowsType();
+            }
+
+            CurvePoint3 = p2;
+
+            var offset = 0.0;
+            double distance = 0;
+            if (this.BezVisibility == true)
+            {
+                distance = Math.Sqrt(Math.Pow(CurvePoint3.X - CurvePoint0.X, 2) + Math.Pow(CurvePoint3.Y - CurvePoint0.Y, 2));
+                offset = .45 * distance;
+            }
+            else
+            {
+                distance = CurvePoint3.X - CurvePoint0.X;
+                offset = distance / 2;
+            }
+
+            CurvePoint1 = new Point(CurvePoint0.X + offset, CurvePoint0.Y);
+            CurvePoint2 = new Point(p2.X - offset, p2.Y);
+
+            //if connector is dragged from an input port
+            if (ActiveStartPort != null && ActiveStartPort.PortType == PortType.Input)
+            {
+                CurvePoint1 = new Point(CurvePoint0.X - offset, CurvePoint1.Y); ;
+                CurvePoint2 = new Point(p2.X + offset, p2.Y);
+            }
+
+            _dotTop = CurvePoint3.Y - EndDotSize / 2;
+            _dotLeft = CurvePoint3.X - EndDotSize / 2;
+
+
+            ///Add Points
+            Point[] points = new Point[WirePinViewCollection.Count + 4];
+
+            points[0] = CurvePoint0;
+            points[1] = CurvePoint1;
+            points[2] = CurvePoint2;
+            points[3] = CurvePoint3;
+
+            int count = 4;
+            foreach (var wirePin in WirePinViewCollection)
+            {
+                points[count] = new Point(wirePin.Left, wirePin.Top);
+                count++;
+            }
+
+            var orderedPoints = points.OrderBy(p => p.X).ToArray();
+
+
+            var bezier = GetBezierApproximation(orderedPoints, points.Length);
+            PathFigure pathFigure = new PathFigure(bezier.Points[0], new[] { bezier }, false);
+            PathFigureCollection pathFigureCollection = new PathFigureCollection();
+            pathFigureCollection.Add(pathFigure);
+            ComputedBezierPathGeometry = new PathGeometry();
+            ComputedBezierPathGeometry.Figures = pathFigureCollection;
+            ComputedBezierPath = new Path();
+            ComputedBezierPath.Data = ComputedBezierPathGeometry;
+        }
+
+        PolyLineSegment GetBezierApproximation(Point[] controlPoints, int outputSegmentCount)
+        {
+            Point[] points = new Point[outputSegmentCount + 1];
+            for (int i = 0; i <= outputSegmentCount; i++)
+            {
+                double t = (double)i / outputSegmentCount;
+                points[i] = GetBezierPoint(t, controlPoints, 0, controlPoints.Length);
+            }
+            return new PolyLineSegment(points, true);
+        }
+
+        Point GetBezierPoint(double t, Point[] controlPoints, int index, int count)
+        {
+            if (count == 1)
+                return controlPoints[index];
+            var P0 = GetBezierPoint(t, controlPoints, index, count - 1);
+            var P1 = GetBezierPoint(t, controlPoints, index + 1, count - 1);
+            return new Point((1 - t) * P0.X + t * P1.X, (1 - t) * P0.Y + t * P1.Y);
+        }
+
 
         private bool CanRedraw(object parameter)
         {
