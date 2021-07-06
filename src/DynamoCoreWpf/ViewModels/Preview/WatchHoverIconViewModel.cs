@@ -28,6 +28,7 @@ namespace Dynamo.ViewModels
 
         private void PlaceWatchNodeCommandExecute(object param)
         {
+            ViewModel.DiscardAllWirePins();
             PlaceWatchNode();
         }
 

@@ -13,6 +13,7 @@
              Canvas.Left="{Binding Left, Mode=TwoWay}" 
              Canvas.Top="{Binding Top, Mode=TwoWay}"
              MouseLeftButtonDown="OnPinMouseDown">
+
     <Canvas>
         <Canvas.ContextMenu>
                 <ContextMenu>
@@ -27,8 +28,22 @@
                 BorderBrush="Transparent"
                 x:Name="PinBtn">-->
             <StackPanel  x:Name="PinBtn"  Background="Transparent">
-                <Image Source="/DynamoCoreWpf;component/UI/Images/Pin_16px.png"/>
-            </StackPanel>
+            <Image>
+                <Image.Source>/DynamoCoreWpf;component/UI/Images/Pin_16px.png</Image.Source>
+                <!--<Image.Style>
+                    <Style>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=IsSelected, Mode=OneWay}" Value="True">
+                                <Setter Property="Color" Value="LightBlue"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=IsSelected, Mode=OneWay}" Value="False">
+                                <Setter Property="Color" Value="#EEE"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Image.Style>-->
+            </Image>
+        </StackPanel>
         <!--</Button>-->
     </Canvas>
 </UserControl>

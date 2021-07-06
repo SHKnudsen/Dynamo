@@ -34,7 +34,6 @@ namespace Dynamo.ViewModels
 
         public ObservableCollection<WirePinViewModel> WirePinViewCollection { get; set; }
 
-        private WirePinViewModel wirePinViewModel { get; set; }
         private double _panelX;
         private double _panelY;
 
@@ -78,13 +77,6 @@ namespace Dynamo.ViewModels
         /// Required timer for 'watch placement' button desirable behaviour.
         /// </summary>
         private System.Windows.Threading.DispatcherTimer timer;
-
-        //private WirePinViewModel wirePinViewModel;
-        //public WirePinViewModel WirePinVM
-        //{
-        //    get { return wirePinViewModel; }
-        //    private set { wirePinViewModel = value; RaisePropertyChanged(nameof(WirePinVM)); }
-        //}
 
         private WatchHoverIconViewModel watchHoverViewModel;
         public WatchHoverIconViewModel WatchHoverViewModel
@@ -846,6 +838,37 @@ namespace Dynamo.ViewModels
             }
         }
 
+        public PathFigure DrawSegmentBetweenPointPairs(Point startPt, Point endPt, bool isExtremity)
+        {
+            var pt3 = endPt;
+            var offset = 0.0;
+            double distance = 0;
+            if (this.BezVisibility == true)
+            {
+                distance = Math.Sqrt(Math.Pow(CurvePoint3.X - CurvePoint0.X, 2) + Math.Pow(CurvePoint3.Y - CurvePoint0.Y, 2));
+                offset = .45 * distance;
+            }
+            else
+            {
+                distance = CurvePoint3.X - CurvePoint0.X;
+                offset = distance / 2;
+            }
+
+            var pt1 = new Point(startPt.X + offset, startPt.Y);
+            var pt2 = new Point(pt3.X - offset, pt3.Y);
+
+
+            PathFigure pathFigure = new PathFigure();
+            pathFigure.StartPoint = startPt;
+
+            BezierSegment segment = new BezierSegment(pt1, pt2, pt3, true);
+            var segmentCollection = new PathSegmentCollection(1);
+            segmentCollection.Add(segment);
+            pathFigure.Segments = segmentCollection;
+
+            return pathFigure;
+        }
+
         public void RedrawBezierManyPoints()
         {
             var parameter = this.ConnectorModel.End.Center;
@@ -908,35 +931,68 @@ namespace Dynamo.ViewModels
 
             var orderedPoints = points.OrderBy(p => p.X).ToArray();
 
+            Point[,] pointPairs = BreakIntoPointPairs(orderedPoints);
 
-            var bezier = GetBezierApproximation(orderedPoints, points.Length);
-            PathFigure pathFigure = new PathFigure(bezier.Points[0], new[] { bezier }, false);
             PathFigureCollection pathFigureCollection = new PathFigureCollection();
-            pathFigureCollection.Add(pathFigure);
+
+            for (int i = 0; i < pointPairs.GetLength(0); i++)
+            {
+                //each segment starts here
+                var segmentList = new List<Point>();
+
+                for (int j = 0; j < pointPairs.GetLength(1); j++)
+                {
+                    segmentList.Add(pointPairs[i,j]);
+                }
+                var pathFigure = DrawSegmentBetweenPointPairs(segmentList[0], segmentList[1], false);
+                pathFigureCollection.Add(pathFigure);
+            }
+
             ComputedBezierPathGeometry = new PathGeometry();
             ComputedBezierPathGeometry.Figures = pathFigureCollection;
             ComputedBezierPath = new Path();
             ComputedBezierPath.Data = ComputedBezierPathGeometry;
         }
 
-        PolyLineSegment GetBezierApproximation(Point[] controlPoints, int outputSegmentCount)
+        private Point[,] BreakIntoPointPairs(Point[] points)
         {
-            Point[] points = new Point[outputSegmentCount + 1];
-            for (int i = 0; i <= outputSegmentCount; i++)
-            {
-                double t = (double)i / outputSegmentCount;
-                points[i] = GetBezierPoint(t, controlPoints, 0, controlPoints.Length);
-            }
-            return new PolyLineSegment(points, true);
+            Point[,] outPointPairs = new Point[points.Length - 1, 2];
+
+            for (int i = 0; i < points.Length-1; i++)
+                for (int j = 0; j < 2; j++)
+                    outPointPairs[i, j] = points[i + j];
+            return outPointPairs;
         }
 
-        Point GetBezierPoint(double t, Point[] controlPoints, int index, int count)
+        //PolyLineSegment GetBezierApproximation(Point[] controlPoints, int outputSegmentCount)
+        //{
+        //    Point[] points = new Point[outputSegmentCount + 1];
+        //    for (int i = 0; i <= outputSegmentCount; i++)
+        //    {
+        //        double t = (double)i / outputSegmentCount;
+        //        points[i] = GetBezierPoint(t, controlPoints, 0, controlPoints.Length);
+        //    }
+        //    return new PolyLineSegment(points, true);
+        //}
+
+        //Point GetBezierPoint(double t, Point[] controlPoints, int index, int count)
+        //{
+        //    if (count == 1)
+        //        return controlPoints[index];
+        //    var P0 = GetBezierPoint(t, controlPoints, index, count - 1);
+        //    var P1 = GetBezierPoint(t, controlPoints, index + 1, count - 1);
+        //    return new Point((1 - t) * P0.X + t * P1.X, (1 - t) * P0.Y + t * P1.Y);
+        //}
+
+        public void DiscardAllWirePins()
         {
-            if (count == 1)
-                return controlPoints[index];
-            var P0 = GetBezierPoint(t, controlPoints, index, count - 1);
-            var P1 = GetBezierPoint(t, controlPoints, index + 1, count - 1);
-            return new Point((1 - t) * P0.X + t * P1.X, (1 - t) * P0.Y + t * P1.Y);
+            foreach (var pin in WirePinViewCollection)
+            {
+                pin.Model.Dispose();
+                pin.Dispose();
+            }
+            WirePinViewCollection.Clear();
+            workspaceViewModel.Pins.Clear();
         }
 
 
