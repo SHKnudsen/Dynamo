@@ -1131,23 +1131,6 @@ namespace Dynamo.ViewModels
             return true;
         }
 
-        //public void AddPin(object parameters)
-        //{
-        //    if (null != parameters) // See above for details of this exception.
-        //    {
-        //        var message = "Internal error, argument must be null";
-        //        throw new ArgumentException(message, "parameters");
-        //    }
-
-        //    var command = new DynamoModel.CreateWirePinCommand(Guid.NewGuid(), null, 0, 0, true);
-        //    this.ExecuteCommand(command);
-        //}
-        //internal bool CanAddPin(object parameters)
-        //{
-        //    return true;
-        //}
-
-    
         internal void AddAnnotation(object parameters)
         {
             if (null != parameters) // See above for details of this exception.

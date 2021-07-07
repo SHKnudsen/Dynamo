@@ -106,5 +106,15 @@ namespace Dynamo.Nodes
             DynamoSelection.Instance.Selection.AddUnique(ViewModel.Model);
             BringToFront();
         }
+
+        //private void OnPinMouseUp(object sender, MouseButtonEventArgs e)
+        //{
+        //    DynamoSelection.Instance.Selection.Remove(ViewModel.Model);
+        //}
+
+        //private void WirePinView_OnMouseLeave(object sender, MouseEventArgs e)
+        //{
+        //    DynamoSelection.Instance.Selection.Remove(ViewModel.Model);
+        //}
     }
 }

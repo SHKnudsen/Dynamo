@@ -10,9 +10,18 @@
              d:DesignWidth="30"
              Visibility="Visible"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:ui="clr-namespace:Dynamo.UI"
              Canvas.Left="{Binding Left, Mode=TwoWay}" 
              Canvas.Top="{Binding Top, Mode=TwoWay}"
              MouseLeftButtonDown="OnPinMouseDown">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="{x:Static ui:SharedDictionaryManager.DynamoColorsAndBrushesDictionaryUri}" />
+            </ResourceDictionary.MergedDictionaries>
+            </ResourceDictionary>
+    </UserControl.Resources>
 
     <Canvas>
         <Canvas.ContextMenu>
@@ -22,22 +31,26 @@
             </Canvas.ContextMenu>
 
             <StackPanel  x:Name="PinBtn"  Background="Transparent">
-            <Image>
-                <Image.Source>/DynamoCoreWpf;component/UI/Images/Pin_16px.png</Image.Source>
-                <Image.Style>
-                    <Style TargetType="{x:Type Image}">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Path=IsHalftone, Mode=OneWay}" Value="True">
-                                <Setter Property="Source" Value="/DynamoCoreWpf;component/UI/Images/Pin_16px.png"/>
+                <Border CornerRadius="20">
+                    <Border.Style>
+                        <Style TargetType="{x:Type Border}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=IsSelected, Mode=OneWay}" Value="False">
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=IsSelected, Mode=OneWay}" Value="True">
+                                <Setter Property="BorderBrush" Value="{StaticResource outerBorderSelection}"/>
+                                    <Setter Property="BorderThickness" Value="3"/>
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding Path=IsHalftone, Mode=OneWay}" Value="False">
-                                <Setter Property="Source" Value="/DynamoCoreWpf;component/UI/Images/Pin_16px.png"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Image.Style>
-            </Image>
-        </StackPanel>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <Image>
+                    <Image.Source>/DynamoCoreWpf;component/UI/Images/Pin_16px.png</Image.Source>
+                </Image>
+            </Border>
+            </StackPanel>
         <Canvas.RenderTransform>
             <TranslateTransform X="0" Y="-10" />
         </Canvas.RenderTransform>
