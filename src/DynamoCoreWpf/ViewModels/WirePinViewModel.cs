@@ -105,6 +105,21 @@ namespace Dynamo.ViewModels
             get { return _model.IsSelected; }
         }
 
+        private bool isHalftone;
+
+        public bool IsHalftone
+        {
+            get
+            {
+                return isHalftone;
+            }
+            set
+            {
+                isHalftone = value;
+                RaisePropertyChanged(nameof(IsHalftone));
+            }
+        }
+
         #endregion
 
         #region Commands
@@ -119,8 +134,6 @@ namespace Dynamo.ViewModels
         {
             UnpinWireCommand = new DelegateCommand(UnpinWireCommandExecute);
         }
-
-
 
 #endregion
 
@@ -183,7 +196,6 @@ namespace Dynamo.ViewModels
                 case "IsSelected":
                     RaisePropertyChanged(nameof(IsSelected));
                     break;
-
             }
         }
 

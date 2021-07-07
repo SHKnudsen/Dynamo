@@ -24,6 +24,20 @@ namespace Dynamo.ViewModels
         public Point MidPoint { get; private set; }
         public double MarkerSize { get; private set; } = 30;
 
+        private bool _isHalftone;
+        public bool IsHalftone 
+        {
+            get
+            {
+                return _isHalftone;
+            }
+            set
+            {
+                _isHalftone = value;
+                RaisePropertyChanged(nameof(IsHalftone));
+            }
+        }
+
         public DelegateCommand PlaceWatchNodeCommand { get; set; }
 
         private void PlaceWatchNodeCommandExecute(object param)
@@ -51,7 +65,7 @@ namespace Dynamo.ViewModels
             Dispatcher = Dispatcher.CurrentDispatcher;
             MidPoint = ConnectorBezierMidpoint();
             connectorViewModel.PropertyChanged += OnConnectorViewModelPropertyChanged;
-           
+            IsHalftone = false;
         }
 
         private void OnConnectorViewModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

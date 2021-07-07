@@ -103,10 +103,6 @@ namespace Dynamo.Nodes
 
         private void OnPinMouseDown(object sender, MouseButtonEventArgs e)
         {
-          //  System.Guid pinGuid = this.ViewModel.Model.GUID;
-           
-            //ViewModel.WorkspaceViewModel.DynamoViewModel.ExecuteCommand(
-            //    new DynCmd.SelectModelCommand(pinGuid, Keyboard.Modifiers.AsDynamoType()));
             DynamoSelection.Instance.Selection.AddUnique(ViewModel.Model);
             BringToFront();
         }

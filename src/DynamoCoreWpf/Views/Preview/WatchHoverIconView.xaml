@@ -19,7 +19,20 @@
                 Width="{Binding MarkerSize}"
                 Command="{Binding PlaceWatchNodeCommand}">
             <StackPanel Background="Transparent">
-                <Image Source="/DynamoCoreWpf;component/UI/Images/Watch_16px.png"/>
+                <Image>
+                    <Image.Style>
+                        <Style TargetType="{x:Type Image}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=IsHalftone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                    <Setter Property="Source" Value="/DynamoCoreWpf;component/UI/Images/Watch_GreyOut_16px.png"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=IsHalftone, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                    <Setter Property="Source" Value="/DynamoCoreWpf;component/UI/Images/Watch_16px.png"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                    </Image>
             </StackPanel>
         </Button>
     </Canvas>

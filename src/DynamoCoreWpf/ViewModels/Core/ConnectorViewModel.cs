@@ -117,7 +117,18 @@ namespace Dynamo.ViewModels
             set
             {
                 _isVisible = value;
+                SetVisibilityOfPins(_isVisible);
                 RaisePropertyChanged(nameof(IsVisible));
+            }
+        }
+
+        private void SetVisibilityOfPins(bool visibility)
+        {
+            if (WirePinViewCollection is null) return;
+
+            foreach (var pin in WirePinViewCollection)
+            {
+                pin.IsHalftone = !visibility;
             }
         }
 
@@ -183,7 +194,6 @@ namespace Dynamo.ViewModels
                 RaisePropertyChanged(nameof(MouseHoverOn));
             }
         }
-
 
         public double Left
         {
@@ -438,6 +448,7 @@ namespace Dynamo.ViewModels
             {
                 MouseHoverOn = true;
                 WatchHoverViewModel = new WatchHoverIconViewModel(this, workspaceViewModel.DynamoViewModel);
+                WatchHoverViewModel.IsHalftone = !IsVisible;
                 RaisePropertyChanged(nameof(WatchHoverIconViewModel));
             }
 
@@ -629,6 +640,8 @@ namespace Dynamo.ViewModels
 
             foreach (var pin in WirePinViewCollection)
                 pin.RequestRedraw -= HandlerRedrawRequest;
+
+            DiscardAllWirePins();
         }
 
         private void nodeViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -840,28 +853,27 @@ namespace Dynamo.ViewModels
 
         public PathFigure DrawSegmentBetweenPointPairs(Point startPt, Point endPt, bool isExtremity)
         {
-            var pt3 = endPt;
             var offset = 0.0;
             double distance = 0;
             if (this.BezVisibility == true)
             {
-                distance = Math.Sqrt(Math.Pow(CurvePoint3.X - CurvePoint0.X, 2) + Math.Pow(CurvePoint3.Y - CurvePoint0.Y, 2));
+                distance = Math.Sqrt(Math.Pow(endPt.X - startPt.X, 2) + Math.Pow(endPt.Y - startPt.Y, 2));
                 offset = .45 * distance;
             }
             else
             {
-                distance = CurvePoint3.X - CurvePoint0.X;
+                distance = endPt.X - startPt.X;
                 offset = distance / 2;
             }
 
             var pt1 = new Point(startPt.X + offset, startPt.Y);
-            var pt2 = new Point(pt3.X - offset, pt3.Y);
+            var pt2 = new Point(endPt.X - offset, endPt.Y);
 
 
             PathFigure pathFigure = new PathFigure();
             pathFigure.StartPoint = startPt;
 
-            BezierSegment segment = new BezierSegment(pt1, pt2, pt3, true);
+            BezierSegment segment = new BezierSegment(pt1, pt2, endPt, true);
             var segmentCollection = new PathSegmentCollection(1);
             segmentCollection.Add(segment);
             pathFigure.Segments = segmentCollection;
@@ -914,15 +926,13 @@ namespace Dynamo.ViewModels
             _dotLeft = CurvePoint3.X - EndDotSize / 2;
 
 
-            ///Add Points
-            Point[] points = new Point[WirePinViewCollection.Count + 4];
+            ///Add chain of points including start/end
+            int count = 2;
+            Point[] points = new Point[WirePinViewCollection.Count + count];
 
             points[0] = CurvePoint0;
-            points[1] = CurvePoint1;
-            points[2] = CurvePoint2;
-            points[3] = CurvePoint3;
+            points[1] = CurvePoint3;
 
-            int count = 4;
             foreach (var wirePin in WirePinViewCollection)
             {
                 points[count] = new Point(wirePin.Left, wirePin.Top);
@@ -944,6 +954,7 @@ namespace Dynamo.ViewModels
                 {
                     segmentList.Add(pointPairs[i,j]);
                 }
+
                 var pathFigure = DrawSegmentBetweenPointPairs(segmentList[0], segmentList[1], false);
                 pathFigureCollection.Add(pathFigure);
             }
@@ -954,6 +965,11 @@ namespace Dynamo.ViewModels
             ComputedBezierPath.Data = ComputedBezierPathGeometry;
         }
 
+        /// <summary>
+        /// Point pairs from a chain of sorted points.
+        /// </summary>
+        /// <param name="points"></param>
+        /// <returns></returns>
         private Point[,] BreakIntoPointPairs(Point[] points)
         {
             Point[,] outPointPairs = new Point[points.Length - 1, 2];
@@ -963,26 +979,6 @@ namespace Dynamo.ViewModels
                     outPointPairs[i, j] = points[i + j];
             return outPointPairs;
         }
-
-        //PolyLineSegment GetBezierApproximation(Point[] controlPoints, int outputSegmentCount)
-        //{
-        //    Point[] points = new Point[outputSegmentCount + 1];
-        //    for (int i = 0; i <= outputSegmentCount; i++)
-        //    {
-        //        double t = (double)i / outputSegmentCount;
-        //        points[i] = GetBezierPoint(t, controlPoints, 0, controlPoints.Length);
-        //    }
-        //    return new PolyLineSegment(points, true);
-        //}
-
-        //Point GetBezierPoint(double t, Point[] controlPoints, int index, int count)
-        //{
-        //    if (count == 1)
-        //        return controlPoints[index];
-        //    var P0 = GetBezierPoint(t, controlPoints, index, count - 1);
-        //    var P1 = GetBezierPoint(t, controlPoints, index + 1, count - 1);
-        //    return new Point((1 - t) * P0.X + t * P1.X, (1 - t) * P0.Y + t * P1.Y);
-        //}
 
         public void DiscardAllWirePins()
         {

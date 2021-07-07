@@ -17,34 +17,30 @@
     <Canvas>
         <Canvas.ContextMenu>
                 <ContextMenu>
-                    <!--<MenuItem Header="{x:Static props:Resources.WireContextMenuHeaderBreakConnections}" Command="{Binding BreakConnectionCommand}"/>
-                    <MenuItem Header="{x:Static props:Resources.WireContextMenuHeaderSelectConnected}" Command="{Binding SelectConnectedCommand}"/>
-                    <MenuItem Header="{Binding Path=IsVisible, Converter={StaticResource HeaderVizConvert}}" Command="{Binding HideWireCommand}"/>-->
-                    <!--<MenuItem Header="{x:Static props:Resources.WireContextMenuHeaderPinWire}" Command="{Binding PinWireCommand}"/>-->
-                <MenuItem Header="{x:Static props:Resources.WireContextMenuHeaderUnpinWire}" Command="{Binding UnpinWireCommand}"/>
+                    <MenuItem Header="{x:Static props:Resources.WireContextMenuHeaderUnpinWire}" Command="{Binding UnpinWireCommand}"/>
                 </ContextMenu>
             </Canvas.ContextMenu>
-        <!--<Button Background="Transparent"
-                BorderBrush="Transparent"
-                x:Name="PinBtn">-->
+
             <StackPanel  x:Name="PinBtn"  Background="Transparent">
             <Image>
                 <Image.Source>/DynamoCoreWpf;component/UI/Images/Pin_16px.png</Image.Source>
-                <!--<Image.Style>
-                    <Style>
+                <Image.Style>
+                    <Style TargetType="{x:Type Image}">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding Path=IsSelected, Mode=OneWay}" Value="True">
-                                <Setter Property="Color" Value="LightBlue"/>
+                            <DataTrigger Binding="{Binding Path=IsHalftone, Mode=OneWay}" Value="True">
+                                <Setter Property="Source" Value="/DynamoCoreWpf;component/UI/Images/Pin_16px.png"/>
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding Path=IsSelected, Mode=OneWay}" Value="False">
-                                <Setter Property="Color" Value="#EEE"/>
+                            <DataTrigger Binding="{Binding Path=IsHalftone, Mode=OneWay}" Value="False">
+                                <Setter Property="Source" Value="/DynamoCoreWpf;component/UI/Images/Pin_16px.png"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
-                </Image.Style>-->
+                </Image.Style>
             </Image>
         </StackPanel>
-        <!--</Button>-->
+        <Canvas.RenderTransform>
+            <TranslateTransform X="0" Y="-10" />
+        </Canvas.RenderTransform>
     </Canvas>
 </UserControl>
 
