@@ -79,15 +79,17 @@ namespace Dynamo.ViewModels
 
         private void OnConnectorViewModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Contains("CurvePoint") | e.PropertyName == nameof(ConnectorViewModel.WirePinViewCollection))
-            {
+            if (!(e.PropertyName.Contains("CurvePoint") |
+                  e.PropertyName == nameof(ConnectorViewModel.WirePinViewCollection)))
+                return;
+            
                 if (ViewModel.WirePinViewCollection.Count > 0 && ViewModel.BezierControlPoints != null)
                     MidPoint = MultiBezierMidpoint();
                 else
                     MidPoint = ConnectorBezierMidpoint();
 
                 RaisePropertyChanged(nameof(MidPoint));
-            }
+            
         }
 
         private Point ConnectorBezierMidpoint()

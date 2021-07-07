@@ -542,6 +542,9 @@ namespace Dynamo.ViewModels
             workspaceViewModel.Pins.Remove(matchingPin);
             WirePinViewCollection.Remove(matchingPin);
 
+            if (WirePinViewCollection.Count == 0)
+                BezierControlPoints = null;
+
             matchingPin.Dispose();
         }
 
@@ -934,19 +937,19 @@ namespace Dynamo.ViewModels
 
 
                 ///Add chain of points including start/end
-                int count = 2;
-                Point[] points = new Point[WirePinViewCollection.Count + count];
-
-                points[0] = CurvePoint0;
-                points[1] = CurvePoint3;
-
+                
+                Point[] points = new Point[WirePinViewCollection.Count];
+                int count = 0;
                 foreach (var wirePin in WirePinViewCollection)
                 {
                     points[count] = new Point(wirePin.Left, wirePin.Top);
                     count++;
                 }
 
-                var orderedPoints = points.OrderBy(p => p.X).ToArray();
+                var orderedPoints = points.OrderBy(p => p.X).ToList();
+
+                orderedPoints.Insert(0, CurvePoint0);
+                orderedPoints.Insert(orderedPoints.Count, CurvePoint3);
 
                 Point[,] pointPairs = BreakIntoPointPairs(orderedPoints);
 
@@ -985,11 +988,11 @@ namespace Dynamo.ViewModels
         /// </summary>
         /// <param name="points"></param>
         /// <returns></returns>
-        private Point[,] BreakIntoPointPairs(Point[] points)
+        private Point[,] BreakIntoPointPairs(List<Point> points)
         {
-            Point[,] outPointPairs = new Point[points.Length - 1, 2];
+            Point[,] outPointPairs = new Point[points.Count - 1, 2];
 
-            for (int i = 0; i < points.Length-1; i++)
+            for (int i = 0; i < points.Count-1; i++)
                 for (int j = 0; j < 2; j++)
                     outPointPairs[i, j] = points[i + j];
             return outPointPairs;
