@@ -34,6 +34,8 @@ namespace Dynamo.ViewModels
 
         public ObservableCollection<WirePinViewModel> WirePinViewCollection { get; set; }
 
+        public List<Point[]> BezierControlPoints { get; set; }
+
         private double _panelX;
         private double _panelY;
 
@@ -851,7 +853,7 @@ namespace Dynamo.ViewModels
             }
         }
 
-        public PathFigure DrawSegmentBetweenPointPairs(Point startPt, Point endPt, bool isExtremity)
+        public PathFigure DrawSegmentBetweenPointPairs(Point startPt, Point endPt, ref List<Point[]> controlPointList)
         {
             var offset = 0.0;
             double distance = 0;
@@ -878,6 +880,8 @@ namespace Dynamo.ViewModels
             segmentCollection.Add(segment);
             pathFigure.Segments = segmentCollection;
 
+            controlPointList.Add(new Point[]{startPt, pt1, pt2, endPt});
+
             return pathFigure;
         }
 
@@ -886,83 +890,94 @@ namespace Dynamo.ViewModels
             var parameter = this.ConnectorModel.End.Center;
             var param = parameter as object;
 
-            var p2 = new Point();
-
-            if (parameter is Point)
+            var controlPoints = new List<Point[]>();
+            try
             {
-                p2 = (Point)param;
-            }
-            else if (parameter is Point2D)
-            {
-                p2 = ((Point2D)param).AsWindowsType();
-            }
+                var p2 = new Point();
 
-            CurvePoint3 = p2;
-
-            var offset = 0.0;
-            double distance = 0;
-            if (this.BezVisibility == true)
-            {
-                distance = Math.Sqrt(Math.Pow(CurvePoint3.X - CurvePoint0.X, 2) + Math.Pow(CurvePoint3.Y - CurvePoint0.Y, 2));
-                offset = .45 * distance;
-            }
-            else
-            {
-                distance = CurvePoint3.X - CurvePoint0.X;
-                offset = distance / 2;
-            }
-
-            CurvePoint1 = new Point(CurvePoint0.X + offset, CurvePoint0.Y);
-            CurvePoint2 = new Point(p2.X - offset, p2.Y);
-
-            //if connector is dragged from an input port
-            if (ActiveStartPort != null && ActiveStartPort.PortType == PortType.Input)
-            {
-                CurvePoint1 = new Point(CurvePoint0.X - offset, CurvePoint1.Y); ;
-                CurvePoint2 = new Point(p2.X + offset, p2.Y);
-            }
-
-            _dotTop = CurvePoint3.Y - EndDotSize / 2;
-            _dotLeft = CurvePoint3.X - EndDotSize / 2;
-
-
-            ///Add chain of points including start/end
-            int count = 2;
-            Point[] points = new Point[WirePinViewCollection.Count + count];
-
-            points[0] = CurvePoint0;
-            points[1] = CurvePoint3;
-
-            foreach (var wirePin in WirePinViewCollection)
-            {
-                points[count] = new Point(wirePin.Left, wirePin.Top);
-                count++;
-            }
-
-            var orderedPoints = points.OrderBy(p => p.X).ToArray();
-
-            Point[,] pointPairs = BreakIntoPointPairs(orderedPoints);
-
-            PathFigureCollection pathFigureCollection = new PathFigureCollection();
-
-            for (int i = 0; i < pointPairs.GetLength(0); i++)
-            {
-                //each segment starts here
-                var segmentList = new List<Point>();
-
-                for (int j = 0; j < pointPairs.GetLength(1); j++)
+                if (parameter is Point)
                 {
-                    segmentList.Add(pointPairs[i,j]);
+                    p2 = (Point)param;
+                }
+                else if (parameter is Point2D)
+                {
+                    p2 = ((Point2D)param).AsWindowsType();
                 }
 
-                var pathFigure = DrawSegmentBetweenPointPairs(segmentList[0], segmentList[1], false);
-                pathFigureCollection.Add(pathFigure);
-            }
+                CurvePoint3 = p2;
 
-            ComputedBezierPathGeometry = new PathGeometry();
-            ComputedBezierPathGeometry.Figures = pathFigureCollection;
-            ComputedBezierPath = new Path();
-            ComputedBezierPath.Data = ComputedBezierPathGeometry;
+                var offset = 0.0;
+                double distance = 0;
+                if (this.BezVisibility == true)
+                {
+                    distance = Math.Sqrt(Math.Pow(CurvePoint3.X - CurvePoint0.X, 2) + Math.Pow(CurvePoint3.Y - CurvePoint0.Y, 2));
+                    offset = .45 * distance;
+                }
+                else
+                {
+                    distance = CurvePoint3.X - CurvePoint0.X;
+                    offset = distance / 2;
+                }
+
+                CurvePoint1 = new Point(CurvePoint0.X + offset, CurvePoint0.Y);
+                CurvePoint2 = new Point(p2.X - offset, p2.Y);
+
+                //if connector is dragged from an input port
+                if (ActiveStartPort != null && ActiveStartPort.PortType == PortType.Input)
+                {
+                    CurvePoint1 = new Point(CurvePoint0.X - offset, CurvePoint1.Y); ;
+                    CurvePoint2 = new Point(p2.X + offset, p2.Y);
+                }
+
+                _dotTop = CurvePoint3.Y - EndDotSize / 2;
+                _dotLeft = CurvePoint3.X - EndDotSize / 2;
+
+
+                ///Add chain of points including start/end
+                int count = 2;
+                Point[] points = new Point[WirePinViewCollection.Count + count];
+
+                points[0] = CurvePoint0;
+                points[1] = CurvePoint3;
+
+                foreach (var wirePin in WirePinViewCollection)
+                {
+                    points[count] = new Point(wirePin.Left, wirePin.Top);
+                    count++;
+                }
+
+                var orderedPoints = points.OrderBy(p => p.X).ToArray();
+
+                Point[,] pointPairs = BreakIntoPointPairs(orderedPoints);
+
+                PathFigureCollection pathFigureCollection = new PathFigureCollection();
+
+                for (int i = 0; i < pointPairs.GetLength(0); i++)
+                {
+                    //each segment starts here
+                    var segmentList = new List<Point>();
+
+                    for (int j = 0; j < pointPairs.GetLength(1); j++)
+                    {
+                        segmentList.Add(pointPairs[i, j]);
+                    }
+
+                    var pathFigure = DrawSegmentBetweenPointPairs(segmentList[0], segmentList[1], ref controlPoints);
+                    pathFigureCollection.Add(pathFigure);
+                }
+
+                BezierControlPoints = new List<Point[]>();
+                BezierControlPoints = controlPoints;
+
+                ComputedBezierPathGeometry = new PathGeometry();
+                ComputedBezierPathGeometry.Figures = pathFigureCollection;
+                ComputedBezierPath = new Path();
+                ComputedBezierPath.Data = ComputedBezierPathGeometry;
+            }
+            catch (Exception ex)
+            {
+                string mess = ex.Message;
+            }
         }
 
         /// <summary>

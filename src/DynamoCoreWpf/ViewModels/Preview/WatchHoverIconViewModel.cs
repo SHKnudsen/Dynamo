@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Threading;
 using Dynamo.Core;
 using Dynamo.Graph.Nodes;
@@ -63,16 +64,30 @@ namespace Dynamo.ViewModels
             InitCommands();
 
             Dispatcher = Dispatcher.CurrentDispatcher;
-            MidPoint = ConnectorBezierMidpoint();
+
+            var bez = ViewModel.BezierControlPoints;
+            var coll = ViewModel.WirePinViewCollection;
+
+            if (ViewModel.WirePinViewCollection.Count==0 && ViewModel.BezierControlPoints is null)
+                MidPoint = ConnectorBezierMidpoint();
+            else
+                MidPoint = MultiBezierMidpoint();
+
             connectorViewModel.PropertyChanged += OnConnectorViewModelPropertyChanged;
             IsHalftone = false;
         }
 
         private void OnConnectorViewModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (!e.PropertyName.Contains("CurvePoint")) { return; }
-            MidPoint = ConnectorBezierMidpoint();
-            RaisePropertyChanged(nameof(MidPoint));
+            if (e.PropertyName.Contains("CurvePoint") | e.PropertyName == nameof(ConnectorViewModel.WirePinViewCollection))
+            {
+                if (ViewModel.WirePinViewCollection.Count > 0 && ViewModel.BezierControlPoints != null)
+                    MidPoint = MultiBezierMidpoint();
+                else
+                    MidPoint = ConnectorBezierMidpoint();
+
+                RaisePropertyChanged(nameof(MidPoint));
+            }
         }
 
         private Point ConnectorBezierMidpoint()
@@ -97,6 +112,47 @@ namespace Dynamo.ViewModels
                 ViewModel.CurvePoint3.Y) - (MarkerSize / 2);
 
             return new Point(x, y);
+        }
+
+        private Point ConnectorBezierMidpoint(Point[] points)
+        {
+            // formula to get bezier curve midtpoint
+            // https://stackoverflow.com/questions/5634460/quadratic-b%c3%a9zier-curve-calculate-points?rq=1
+            var parameter = 0.5;
+            var x = ((1 - parameter) * (1 - parameter) * (1 - parameter) *
+                points[0].X + 3 * (1 - parameter) * (1 - parameter)
+                * parameter *
+                points[1].X + 3 * (1 - parameter)
+                                            * parameter * parameter *
+                                            points[2].X + parameter * parameter * parameter *
+                points[3].X) - (MarkerSize / 2);
+
+            var y = ((1 - parameter) * (1 - parameter) * (1 - parameter) *
+                points[0].Y + 3 * (1 - parameter) * (1 - parameter)
+                * parameter *
+                points[1].Y + 3 * (1 - parameter)
+                                * parameter * parameter *
+                                points[2].Y + parameter * parameter * parameter *
+                points[3].Y) - (MarkerSize / 2);
+
+            return new Point(x, y);
+        }
+
+        private Point MultiBezierMidpoint()
+        {
+            int bezierMiddleSegmentIndex = -1;
+            if (ViewModel.ComputedBezierPathGeometry.Figures.Count % 2 == 0)
+            {
+                bezierMiddleSegmentIndex = (int) (ViewModel.ComputedBezierPathGeometry.Figures.Count / 2 - 1);
+            }
+            else
+            {
+                bezierMiddleSegmentIndex = (int)(ViewModel.ComputedBezierPathGeometry.Figures.Count / 2);
+            }
+
+            var segmentToCalculateMidpointOn = ViewModel.BezierControlPoints[bezierMiddleSegmentIndex];
+
+            return ConnectorBezierMidpoint(segmentToCalculateMidpointOn);
         }
 
         internal void PlaceWatchNode()
