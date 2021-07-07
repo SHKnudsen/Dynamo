@@ -32,13 +32,13 @@ namespace Dynamo.Nodes
         void OnPinViewLoaded(object sender, RoutedEventArgs e)
         {
             ViewModel = this.DataContext as WirePinViewModel;
-            // ViewModel.RequestsSelection += OnViewModelRequestsSelection;
+            ViewModel.RequestsSelection += OnViewModelRequestsSelection;
 
         }
 
         void OnPinViewUnloaded(object sender, RoutedEventArgs e)
         {
-            //ViewModel.RequestsSelection -= OnViewModelRequestsSelection;
+            ViewModel.RequestsSelection -= OnViewModelRequestsSelection;
         }
 
         void OnViewModelRequestsSelection(object sender, EventArgs e)

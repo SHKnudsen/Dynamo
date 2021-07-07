@@ -22,7 +22,7 @@
         <nodes:WirePinView DataContext="{Binding}" />
     </DataTemplate>
     <!--used for displaying pins-->
-    <DataTemplate x:Key="ShowItemIfExactlyOneItem">
+    <DataTemplate x:Key="ShowPinCollection">
         <ItemsControl x:Name="ic" ItemsSource="{Binding}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -155,7 +155,7 @@
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch" />
 
-            <ContentControl Canvas.ZIndex="1"  Content="{Binding WirePinViewCollection}" ContentTemplate="{StaticResource ShowItemIfExactlyOneItem}"
+            <ContentControl Canvas.ZIndex="1"  Content="{Binding WirePinViewCollection}" ContentTemplate="{StaticResource ShowPinCollection}"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch" />
 

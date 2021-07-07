@@ -527,9 +527,6 @@ namespace Dynamo.ViewModels
         private void HandlerRedrawRequest(object sender, EventArgs e)
         {
             Redraw();
-            //var viewModelSender = sender as WirePinViewModel;
-            //if (viewModelSender is null) return;
-            //viewModelSender.RequestRedraw -= HandlerRedrawRequest;
         }
 
         private void HandleWirePinVMRemove(object sender, EventArgs e)
