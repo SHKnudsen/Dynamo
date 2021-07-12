@@ -881,7 +881,7 @@ namespace Dynamo.ViewModels
         {
             var fullyEnclosed = !isCrossSelect;
             var selection = DynamoSelection.Instance.Selection;
-            var childlessModels = Model.Nodes.Concat<ModelBase>(Model.Notes);
+            var childlessModels = Model.Nodes.Concat<ModelBase>(Model.Notes).Concat<ModelBase>(Pins.Select(c=>c.Model));
 
             foreach (var n in childlessModels)
             {

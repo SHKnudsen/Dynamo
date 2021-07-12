@@ -515,12 +515,7 @@ namespace Dynamo.ViewModels
             MousePosition = new Point(PanelX, PanelY);
             if (MousePosition == new Point(0, 0)) return;
             var connectorPinModel = new ConnectorPinModel(PanelX, PanelY, Guid.NewGuid(), _model.GUID);
-            var connectorPinViewModel = new ConnectorPinViewModel(this.workspaceViewModel, connectorPinModel);
-            connectorPinViewModel.RequestRedraw += HandlerRedrawRequest;
-            connectorPinViewModel.RequestRemove += HandleConnectorPinViewModelRemove;
-
-            workspaceViewModel.Pins.Add(connectorPinViewModel);
-            ConnectorPinViewCollection.Add(connectorPinViewModel);
+            AddConnectorPinModel(connectorPinModel);
         }
 
         private void HandlerRedrawRequest(object sender, EventArgs e)
@@ -618,12 +613,25 @@ namespace Dynamo.ViewModels
 
         private void ConnectorPinModelCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            if (e.NewItems is null) return;
             foreach (ConnectorPinModel newItem in e.NewItems)
             {
                 AddConnectorPinViewModel(newItem);
             }
         }
 
+        /// <summary>
+        /// Adding a pinModel to a collection of pinModels stored in the ConnectorModel
+        /// </summary>
+        /// <param name="pinModel"></param>
+        private void AddConnectorPinModel(ConnectorPinModel pinModel)
+        {
+            _model.ConnectorPinModels.Add(pinModel);
+        }
+        /// <summary>
+        /// View model adding method only- given a model
+        /// </summary>
+        /// <param name="pinModel"></param>
         private void AddConnectorPinViewModel(ConnectorPinModel pinModel)
         {
             var pinViewModel = new ConnectorPinViewModel(this.workspaceViewModel, pinModel);
@@ -634,6 +642,7 @@ namespace Dynamo.ViewModels
             workspaceViewModel.Pins.Add(pinViewModel);
             ConnectorPinViewCollection.Add(pinViewModel);
         }
+
         private void HandleConnectorPinViewModelRemove(object sender, EventArgs e)
         {
             var viewModelSender = sender as ConnectorPinViewModel;
@@ -643,6 +652,8 @@ namespace Dynamo.ViewModels
             matchingPin.RequestRedraw -= HandlerRedrawRequest;
             workspaceViewModel.Pins.Remove(matchingPin);
             ConnectorPinViewCollection.Remove(matchingPin);
+
+            _model.ConnectorPinModels.Remove(viewModelSender.Model);
 
             if (ConnectorPinViewCollection.Count == 0)
                 BezierControlPoints = null;

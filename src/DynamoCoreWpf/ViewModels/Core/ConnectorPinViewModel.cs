@@ -128,6 +128,9 @@ namespace Dynamo.ViewModels
 
         #endregion
 
+        [JsonIgnore]
+        public Action OnMouseLeave;
+
         #region Commands
         [JsonIgnore]
         public DelegateCommand UnpinConnectorCommand { get; set; }
@@ -141,7 +144,7 @@ namespace Dynamo.ViewModels
             UnpinConnectorCommand = new DelegateCommand(UnpinWireCommandExecute);
         }
 
-#endregion
+        #endregion
 
         public ConnectorPinViewModel(WorkspaceViewModel workspaceViewModel, ConnectorPinModel model)
         {

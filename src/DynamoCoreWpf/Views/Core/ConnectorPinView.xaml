@@ -8,12 +8,11 @@
              mc:Ignorable="d" 
              d:DesignHeight="30"
              d:DesignWidth="30"
-             Visibility="Visible"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:ui="clr-namespace:Dynamo.UI"
-             Canvas.Left="{Binding Left, Mode=TwoWay}" 
-             Canvas.Top="{Binding Top, Mode=TwoWay}"
-             MouseLeftButtonDown="OnPinMouseDown">
+           
+             MouseLeftButtonDown="OnPinMouseDown"
+             MouseEnter="OnNodeViewMouseEnter">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -23,14 +22,14 @@
             </ResourceDictionary>
     </UserControl.Resources>
 
-    <Canvas>
+    <Canvas Left="{Binding Left, Mode=TwoWay}" Top="{Binding Top, Mode=TwoWay}">
         <Canvas.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="{x:Static props:Resources.ConnectorContextMenuHeaderUnpinConnector}" Command="{Binding UnpinConnectorCommand}"/>
                 </ContextMenu>
             </Canvas.ContextMenu>
 
-            <StackPanel  x:Name="PinBtn"  Background="Transparent">
+            <!--<Grid  x:Name="PinBtn"  Background="Transparent">-->
                 <Border CornerRadius="20">
                     <Border.Style>
                         <Style TargetType="{x:Type Border}">
@@ -50,7 +49,7 @@
                     <Image.Source>/DynamoCoreWpf;component/UI/Images/Pin_16px.png</Image.Source>
                 </Image>
             </Border>
-            </StackPanel>
+            <!--</Grid>-->
         <Canvas.RenderTransform>
             <TranslateTransform X="0" Y="-10" />
         </Canvas.RenderTransform>

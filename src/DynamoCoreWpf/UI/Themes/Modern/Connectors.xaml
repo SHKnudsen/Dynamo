@@ -29,6 +29,12 @@
                     <Canvas/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+                <Style TargetType="ContentPresenter">
+                    <Setter Property="Canvas.Left" Value="{Binding Path=Left}" />
+                    <Setter Property="Canvas.Top" Value="{Binding Path=Top}" />
+                </Style>
+            </ItemsControl.ItemContainerStyle>
         </ItemsControl>
     </DataTemplate>
 
@@ -155,9 +161,7 @@
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch" />
 
-            <ContentControl Canvas.ZIndex="1"  Content="{Binding ConnectorPinViewCollection}" ContentTemplate="{StaticResource ShowPinCollection}"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch" />
+            <ContentControl Canvas.ZIndex="1"  Content="{Binding ConnectorPinViewCollection}" ContentTemplate="{StaticResource ShowPinCollection}"/>
 
         </Grid>
         <DataTemplate.Triggers>

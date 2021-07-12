@@ -2,14 +2,20 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Threading;
 using Dynamo.Configuration;
+using Dynamo.Controls;
 using Dynamo.Selection;
 using Dynamo.UI;
+using Dynamo.UI.Controls;
 using Dynamo.UI.Prompts;
 using Dynamo.Utilities;
 using Dynamo.ViewModels;
 using DynCmd = Dynamo.Models.DynamoModel;
+using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 
 namespace Dynamo.Nodes
 {
@@ -34,6 +40,14 @@ namespace Dynamo.Nodes
             ViewModel = this.DataContext as ConnectorPinViewModel;
             ViewModel.RequestsSelection += OnViewModelRequestsSelection;
 
+            MouseLeave += ConnectorPin_MouseLeave;
+
+        }
+
+        private void ConnectorPin_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (ViewModel != null && ViewModel.OnMouseLeave != null)
+                ViewModel.OnMouseLeave();
         }
 
         void OnPinViewUnloaded(object sender, RoutedEventArgs e)
@@ -61,20 +75,19 @@ namespace Dynamo.Nodes
                 }
             }
         }
-  
-
+        
         /// <summary>
         /// Sets ZIndex of the particular note to be the highest in the workspace
         /// This brings the note to the forefront of the workspace when clicked
         /// </summary>
         private void BringToFront()
         {
-            if (NoteViewModel.StaticZIndex == int.MaxValue)
+            if (ConnectorPinViewModel.StaticZIndex == int.MaxValue)
             {
                 PrepareZIndex();
             }
 
-            ViewModel.ZIndex = ++NoteViewModel.StaticZIndex;
+            ViewModel.ZIndex = ++ConnectorPinViewModel.StaticZIndex;
         }
 
 
@@ -105,6 +118,11 @@ namespace Dynamo.Nodes
         {
             DynamoSelection.Instance.Selection.AddUnique(ViewModel.Model);
             BringToFront();
+        }
+
+        private void OnNodeViewMouseEnter(object sender, MouseEventArgs e)
+        {
+
         }
 
         //private void OnPinMouseUp(object sender, MouseButtonEventArgs e)

@@ -140,6 +140,13 @@ namespace Dynamo.Graph.Workspaces
                     combinedGraph.AddEdge(edge.Start.Owner.GUID, edge.End.Owner.GUID,
                         edge.Start.Center.X, edge.Start.Center.Y, edge.End.Center.X, edge.End.Center.Y);
                 }
+
+               
+
+                foreach (var pin in edge.ConnectorPinModels)
+                {
+                    combinedGraph.AddNode(pin.GUID, 30, 30,pin.CenterX, pin.CenterY,pin.IsSelected);
+                }
             }
 
             foreach (NoteModel note in workspace.Notes)
