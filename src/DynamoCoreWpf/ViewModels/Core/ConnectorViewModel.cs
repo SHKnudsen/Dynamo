@@ -386,6 +386,9 @@ namespace Dynamo.ViewModels
 
             if (_model != null)
             {
+                var index = _model.Start.Index;
+                var controller = workspaceViewModel.DynamoViewModel.EngineController;
+                var owner = _model.Start.Owner;
                 var portValue = _model.Start.Owner.GetValue(_model.Start.Index, workspaceViewModel.DynamoViewModel.EngineController);
                 if (portValue is null)
                 {
@@ -515,7 +518,7 @@ namespace Dynamo.ViewModels
             
             MousePosition = new Point(PanelX, PanelY);
             if (MousePosition == new Point(0, 0)) return;
-            var wirePinModel = new WirePinModel(PanelX, PanelY, Guid.NewGuid());
+            var wirePinModel = new WirePinModel(PanelX, PanelY, Guid.NewGuid(), _model.GUID);
             var wirePinVM = new WirePinViewModel(this.workspaceViewModel, wirePinModel);
             wirePinVM.RequestRedraw += HandlerRedrawRequest;
             wirePinVM.RequestRemove += HandleWirePinVMRemove;
@@ -529,21 +532,7 @@ namespace Dynamo.ViewModels
             Redraw();
         }
 
-        private void HandleWirePinVMRemove(object sender, EventArgs e)
-        {
-            var viewModelSender = sender as WirePinViewModel;
-            if (viewModelSender is null) return;
-
-            var matchingPin = workspaceViewModel.Pins.First(x => x == viewModelSender);
-            matchingPin.RequestRedraw -= HandlerRedrawRequest;
-            workspaceViewModel.Pins.Remove(matchingPin);
-            WirePinViewCollection.Remove(matchingPin);
-
-            if (WirePinViewCollection.Count == 0)
-                BezierControlPoints = null;
-
-            matchingPin.Dispose();
-        }
+       
 
         bool CanRun(object parameter)
         {
@@ -585,21 +574,17 @@ namespace Dynamo.ViewModels
         public ConnectorViewModel(WorkspaceViewModel workspace, PortModel port)
         {
             this.workspaceViewModel = workspace;
+            WirePinViewCollection = new ObservableCollection<WirePinViewModel>();
+            WirePinViewCollection.CollectionChanged += HandleCollectionChanged;
+
             IsVisible = workspaceViewModel.DynamoViewModel.IsShowingConnectors;
             IsConnecting = true;
             MouseHoverOn = false;
             _activeStartPort = port;
-            WirePinViewCollection = new ObservableCollection<WirePinViewModel>();
-            WirePinViewCollection.CollectionChanged += HandleCollectionChanged;
 
             Redraw(port.Center);
 
             InitializeCommands();
-        }
-
-        private void HandleCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            Redraw();
         }
 
 
@@ -611,11 +596,21 @@ namespace Dynamo.ViewModels
         {
             this.workspaceViewModel = workspace;
             _model = model;
+            _model.WirePinModels.CollectionChanged += WirePinModelCollectionChanged;
+
+            WirePinViewCollection = new ObservableCollection<WirePinViewModel>();
+            WirePinViewCollection.CollectionChanged += HandleCollectionChanged;
 
             IsVisible = workspaceViewModel.DynamoViewModel.IsShowingConnectors;
             MouseHoverOn = false;
-            WirePinViewCollection = new ObservableCollection<WirePinViewModel>();
-            WirePinViewCollection.CollectionChanged += HandleCollectionChanged;
+
+            if (_model.WirePinModels != null)
+            {
+                foreach (var p in model.WirePinModels)
+                {
+                    AddPinViewModel(p);
+                }
+            }
 
             _model.PropertyChanged += Model_PropertyChanged;
             _model.Start.Owner.PropertyChanged += StartOwner_PropertyChanged;
@@ -629,6 +624,45 @@ namespace Dynamo.ViewModels
             UpdateWireDataToolTip();
         }
 
+        private void WirePinModelCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            foreach (WirePinModel newItem in e.NewItems)
+            {
+                AddPinViewModel(newItem);
+            }
+        }
+
+        private void AddPinViewModel(WirePinModel pinModel)
+        {
+            var wirePinVM = new WirePinViewModel(this.workspaceViewModel, pinModel);
+
+            wirePinVM.RequestRedraw += HandlerRedrawRequest;
+            wirePinVM.RequestRemove += HandleWirePinVMRemove;
+
+            workspaceViewModel.Pins.Add(wirePinVM);
+            WirePinViewCollection.Add(wirePinVM);
+        }
+        private void HandleWirePinVMRemove(object sender, EventArgs e)
+        {
+            var viewModelSender = sender as WirePinViewModel;
+            if (viewModelSender is null) return;
+
+            var matchingPin = workspaceViewModel.Pins.First(x => x == viewModelSender);
+            matchingPin.RequestRedraw -= HandlerRedrawRequest;
+            workspaceViewModel.Pins.Remove(matchingPin);
+            WirePinViewCollection.Remove(matchingPin);
+
+            if (WirePinViewCollection.Count == 0)
+                BezierControlPoints = null;
+
+            matchingPin.Dispose();
+        }
+
+        private void HandleCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            Redraw();
+        }
+
 
 
         public virtual void Dispose()
@@ -636,6 +670,7 @@ namespace Dynamo.ViewModels
             _model.PropertyChanged -= Model_PropertyChanged;
             _model.Start.Owner.PropertyChanged -= StartOwner_PropertyChanged;
             _model.End.Owner.PropertyChanged -= EndOwner_PropertyChanged;
+            _model.WirePinModels.CollectionChanged -= WirePinModelCollectionChanged;
 
             workspaceViewModel.DynamoViewModel.Model.PreferenceSettings.PropertyChanged -= DynamoViewModel_PropertyChanged;
             Nodevm.PropertyChanged -= nodeViewModel_PropertyChanged;

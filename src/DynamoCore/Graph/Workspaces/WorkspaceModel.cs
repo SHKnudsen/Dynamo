@@ -43,9 +43,10 @@ namespace Dynamo.Graph.Workspaces
         public IEnumerable<ExtraNodeViewInfo> NodeViews;
         public IEnumerable<ExtraNoteViewInfo> Notes;
         public IEnumerable<ExtraAnnotationViewInfo> Annotations;
+        public IEnumerable<ExtraWirePinInfo> WirePins;
         public double X;
         public double Y;
-        public double Zoom;        
+        public double Zoom;
     }
 
     /// <summary>
@@ -78,6 +79,17 @@ namespace Dynamo.Graph.Workspaces
 
         // TODO, QNTM-1099: Figure out if this is necessary
         // public int ZIndex;
+    }
+
+    /// <summary>
+    /// Non view-specific container for additional note view information 
+    /// required to fully construct a WorkspaceModel from JSON
+    /// </summary>
+    public class ExtraWirePinInfo
+    {
+        public string ConnectorGuid;
+        public double Left;
+        public double Top;
     }
 
     /// <summary>
@@ -2057,6 +2069,8 @@ namespace Dynamo.Graph.Workspaces
             //            ensure that any contained notes are contained properly
             LoadNotesFromAnnotations(workspaceViewInfo.Annotations);
 
+            LoadWirePins(workspaceViewInfo.WirePins);
+
             // This function loads annotations from the Annotations array in the JSON format
             // that have a non-empty nodes collection
             LoadAnnotations(workspaceViewInfo.Annotations);
@@ -2152,6 +2166,22 @@ namespace Dynamo.Graph.Workspaces
                     this.AddNote(noteModel);
                 }
            
+            }
+        }
+
+        private void LoadWirePins(IEnumerable<ExtraWirePinInfo> pinViews)
+        {
+            if (pinViews == null)
+                return;
+
+            foreach (ExtraWirePinInfo pinViewInfo in pinViews)
+            {
+                var connectorGuid = IdToGuidConverter(pinViewInfo.ConnectorGuid);
+
+                var matchingConnector = Connectors.FirstOrDefault(x => x.GUID == connectorGuid);
+                if (matchingConnector is null) return;
+
+                matchingConnector.AddPin(pinViewInfo.Left, pinViewInfo.Top);
             }
         }
 

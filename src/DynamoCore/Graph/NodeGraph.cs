@@ -148,46 +148,46 @@ namespace Dynamo.Graph
         /// </summary>
         /// <param name="pin"></param>
         /// <returns></returns>
-        public static WirePinModel LoadPinFromXml(XmlNode pin)
-        {
-            var instance = new WirePinModel(0, 0, Guid.NewGuid());
-            instance.Deserialize(pin as XmlElement, SaveContext.Save);
-            return instance;
-        }
+        //public static WirePinModel LoadPinFromXml(XmlNode pin)
+        //{
+        //    var instance = new WirePinModel(0, 0, Guid.NewGuid());
+        //    instance.Deserialize(pin as XmlElement, SaveContext.Save);
+        //    return instance;
+        //}
 
-        /// <summary>
-        /// Check if tag name is pin or wirepin?
-        /// </summary>
-        /// <param name="xmlDoc"></param>
-        /// <returns></returns>
-        private static IEnumerable<WirePinModel> LoadPinsFromXml(XmlDocument xmlDoc)
-        {
-            XmlNodeList nNodes = xmlDoc.GetElementsByTagName("Pins");
-            if (nNodes.Count == 0)
-                nNodes = xmlDoc.GetElementsByTagName("dynNotes");
-            XmlNode nNodesList = nNodes[0];
+        ///// <summary>
+        ///// Check if tag name is pin or wirepin?
+        ///// </summary>
+        ///// <param name="xmlDoc"></param>
+        ///// <returns></returns>
+        //private static IEnumerable<WirePinModel> LoadPinsFromXml(XmlDocument xmlDoc)
+        //{
+        //    XmlNodeList nNodes = xmlDoc.GetElementsByTagName("WirePins");
+        //    if (nNodes.Count == 0)
+        //        nNodes = xmlDoc.GetElementsByTagName("dynNotes");
+        //    XmlNode nNodesList = nNodes[0];
 
-            return nNodesList != null
-                ? nNodesList.ChildNodes.Cast<XmlNode>().Select(LoadPinFromXml)
-                : Enumerable.Empty<WirePinModel>();
-        }
+        //    return nNodesList != null
+        //        ? nNodesList.ChildNodes.Cast<XmlNode>().Select(LoadPinFromXml)
+        //        : Enumerable.Empty<WirePinModel>();
+        //}
 
-        internal static AnnotationModel LoadAnnotationFromXml(XmlNode annotation, IEnumerable<NodeModel> nodes, IEnumerable<NoteModel> notes, IEnumerable<WirePinModel> pins)
+        internal static AnnotationModel LoadAnnotationFromXml(XmlNode annotation, IEnumerable<NodeModel> nodes, IEnumerable<NoteModel> notes)
         {
-            var instance = new AnnotationModel(nodes,notes, pins);             
+            var instance = new AnnotationModel(nodes,notes);             
             instance.Deserialize(annotation as XmlElement, SaveContext.Save);
             return instance;
         }
 
         private static IEnumerable<AnnotationModel> LoadAnnotationsFromXml(XmlDocument xmlDoc, IEnumerable<NodeModel> nodes,
-                                                                                IEnumerable<NoteModel> notes, IEnumerable<WirePinModel> pins)
+                                                                                IEnumerable<NoteModel> notes)
         {
             XmlNodeList nNodes = xmlDoc.GetElementsByTagName("Annotations");
             if (nNodes.Count == 0)
                 nNodes = xmlDoc.GetElementsByTagName("dynAnnotations");
             XmlNode nNodesList = nNodes[0];
             if (nNodesList != null)
-                return from XmlElement annotation in nNodesList.ChildNodes.Cast<XmlNode>() select LoadAnnotationFromXml(annotation, nodes, notes, pins);
+                return from XmlElement annotation in nNodesList.ChildNodes.Cast<XmlNode>() select LoadAnnotationFromXml(annotation, nodes, notes);
             
             return Enumerable.Empty<AnnotationModel>();
         }
@@ -252,8 +252,8 @@ namespace Dynamo.Graph
             var nodes = LoadNodesFromXml(xmlDoc, nodeFactory, elementResolver).ToList();
             var connectors = LoadConnectorsFromXml(xmlDoc, nodes.ToDictionary(node => node.GUID)).ToList();
             var notes = LoadNotesFromXml(xmlDoc).ToList();
-            var pins = LoadPinsFromXml(xmlDoc).ToList();
-            var annotations = LoadAnnotationsFromXml(xmlDoc, nodes, notes, pins).ToList();
+           // var pins = LoadPinsFromXml(xmlDoc).ToList();
+            var annotations = LoadAnnotationsFromXml(xmlDoc, nodes, notes).ToList();
             var presets = LoadPresetsFromXml(xmlDoc,nodes).ToList();
 
             return new NodeGraph { Nodes = nodes, Connectors = connectors, Notes = notes, Annotations = annotations, Presets = presets, ElementResolver = elementResolver };

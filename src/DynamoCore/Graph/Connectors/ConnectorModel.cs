@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Xml;
 using Dynamo.Graph.Nodes;
@@ -40,6 +42,15 @@ namespace Dynamo.Graph.Connectors
         /// Returns end port model.
         /// </summary>
         public PortModel End { get; private set; }
+        /// <summary>
+        /// Collection of pinmodels
+        /// </summary>
+        public ObservableCollection<WirePinModel> WirePinModels { get; set; }
+
+        internal void AddPin(double x, double y)
+        {
+            WirePinModels.Add(new WirePinModel(x, y, Guid.NewGuid(),this.GUID));
+        }
 
         /// <summary>
         /// ID of the Connector, which is unique within the graph.
@@ -95,6 +106,7 @@ namespace Dynamo.Graph.Connectors
         /// <param name="guid">The unique identifier for the <see cref="ConnectorModel"/>.</param>
         public ConnectorModel(PortModel start, PortModel end, Guid guid)
         {
+            WirePinModels = new ObservableCollection<WirePinModel>();
             Debug.WriteLine("Creating a connector between ports {0}(owner:{1}) and {2}(owner:{3}).", 
                 start.GUID, start.Owner == null?"null":start.Owner.Name, end.GUID, end.Owner == null?"null":end.Owner.Name);
             Start = start;
@@ -106,14 +118,13 @@ namespace Dynamo.Graph.Connectors
         private ConnectorModel(
             NodeModel start, NodeModel end, int startIndex, int endIndex, Guid guid)
         {
+            WirePinModels = new ObservableCollection<WirePinModel>();
             GUID = guid;
             Start = start.OutPorts[startIndex];
-
             PortModel endPort = end.InPorts[endIndex];
 
             Debug.WriteLine("Creating a connector between ports {0}(owner:{1}) and {2}(owner:{3}).",
                 start.GUID, Start.Owner == null ? "null" : Start.Owner.Name, end.GUID, endPort.Owner == null ? "null" : endPort.Owner.Name);
-
             Start.Connectors.Add(this);
             Connect(endPort);
         }

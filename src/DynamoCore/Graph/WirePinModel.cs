@@ -1,25 +1,21 @@
 ﻿using System;
 using System.Xml;
+using Dynamo.Graph.Connectors;
 using Dynamo.Utilities;
 
 namespace Dynamo.Graph
 {
     public class WirePinModel : ModelBase
     {
- 
-        /// <summary>
-        /// Creates NoteModel.
-        /// </summary>
-        /// <param name="x">X coordinate of note.</param>
-        /// <param name="y">Y coordinate of note.</param>
-        /// <param name="text">Text of note</param>
-        /// <param name="guid">Unique id of note</param>
-        public WirePinModel(double x, double y, Guid guid)
+        public Guid ConnectorId { get; set; }
+        public WirePinModel(double x, double y, Guid id, Guid connectorId)
         {
             X = x;
             Y = y;
-            GUID = guid;
+            GUID = id;
+            ConnectorId = connectorId;
         }
+
 
         #region Command Framework Supporting Methods
 

@@ -36,6 +36,13 @@ namespace Dynamo.Wpf.ViewModels.Core.Converters
             writer.WritePropertyName("Camera");
             serializer.Serialize(writer, workspaceView.Camera);
 
+            writer.WritePropertyName("WirePins");
+            writer.WriteStartArray();
+
+            foreach (var wirePin in workspaceView.Pins)
+                serializer.Serialize(writer, wirePin);
+            writer.WriteEndArray();
+
             writer.WritePropertyName("NodeViews");
             writer.WriteStartArray();
             foreach (var nodeView in workspaceView.Nodes)
@@ -58,16 +65,7 @@ namespace Dynamo.Wpf.ViewModels.Core.Converters
 
                 serializer.Serialize(writer, new AnnotationViewModel(workspaceView, convertedNote));
             }
-            //foreach (var pin in workspaceView.Pins)
-            //{
-            //    AnnotationModel convertedPin = new AnnotationModel(new NodeModel[0], new WirePinModel[0]);
-            //    convertedPin.GUID = pin.Model.GUID;
-            //    convertedPin.X = pin.Left;
-            //    convertedPin.Y = pin.Top;
-            //    convertedPin.AnnotationText = pin.Text;
 
-            //    serializer.Serialize(writer, new AnnotationViewModel(workspaceView, convertedPin));
-            //}
             writer.WriteEndArray();
 
             writer.WritePropertyName("X");

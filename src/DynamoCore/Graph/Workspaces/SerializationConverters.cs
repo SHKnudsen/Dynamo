@@ -811,6 +811,7 @@ namespace Dynamo.Graph.Workspaces
             writer.WritePropertyName("Connectors");
             serializer.Serialize(writer, ws.Connectors);
 
+
             // Dependencies
             writer.WritePropertyName("Dependencies");
             writer.WriteStartArray();
@@ -1217,6 +1218,60 @@ namespace Dynamo.Graph.Workspaces
             writer.WritePropertyName("Id");
             writer.WriteValue(connector.GUID.ToString("N"));
             writer.WriteEndObject();
+        }
+    }
+
+    /// <summary>
+    /// The ConnectorConverter is used to serialize and deserialize ConnectorModels.
+    /// The Start and End of a ConnectorModel are references to PortModels, but
+    /// we want the serialized representation of a Connector to reference these 
+    /// ports by Id. This converter resolves the reference to the correct NodeModel
+    /// instance by id, and constructs the ConnectorModel.
+    /// </summary>
+    public class ConnectorPinConverter : JsonConverter
+    {
+        private Logging.ILogger logger;
+
+        /// <summary>
+        /// Constructs a ConnectorConverter.
+        /// </summary>
+        /// <param name="logger"></param>
+        public ConnectorPinConverter(Logging.ILogger logger)
+        {
+            this.logger = logger;
+        }
+        public ConnectorPinConverter()
+        {
+            this.logger = logger;
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(WirePinModel);
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            var obj = JObject.Load(reader);
+            var xPos = obj["Left"].Value<double>();
+            var yPos = obj["Top"].Value<double>();
+            var connectorGuid = obj["ConnectorGuid"].Value<Guid>();
+
+
+            var resolver = (IdReferenceResolver)serializer.ReferenceResolver;
+
+           // Guid connectorId = GuidUtility.tryParseOrCreateGuid(connectorGuid);
+
+            var wirePin = new WirePinModel(xPos, yPos, Guid.NewGuid(), connectorGuid);
+            if (wirePin is null)
+                return null;
+
+            return wirePin;
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+           
         }
     }
 

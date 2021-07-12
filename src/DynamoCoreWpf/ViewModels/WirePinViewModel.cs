@@ -62,7 +62,6 @@ namespace Dynamo.ViewModels
         /// <summary>
         /// Element's left position is two-way bound to this value
         /// </summary>
-        [JsonIgnore]
         public double Left
         {
             get { return _model.X; }
@@ -76,7 +75,6 @@ namespace Dynamo.ViewModels
         /// <summary>
         /// Element's top position is two-way bound to this value
         /// </summary>
-        [JsonIgnore]
         public double Top
         {
             get { return _model.Y; }
@@ -106,7 +104,7 @@ namespace Dynamo.ViewModels
         }
 
         private bool isHalftone;
-
+        [JsonIgnore]
         public bool IsHalftone
         {
             get
@@ -120,10 +118,18 @@ namespace Dynamo.ViewModels
             }
         }
 
+        public Guid ConnectorGuid
+        {
+            get
+            {
+                return _model.ConnectorId;
+            }
+        }
+
         #endregion
 
         #region Commands
-
+        [JsonIgnore]
         public DelegateCommand UnpinWireCommand { get; set; }
 
         private void UnpinWireCommandExecute(object parameter)
@@ -153,13 +159,6 @@ namespace Dynamo.ViewModels
 
             base.Dispose();
         }
-
-        //private void SelectionOnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        //{
-        //    //CreateGroupCommand.RaiseCanExecuteChanged();
-        //    //AddToGroupCommand.RaiseCanExecuteChanged();
-        //    //UngroupCommand.RaiseCanExecuteChanged();
-        //}
 
         private void Select(object parameter)
         {

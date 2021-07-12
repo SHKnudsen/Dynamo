@@ -27,6 +27,7 @@ using Dynamo.Wpf.ViewModels.Watch3D;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Function = Dynamo.Graph.Nodes.CustomNodes.Function;
+using SerializationExtensions = Dynamo.Graph.Workspaces.SerializationExtensions;
 
 namespace Dynamo.ViewModels
 {
@@ -471,7 +472,7 @@ namespace Dynamo.ViewModels
 
             foreach (NodeModel node in Model.Nodes) Model_NodeAdded(node);
             foreach (NoteModel note in Model.Notes) Model_NoteAdded(note);
-            //foreach (WirePinModel pin in Model.Pins) Model_PinAdded(pin);
+            //foreach (WirePinModel pin in Model.WirePins) Model_PinAdded(pin);
             foreach (AnnotationModel annotation in Model.Annotations) Model_AnnotationAdded(annotation);
             foreach (ConnectorModel connector in Model.Connectors) Connectors_ConnectorAdded(connector);
 
@@ -601,7 +602,6 @@ namespace Dynamo.ViewModels
         {
             var token = JToken.Parse(this.ToJson());
             modelData.Add("View", token);
-
             return modelData;
         }
 
@@ -616,21 +616,27 @@ namespace Dynamo.ViewModels
             var viewBlock = obj["View"];
             if (viewBlock == null)
               return null;
-           
-            var settings = new JsonSerializerSettings
-            {
-                Error = (sender, args) =>
-                {
-                    args.ErrorContext.Handled = true;
-                    Console.WriteLine(args.ErrorContext.Error);
-                },
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                TypeNameHandling = TypeNameHandling.Auto,
-                Formatting = Newtonsoft.Json.Formatting.Indented,
-                Culture = CultureInfo.InvariantCulture
-            };
 
-            return JsonConvert.DeserializeObject<ExtraWorkspaceViewInfo>(viewBlock.ToString(), settings);
+           var settings = new JsonSerializerSettings
+           {
+               Error = (sender, args) =>
+               {
+                   args.ErrorContext.Handled = true;
+                   Console.WriteLine(args.ErrorContext.Error);
+               },
+               ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+               TypeNameHandling = TypeNameHandling.Auto,
+               Formatting = Newtonsoft.Json.Formatting.Indented,
+               Culture = CultureInfo.InvariantCulture,
+               Converters = new List<JsonConverter>
+               {
+                   new ConnectorPinConverter()
+               },
+               ReferenceResolverProvider = () => { return new IdReferenceResolver(); }
+           };
+
+            var viewInfo = JsonConvert.DeserializeObject<ExtraWorkspaceViewInfo>(viewBlock.ToString(), settings);
+            return viewInfo;
         }
 
         void CopyPasteChanged(object sender, EventArgs e)
@@ -655,28 +661,6 @@ namespace Dynamo.ViewModels
                 connector.Dispose();
             }
         }
-
-        //private void Model_PinAdded(WirePinModel pin)
-        //{
-        //    var viewModel = new WirePinViewModel(this, pin);
-        //    Pins.Add(viewModel);
-        //}
-
-        //private void Model_PinRemoved(WirePinModel pin)
-        //{
-        //    var matchingPinViewModel = Pins.First(x => x.Model == pin);
-        //    Pins.Remove(matchingPinViewModel);
-        //    matchingPinViewModel.Dispose();
-        //}
-
-        //private void Model_PinsCleared()
-        //{
-        //    foreach (var pinViewModel in Pins)
-        //    {
-        //        pinViewModel.Dispose();
-        //    }
-        //    Pins.Clear();
-        //}
 
         private void Model_NoteAdded(NoteModel note)
         {
@@ -829,7 +813,6 @@ namespace Dynamo.ViewModels
                     break;
 
             }
-            
         }
 
         void ModelPropertyChanged(object sender, PropertyChangedEventArgs e)
