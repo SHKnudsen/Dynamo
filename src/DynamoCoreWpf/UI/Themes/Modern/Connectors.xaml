@@ -17,9 +17,9 @@
         <!--Add ConnectorViewViews here-->
         <views:WatchHoverIconView DataContext="{Binding}" />
     </DataTemplate>
-    <DataTemplate DataType="{x:Type viewModels:WirePinViewModel}">
+    <DataTemplate DataType="{x:Type viewModels:ConnectorPinViewModel}">
         <!--Add ConnectorViewViews here-->
-        <nodes:WirePinView DataContext="{Binding}" />
+        <nodes:ConnectorPinView DataContext="{Binding}" />
     </DataTemplate>
     <!--used for displaying pins-->
     <DataTemplate x:Key="ShowPinCollection">
@@ -74,10 +74,10 @@
         <Grid x:Name="MainGrid">
             <Grid.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="{x:Static props:Resources.WireContextMenuHeaderBreakConnections}" Command="{Binding BreakConnectionCommand}"/>
-                    <MenuItem Header="{x:Static props:Resources.WireContextMenuHeaderSelectConnected}" Command="{Binding SelectConnectedCommand}"/>
-                    <MenuItem Header="{Binding Path=IsVisible, Converter={StaticResource HeaderVizConvert}}" Command="{Binding HideWireCommand}"/>
-                    <MenuItem Header="{x:Static props:Resources.WireContextMenuHeaderPinWire}" Command="{Binding PinWireCommand}"/>
+                    <MenuItem Header="{x:Static props:Resources.ConnectorContextMenuHeaderBreakConnections}" Command="{Binding BreakConnectionCommand}"/>
+                    <MenuItem Header="{x:Static props:Resources.ConnectorContextMenuHeaderSelectConnected}" Command="{Binding SelectConnectedCommand}"/>
+                    <MenuItem Header="{Binding Path=IsVisible, Converter={StaticResource HeaderVizConvert}}" Command="{Binding HideConnectorCommand}"/>
+                    <MenuItem Header="{x:Static props:Resources.ConnectorContextMenuHeaderPinConnector}" Command="{Binding PinConnectorCommand}"/>
                 </ContextMenu>
             </Grid.ContextMenu>
             <Grid.Resources>
@@ -101,7 +101,7 @@
             <Path Stroke="{DynamicResource BConnectorSelection}" StrokeThickness="3" IsHitTestVisible="{Binding IsHitTestVisible, Mode=OneWay}"
               Name="connector"
               Visibility="{Binding BezVisibility, Converter={StaticResource BooleanToVisibilityConverter}}" 
-              Style="{StaticResource SConnector}" Canvas.ZIndex="0" ToolTip="{Binding WireDataTooltip}" Data="{Binding ComputedBezierPathGeometry, UpdateSourceTrigger=PropertyChanged}">
+              Style="{StaticResource SConnector}" Canvas.ZIndex="0" ToolTip="{Binding ConnectorDataTooltip}" Data="{Binding ComputedBezierPathGeometry, UpdateSourceTrigger=PropertyChanged}">
                 <i:Interaction.Behaviors>
                     <mouse:MouseBehaviour MouseX="{Binding PanelX, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" MouseY="{Binding PanelY, Mode=OneWayToSource,  UpdateSourceTrigger=PropertyChanged}" />
                 </i:Interaction.Behaviors>
@@ -155,7 +155,7 @@
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch" />
 
-            <ContentControl Canvas.ZIndex="1"  Content="{Binding WirePinViewCollection}" ContentTemplate="{StaticResource ShowPinCollection}"
+            <ContentControl Canvas.ZIndex="1"  Content="{Binding ConnectorPinViewCollection}" ContentTemplate="{StaticResource ShowPinCollection}"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch" />
 

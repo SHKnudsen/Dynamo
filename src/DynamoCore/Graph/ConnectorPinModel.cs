@@ -5,10 +5,10 @@ using Dynamo.Utilities;
 
 namespace Dynamo.Graph
 {
-    public class WirePinModel : ModelBase
+    public class ConnectorPinModel : ModelBase
     {
         public Guid ConnectorId { get; set; }
-        public WirePinModel(double x, double y, Guid id, Guid connectorId)
+        public ConnectorPinModel(double x, double y, Guid id, Guid connectorId)
         {
             X = x;
             Y = y;

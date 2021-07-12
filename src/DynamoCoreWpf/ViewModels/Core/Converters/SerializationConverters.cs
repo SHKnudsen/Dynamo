@@ -36,7 +36,7 @@ namespace Dynamo.Wpf.ViewModels.Core.Converters
             writer.WritePropertyName("Camera");
             serializer.Serialize(writer, workspaceView.Camera);
 
-            writer.WritePropertyName("WirePins");
+            writer.WritePropertyName("ConnectorPins");
             writer.WriteStartArray();
 
             foreach (var wirePin in workspaceView.Pins)

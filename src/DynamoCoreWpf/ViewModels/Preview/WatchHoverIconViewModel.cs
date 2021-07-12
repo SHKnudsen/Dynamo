@@ -43,7 +43,7 @@ namespace Dynamo.ViewModels
 
         private void PlaceWatchNodeCommandExecute(object param)
         {
-            ViewModel.DiscardAllWirePins();
+            ViewModel.DiscardAllConnectorPins();
             PlaceWatchNode();
         }
 
@@ -66,9 +66,9 @@ namespace Dynamo.ViewModels
             Dispatcher = Dispatcher.CurrentDispatcher;
 
             var bez = ViewModel.BezierControlPoints;
-            var coll = ViewModel.WirePinViewCollection;
+            var coll = ViewModel.ConnectorPinViewCollection;
 
-            if (ViewModel.WirePinViewCollection.Count==0 && ViewModel.BezierControlPoints is null)
+            if (ViewModel.ConnectorPinViewCollection.Count==0 && ViewModel.BezierControlPoints is null)
                 MidPoint = ConnectorBezierMidpoint();
             else
                 MidPoint = MultiBezierMidpoint();
@@ -80,10 +80,10 @@ namespace Dynamo.ViewModels
         private void OnConnectorViewModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (!(e.PropertyName.Contains("CurvePoint") |
-                  e.PropertyName == nameof(ConnectorViewModel.WirePinViewCollection)))
+                  e.PropertyName == nameof(ConnectorViewModel.ConnectorPinViewCollection)))
                 return;
             
-                if (ViewModel.WirePinViewCollection.Count > 0 && ViewModel.BezierControlPoints != null)
+                if (ViewModel.ConnectorPinViewCollection.Count > 0 && ViewModel.BezierControlPoints != null)
                     MidPoint = MultiBezierMidpoint();
                 else
                     MidPoint = ConnectorBezierMidpoint();

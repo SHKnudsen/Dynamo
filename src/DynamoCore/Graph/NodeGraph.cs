@@ -148,9 +148,9 @@ namespace Dynamo.Graph
         /// </summary>
         /// <param name="pin"></param>
         /// <returns></returns>
-        //public static WirePinModel LoadPinFromXml(XmlNode pin)
+        //public static ConnectorPinModel LoadPinFromXml(XmlNode pin)
         //{
-        //    var instance = new WirePinModel(0, 0, Guid.NewGuid());
+        //    var instance = new ConnectorPinModel(0, 0, Guid.NewGuid());
         //    instance.Deserialize(pin as XmlElement, SaveContext.Save);
         //    return instance;
         //}
@@ -160,16 +160,16 @@ namespace Dynamo.Graph
         ///// </summary>
         ///// <param name="xmlDoc"></param>
         ///// <returns></returns>
-        //private static IEnumerable<WirePinModel> LoadPinsFromXml(XmlDocument xmlDoc)
+        //private static IEnumerable<ConnectorPinModel> LoadPinsFromXml(XmlDocument xmlDoc)
         //{
-        //    XmlNodeList nNodes = xmlDoc.GetElementsByTagName("WirePins");
+        //    XmlNodeList nNodes = xmlDoc.GetElementsByTagName("ConnectorPins");
         //    if (nNodes.Count == 0)
         //        nNodes = xmlDoc.GetElementsByTagName("dynNotes");
         //    XmlNode nNodesList = nNodes[0];
 
         //    return nNodesList != null
         //        ? nNodesList.ChildNodes.Cast<XmlNode>().Select(LoadPinFromXml)
-        //        : Enumerable.Empty<WirePinModel>();
+        //        : Enumerable.Empty<ConnectorPinModel>();
         //}
 
         internal static AnnotationModel LoadAnnotationFromXml(XmlNode annotation, IEnumerable<NodeModel> nodes, IEnumerable<NoteModel> notes)

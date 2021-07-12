@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace Dynamo.ViewModels
 {
-    public partial class WirePinViewModel : ViewModelBase
+    public partial class ConnectorPinViewModel : ViewModelBase
     {
         #region Events
 
@@ -41,7 +41,7 @@ namespace Dynamo.ViewModels
 
         #region Properties
 
-        private WirePinModel _model;
+        private ConnectorPinModel _model;
 
         [JsonIgnore]
         public readonly WorkspaceViewModel WorkspaceViewModel;
@@ -49,7 +49,7 @@ namespace Dynamo.ViewModels
         internal static int StaticZIndex = Configurations.NodeStartZIndex;
 
         [JsonIgnore]
-        public WirePinModel Model
+        public ConnectorPinModel Model
         {
             get { return _model; }
             set
@@ -130,7 +130,7 @@ namespace Dynamo.ViewModels
 
         #region Commands
         [JsonIgnore]
-        public DelegateCommand UnpinWireCommand { get; set; }
+        public DelegateCommand UnpinConnectorCommand { get; set; }
 
         private void UnpinWireCommandExecute(object parameter)
         {
@@ -138,12 +138,12 @@ namespace Dynamo.ViewModels
         }
         private void InitializeCommands()
         {
-            UnpinWireCommand = new DelegateCommand(UnpinWireCommandExecute);
+            UnpinConnectorCommand = new DelegateCommand(UnpinWireCommandExecute);
         }
 
 #endregion
 
-        public WirePinViewModel(WorkspaceViewModel workspaceViewModel, WirePinModel model)
+        public ConnectorPinViewModel(WorkspaceViewModel workspaceViewModel, ConnectorPinModel model)
         {
             this.WorkspaceViewModel = workspaceViewModel;
             _model = model;
@@ -228,12 +228,12 @@ namespace Dynamo.ViewModels
             return true;
         }
 
-        private void UngroupWirePin(object parameters)
+        private void UngroupConnectorPin(object parameters)
         {
             WorkspaceViewModel.DynamoViewModel.UngroupModelCommand.Execute(null);
         }
 
-        private bool CanUngroupWirePin(object parameters)
+        private bool CanUngroupConnectorPin(object parameters)
         {
             var groups = WorkspaceViewModel.Model.Annotations;
             if (!groups.Any(x => x.IsSelected))

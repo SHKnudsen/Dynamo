@@ -275,7 +275,7 @@ namespace Dynamo.ViewModels
         public ObservableCollection<NoteViewModel> Notes { get; } = new ObservableCollection<NoteViewModel>();
 
         [JsonIgnore]
-        public ObservableCollection<WirePinViewModel> Pins { get; } = new ObservableCollection<WirePinViewModel>();
+        public ObservableCollection<ConnectorPinViewModel> Pins { get; } = new ObservableCollection<ConnectorPinViewModel>();
 
         [JsonIgnore]
         public ObservableCollection<InfoBubbleViewModel> Errors { get; } = new ObservableCollection<InfoBubbleViewModel>();
@@ -472,7 +472,7 @@ namespace Dynamo.ViewModels
 
             foreach (NodeModel node in Model.Nodes) Model_NodeAdded(node);
             foreach (NoteModel note in Model.Notes) Model_NoteAdded(note);
-            //foreach (WirePinModel pin in Model.WirePins) Model_PinAdded(pin);
+            //foreach (ConnectorPinModel pin in Model.ConnectorPins) Model_PinAdded(pin);
             foreach (AnnotationModel annotation in Model.Annotations) Model_AnnotationAdded(annotation);
             foreach (ConnectorModel connector in Model.Connectors) Connectors_ConnectorAdded(connector);
 
@@ -627,12 +627,7 @@ namespace Dynamo.ViewModels
                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                TypeNameHandling = TypeNameHandling.Auto,
                Formatting = Newtonsoft.Json.Formatting.Indented,
-               Culture = CultureInfo.InvariantCulture,
-               Converters = new List<JsonConverter>
-               {
-                   new ConnectorPinConverter()
-               },
-               ReferenceResolverProvider = () => { return new IdReferenceResolver(); }
+               Culture = CultureInfo.InvariantCulture
            };
 
             var viewInfo = JsonConvert.DeserializeObject<ExtraWorkspaceViewInfo>(viewBlock.ToString(), settings);

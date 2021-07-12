@@ -32,7 +32,7 @@ namespace Dynamo.ViewModels
 
         #region Properties
 
-        public ObservableCollection<WirePinViewModel> WirePinViewCollection { get; set; }
+        public ObservableCollection<ConnectorPinViewModel> ConnectorPinViewCollection { get; set; }
 
         public List<Point[]> BezierControlPoints { get; set; }
 
@@ -126,9 +126,9 @@ namespace Dynamo.ViewModels
 
         private void SetVisibilityOfPins(bool visibility)
         {
-            if (WirePinViewCollection is null) return;
+            if (ConnectorPinViewCollection is null) return;
 
-            foreach (var pin in WirePinViewCollection)
+            foreach (var pin in ConnectorPinViewCollection)
             {
                 pin.IsHalftone = !visibility;
             }
@@ -152,17 +152,17 @@ namespace Dynamo.ViewModels
         /// <summary>
         /// Contains up-to-date tooltip corresponding to wire you are hovering over.
         /// </summary>
-        private string _wireDataToolTip;
-        public string WireDataTooltip 
+        private string connectorDataToolTip;
+        public string ConnectorDataTooltip 
         {
             get
             {
-                return _wireDataToolTip;
+                return connectorDataToolTip;
             }
             set
             {
-                _wireDataToolTip = value;
-                RaisePropertyChanged(nameof(WireDataTooltip));
+                connectorDataToolTip = value;
+                RaisePropertyChanged(nameof(ConnectorDataTooltip));
             }
         }
 
@@ -378,21 +378,18 @@ namespace Dynamo.ViewModels
         #endregion
 
         /// <summary>
-        /// Updates 'WireDataTooltip' to reflect data of wire being hovered over.
+        /// Updates 'ConnectorDataTooltip' to reflect data of wire being hovered over.
         /// </summary>
-        private void UpdateWireDataToolTip()
+        private void UpdateConnectorDataToolTip()
         {
             bool isCollectionofFiveorMore = false;
 
             if (_model != null)
             {
-                var index = _model.Start.Index;
-                var controller = workspaceViewModel.DynamoViewModel.EngineController;
-                var owner = _model.Start.Owner;
                 var portValue = _model.Start.Owner.GetValue(_model.Start.Index, workspaceViewModel.DynamoViewModel.EngineController);
                 if (portValue is null)
                 {
-                    WireDataTooltip = "N/A";
+                    ConnectorDataTooltip = "N/A";
                     return;
                 }
 
@@ -413,7 +410,7 @@ namespace Dynamo.ViewModels
                         formatted += "...";
                         formatted += Environment.NewLine;
                         formatted += portValue.GetElements().Last().StringData;
-                        WireDataTooltip = $"{_model.Start.Owner.Name} -> {_model.End.Owner.Name}" + Environment.NewLine +
+                        ConnectorDataTooltip = $"{_model.Start.Owner.Name} -> {_model.End.Owner.Name}" + Environment.NewLine +
                       formatted;
                     }
                     else
@@ -425,13 +422,13 @@ namespace Dynamo.ViewModels
                             if (i != portValue.GetElements().Count() - 1)
                                 formatted += Environment.NewLine;
                         }
-                        WireDataTooltip = $"{_model.Start.Owner.Name} -> {_model.End.Owner.Name}" + Environment.NewLine +
+                        ConnectorDataTooltip = $"{_model.Start.Owner.Name} -> {_model.End.Owner.Name}" + Environment.NewLine +
                       formatted;
                     }
                 }
                 else
                 {
-                    WireDataTooltip = $"{_model.Start.Owner.Name} -> {_model.End.Owner.Name}" + Environment.NewLine + portValue.StringData;
+                    ConnectorDataTooltip = $"{_model.Start.Owner.Name} -> {_model.End.Owner.Name}" + Environment.NewLine + portValue.StringData;
                 }
                 isHoveredACollection = isCollectionofFiveorMore;
             }
@@ -439,11 +436,11 @@ namespace Dynamo.ViewModels
         #region Commands
 
         public DelegateCommand BreakConnectionCommand { get; set; }
-        public DelegateCommand HideWireCommand { get; set; }
+        public DelegateCommand HideConnectorCommand { get; set; }
         public DelegateCommand SelectConnectedCommand { get; set; }
         public DelegateCommand MouseHoverCommand { get; set; }
         public DelegateCommand MouseUnhoverCommand { get; set; }
-        public DelegateCommand PinWireCommand { get; set; }
+        public DelegateCommand PinConnectorCommand { get; set; }
 
         public void MouseHoverCommandExecute(object parameter)
         {
@@ -496,7 +493,7 @@ namespace Dynamo.ViewModels
         /// Toggles wire viz on/off. This can be overwritten when a node is selected in hidden mode.
         /// </summary>
         /// <param name="parameter"></param>
-        private void HideWireCommandExecute(object parameter)
+        private void HideConnectorCommandExecute(object parameter)
         {
             IsVisible = !IsVisible;
         }
@@ -513,26 +510,23 @@ namespace Dynamo.ViewModels
             DynamoSelection.Instance.Selection.Add(rightSideNode);
         }
 
-        private void PinWireCommandExecute(object parameters)
+        private void PinConnectorCommandExecute(object parameters)
         {
-            
             MousePosition = new Point(PanelX, PanelY);
             if (MousePosition == new Point(0, 0)) return;
-            var wirePinModel = new WirePinModel(PanelX, PanelY, Guid.NewGuid(), _model.GUID);
-            var wirePinVM = new WirePinViewModel(this.workspaceViewModel, wirePinModel);
-            wirePinVM.RequestRedraw += HandlerRedrawRequest;
-            wirePinVM.RequestRemove += HandleWirePinVMRemove;
+            var connectorPinModel = new ConnectorPinModel(PanelX, PanelY, Guid.NewGuid(), _model.GUID);
+            var connectorPinViewModel = new ConnectorPinViewModel(this.workspaceViewModel, connectorPinModel);
+            connectorPinViewModel.RequestRedraw += HandlerRedrawRequest;
+            connectorPinViewModel.RequestRemove += HandleConnectorPinViewModelRemove;
 
-            workspaceViewModel.Pins.Add(wirePinVM);
-            WirePinViewCollection.Add(wirePinVM);
+            workspaceViewModel.Pins.Add(connectorPinViewModel);
+            ConnectorPinViewCollection.Add(connectorPinViewModel);
         }
 
         private void HandlerRedrawRequest(object sender, EventArgs e)
         {
             Redraw();
         }
-
-       
 
         bool CanRun(object parameter)
         {
@@ -556,16 +550,14 @@ namespace Dynamo.ViewModels
         private void InitializeCommands()
         {
             BreakConnectionCommand = new DelegateCommand(BreakConnectionCommandExecute, CanRun);
-            HideWireCommand = new DelegateCommand(HideWireCommandExecute, CanRun);
+            HideConnectorCommand = new DelegateCommand(HideConnectorCommandExecute, CanRun);
             SelectConnectedCommand = new DelegateCommand(SelectConnectedCommandExecute, CanRun);
             MouseHoverCommand = new DelegateCommand(MouseHoverCommandExecute, CanRunMouseHover);
             MouseUnhoverCommand = new DelegateCommand(MouseUnhoverCommandExecute, CanRunMouseUnhover);
-            PinWireCommand = new DelegateCommand(PinWireCommandExecute, CanRun);
+            PinConnectorCommand = new DelegateCommand(PinConnectorCommandExecute, CanRun);
         }
 
         #endregion
-
-
 
         /// <summary>
         /// Construct a view and start drawing.
@@ -574,8 +566,8 @@ namespace Dynamo.ViewModels
         public ConnectorViewModel(WorkspaceViewModel workspace, PortModel port)
         {
             this.workspaceViewModel = workspace;
-            WirePinViewCollection = new ObservableCollection<WirePinViewModel>();
-            WirePinViewCollection.CollectionChanged += HandleCollectionChanged;
+            ConnectorPinViewCollection = new ObservableCollection<ConnectorPinViewModel>();
+            ConnectorPinViewCollection.CollectionChanged += HandleCollectionChanged;
 
             IsVisible = workspaceViewModel.DynamoViewModel.IsShowingConnectors;
             IsConnecting = true;
@@ -596,19 +588,19 @@ namespace Dynamo.ViewModels
         {
             this.workspaceViewModel = workspace;
             _model = model;
-            _model.WirePinModels.CollectionChanged += WirePinModelCollectionChanged;
+            _model.ConnectorPinModels.CollectionChanged += ConnectorPinModelCollectionChanged;
 
-            WirePinViewCollection = new ObservableCollection<WirePinViewModel>();
-            WirePinViewCollection.CollectionChanged += HandleCollectionChanged;
+            ConnectorPinViewCollection = new ObservableCollection<ConnectorPinViewModel>();
+            ConnectorPinViewCollection.CollectionChanged += HandleCollectionChanged;
 
             IsVisible = workspaceViewModel.DynamoViewModel.IsShowingConnectors;
             MouseHoverOn = false;
 
-            if (_model.WirePinModels != null)
+            if (_model.ConnectorPinModels != null)
             {
-                foreach (var p in model.WirePinModels)
+                foreach (var p in model.ConnectorPinModels)
                 {
-                    AddPinViewModel(p);
+                    AddConnectorPinViewModel(p);
                 }
             }
 
@@ -621,38 +613,38 @@ namespace Dynamo.ViewModels
             Redraw();
             InitializeCommands();
 
-            UpdateWireDataToolTip();
+            UpdateConnectorDataToolTip();
         }
 
-        private void WirePinModelCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void ConnectorPinModelCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            foreach (WirePinModel newItem in e.NewItems)
+            foreach (ConnectorPinModel newItem in e.NewItems)
             {
-                AddPinViewModel(newItem);
+                AddConnectorPinViewModel(newItem);
             }
         }
 
-        private void AddPinViewModel(WirePinModel pinModel)
+        private void AddConnectorPinViewModel(ConnectorPinModel pinModel)
         {
-            var wirePinVM = new WirePinViewModel(this.workspaceViewModel, pinModel);
+            var pinViewModel = new ConnectorPinViewModel(this.workspaceViewModel, pinModel);
 
-            wirePinVM.RequestRedraw += HandlerRedrawRequest;
-            wirePinVM.RequestRemove += HandleWirePinVMRemove;
+            pinViewModel.RequestRedraw += HandlerRedrawRequest;
+            pinViewModel.RequestRemove += HandleConnectorPinViewModelRemove;
 
-            workspaceViewModel.Pins.Add(wirePinVM);
-            WirePinViewCollection.Add(wirePinVM);
+            workspaceViewModel.Pins.Add(pinViewModel);
+            ConnectorPinViewCollection.Add(pinViewModel);
         }
-        private void HandleWirePinVMRemove(object sender, EventArgs e)
+        private void HandleConnectorPinViewModelRemove(object sender, EventArgs e)
         {
-            var viewModelSender = sender as WirePinViewModel;
+            var viewModelSender = sender as ConnectorPinViewModel;
             if (viewModelSender is null) return;
 
             var matchingPin = workspaceViewModel.Pins.First(x => x == viewModelSender);
             matchingPin.RequestRedraw -= HandlerRedrawRequest;
             workspaceViewModel.Pins.Remove(matchingPin);
-            WirePinViewCollection.Remove(matchingPin);
+            ConnectorPinViewCollection.Remove(matchingPin);
 
-            if (WirePinViewCollection.Count == 0)
+            if (ConnectorPinViewCollection.Count == 0)
                 BezierControlPoints = null;
 
             matchingPin.Dispose();
@@ -662,23 +654,20 @@ namespace Dynamo.ViewModels
         {
             Redraw();
         }
-
-
-
         public virtual void Dispose()
         {
             _model.PropertyChanged -= Model_PropertyChanged;
             _model.Start.Owner.PropertyChanged -= StartOwner_PropertyChanged;
             _model.End.Owner.PropertyChanged -= EndOwner_PropertyChanged;
-            _model.WirePinModels.CollectionChanged -= WirePinModelCollectionChanged;
+            _model.ConnectorPinModels.CollectionChanged -= ConnectorPinModelCollectionChanged;
 
             workspaceViewModel.DynamoViewModel.Model.PreferenceSettings.PropertyChanged -= DynamoViewModel_PropertyChanged;
             Nodevm.PropertyChanged -= nodeViewModel_PropertyChanged;
 
-            foreach (var pin in WirePinViewCollection)
+            foreach (var pin in ConnectorPinViewCollection)
                 pin.RequestRedraw -= HandlerRedrawRequest;
 
-            DiscardAllWirePins();
+            DiscardAllConnectorPins();
         }
 
         private void nodeViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -720,7 +709,7 @@ namespace Dynamo.ViewModels
                     RaisePropertyChanged("PreviewState");
                     break;
                 case "CachedValue":
-                    UpdateWireDataToolTip();
+                    UpdateConnectorDataToolTip();
                     break;
                 default:
                     break;
@@ -799,7 +788,7 @@ namespace Dynamo.ViewModels
         /// </summary>
         public void Redraw()
         {
-            if (this.ConnectorModel.End != null && WirePinViewCollection.Count > 0)
+            if (this.ConnectorModel.End != null && ConnectorPinViewCollection.Count > 0)
             {
                 RedrawBezierManyPoints();
             }
@@ -970,9 +959,9 @@ namespace Dynamo.ViewModels
 
                 ///Add chain of points including start/end
                 
-                Point[] points = new Point[WirePinViewCollection.Count];
+                Point[] points = new Point[ConnectorPinViewCollection.Count];
                 int count = 0;
-                foreach (var wirePin in WirePinViewCollection)
+                foreach (var wirePin in ConnectorPinViewCollection)
                 {
                     points[count] = new Point(wirePin.Left, wirePin.Top);
                     count++;
@@ -1030,14 +1019,14 @@ namespace Dynamo.ViewModels
             return outPointPairs;
         }
 
-        public void DiscardAllWirePins()
+        public void DiscardAllConnectorPins()
         {
-            foreach (var pin in WirePinViewCollection)
+            foreach (var pin in ConnectorPinViewCollection)
             {
                 pin.Model.Dispose();
                 pin.Dispose();
             }
-            WirePinViewCollection.Clear();
+            ConnectorPinViewCollection.Clear();
             workspaceViewModel.Pins.Clear();
         }
 

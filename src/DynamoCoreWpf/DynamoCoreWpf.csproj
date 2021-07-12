@@ -313,14 +313,14 @@
     <Compile Include="ViewModels\Watch3D\HelixWatch3DViewModel.cs" />
     <Compile Include="ViewModels\Watch3D\DefaultWatch3DViewModel.cs" />
     <Compile Include="ViewModels\Watch3D\IWatch3DViewModel.cs" />
-    <Compile Include="ViewModels\WirePinViewModel.cs" />
+    <Compile Include="ViewModels\ConnectorPinViewModel.cs" />
     <Compile Include="Views\About\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CodeBlocks\CodeBlockEditor.cs" />
     <Compile Include="Views\Core\DynamoOpenFileDialog.cs" />
-    <Compile Include="Views\Core\WirePinView.xaml.cs">
-      <DependentUpon>WirePinView.xaml</DependentUpon>
+    <Compile Include="Views\Core\ConnectorPinView.xaml.cs">
+      <DependentUpon>ConnectorPinView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Debug\DebugModesWindow.xaml.cs">
       <DependentUpon>DebugModesWindow.xaml</DependentUpon>
@@ -448,7 +448,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Core\WirePinView.xaml">
+    <Page Include="Views\Core\ConnectorPinView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

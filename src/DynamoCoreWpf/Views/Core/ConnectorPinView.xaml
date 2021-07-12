@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Dynamo.Nodes.WirePinView"
+﻿<UserControl x:Class="Dynamo.Nodes.ConnectorPinView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -26,7 +26,7 @@
     <Canvas>
         <Canvas.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="{x:Static props:Resources.WireContextMenuHeaderUnpinWire}" Command="{Binding UnpinWireCommand}"/>
+                    <MenuItem Header="{x:Static props:Resources.ConnectorContextMenuHeaderUnpinConnector}" Command="{Binding UnpinConnectorCommand}"/>
                 </ContextMenu>
             </Canvas.ContextMenu>
 

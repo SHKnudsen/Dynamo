@@ -14,13 +14,13 @@ using DynCmd = Dynamo.Models.DynamoModel;
 namespace Dynamo.Nodes
 {
     /// <summary>
-    /// Interaction logic for WirePinView.xaml
+    /// Interaction logic for ConnectorPinView.xaml
     /// </summary>
-    public partial class WirePinView : IViewModelView<WirePinViewModel>
+    public partial class ConnectorPinView : IViewModelView<ConnectorPinViewModel>
     {
-        public WirePinViewModel ViewModel { get; private set; }
+        public ConnectorPinViewModel ViewModel { get; private set; }
 
-        public WirePinView()
+        public ConnectorPinView()
         {
             InitializeComponent();
 
@@ -31,7 +31,7 @@ namespace Dynamo.Nodes
 
         void OnPinViewLoaded(object sender, RoutedEventArgs e)
         {
-            ViewModel = this.DataContext as WirePinViewModel;
+            ViewModel = this.DataContext as ConnectorPinViewModel;
             ViewModel.RequestsSelection += OnViewModelRequestsSelection;
 
         }

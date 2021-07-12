@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Dynamo.ViewModels
 {
-    public partial class WirePinViewModel
+    public partial class ConnectorPinViewModel
     {
         private DelegateCommand _selectCommand;
         [JsonIgnore]
@@ -39,7 +39,7 @@ namespace Dynamo.ViewModels
             {
                 if (_ungroupCommand == null)
                     _ungroupCommand =
-                        new DelegateCommand(UngroupWirePin, CanUngroupWirePin);
+                        new DelegateCommand(UngroupConnectorPin, CanUngroupConnectorPin);
 
                 return _ungroupCommand;
             }

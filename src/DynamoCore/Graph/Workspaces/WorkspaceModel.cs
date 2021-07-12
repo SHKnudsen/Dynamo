@@ -43,7 +43,7 @@ namespace Dynamo.Graph.Workspaces
         public IEnumerable<ExtraNodeViewInfo> NodeViews;
         public IEnumerable<ExtraNoteViewInfo> Notes;
         public IEnumerable<ExtraAnnotationViewInfo> Annotations;
-        public IEnumerable<ExtraWirePinInfo> WirePins;
+        public IEnumerable<ExtraConnectorPinInfo> ConnectorPins;
         public double X;
         public double Y;
         public double Zoom;
@@ -82,10 +82,10 @@ namespace Dynamo.Graph.Workspaces
     }
 
     /// <summary>
-    /// Non view-specific container for additional note view information 
-    /// required to fully construct a WorkspaceModel from JSON
+    /// Container for connector pin view information 
+    /// required to fully construct a WorkspaceViewModel from JSON
     /// </summary>
-    public class ExtraWirePinInfo
+    public class ExtraConnectorPinInfo
     {
         public string ConnectorGuid;
         public double Left;
@@ -382,36 +382,6 @@ namespace Dynamo.Graph.Workspaces
         protected virtual void OnNodesCleared()
         {
             var handler = NodesCleared;
-            if (handler != null) handler();
-        }
-
-        /// <summary>
-        ///     Event that is fired when a PIN is added to the workspace.
-        /// </summary>
-        public event Action<WirePinModel> WirePinAdded;
-        protected virtual void OnWirePinAdded(WirePinModel pin)
-        {
-            var handler = WirePinAdded;
-            if (handler != null) handler(pin);
-        }
-
-        /// <summary>
-        ///     Event that is fired when a pin is removed from the workspace.
-        /// </summary>
-        public event Action<WirePinModel> WirePinRemoved;
-        protected virtual void OnWirePinRemoved(WirePinModel pin)
-        {
-            var handler = WirePinRemoved;
-            if (handler != null) handler(pin);
-        }
-
-        /// <summary>
-        ///     Event that is fired when pins are cleared from the workspace.
-        /// </summary>
-        public event Action WirePinsCleared;
-        protected virtual void OnWirePinsCleared()
-        {
-            var handler = WirePinsCleared;
             if (handler != null) handler();
         }
 
@@ -2069,7 +2039,8 @@ namespace Dynamo.Graph.Workspaces
             //            ensure that any contained notes are contained properly
             LoadNotesFromAnnotations(workspaceViewInfo.Annotations);
 
-            LoadWirePins(workspaceViewInfo.WirePins);
+            ///This function loads ConnectorPins to the corresponding connector models.
+            LoadConnectorPins(workspaceViewInfo.ConnectorPins);
 
             // This function loads annotations from the Annotations array in the JSON format
             // that have a non-empty nodes collection
@@ -2165,16 +2136,15 @@ namespace Dynamo.Graph.Workspaces
                 {
                     this.AddNote(noteModel);
                 }
-           
             }
         }
 
-        private void LoadWirePins(IEnumerable<ExtraWirePinInfo> pinViews)
+        private void LoadConnectorPins(IEnumerable<ExtraConnectorPinInfo> pinViews)
         {
             if (pinViews == null)
                 return;
 
-            foreach (ExtraWirePinInfo pinViewInfo in pinViews)
+            foreach (ExtraConnectorPinInfo pinViewInfo in pinViews)
             {
                 var connectorGuid = IdToGuidConverter(pinViewInfo.ConnectorGuid);
 
@@ -2234,8 +2204,6 @@ namespace Dynamo.Graph.Workspaces
                     notes.Add(noteModel);
                 }
 
-                // Create a collection of pins in the given annotation
-                var pins = new List<WirePinModel>();
                 foreach (string pinId in annotationViewInfo.Nodes)
                 {
                     var guidValue = IdToGuidConverter(pinId);
@@ -2243,7 +2211,7 @@ namespace Dynamo.Graph.Workspaces
                         continue;
                 }
 
-                var annotationModel = new AnnotationModel(nodes, notes, pins);
+                var annotationModel = new AnnotationModel(nodes, notes);
                 annotationModel.AnnotationText = text;
                 annotationModel.FontSize = annotationViewInfo.FontSize;
                 annotationModel.Background = annotationViewInfo.Background;

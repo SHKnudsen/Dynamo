@@ -403,6 +403,42 @@ namespace Dynamo.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Break Connections.
+        /// </summary>
+        public static string ConnectorContextMenuHeaderBreakConnections {
+            get {
+                return ResourceManager.GetString("ConnectorContextMenuHeaderBreakConnections", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pin Wire.
+        /// </summary>
+        public static string ConnectorContextMenuHeaderPinConnector {
+            get {
+                return ResourceManager.GetString("ConnectorContextMenuHeaderPinConnector", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Connected.
+        /// </summary>
+        public static string ConnectorContextMenuHeaderSelectConnected {
+            get {
+                return ResourceManager.GetString("ConnectorContextMenuHeaderSelectConnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unpin Wire.
+        /// </summary>
+        public static string ConnectorContextMenuHeaderUnpinConnector {
+            get {
+                return ResourceManager.GetString("ConnectorContextMenuHeaderUnpinConnector", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to I agree to data collection in desktop products for Autodesk analytics programs..
         /// </summary>
         public static string ConsentFormADPAnalyticsCheckBoxContent {
@@ -6019,42 +6055,6 @@ namespace Dynamo.Wpf.Properties {
         public static string WatchNodeRawDataMenu {
             get {
                 return ResourceManager.GetString("WatchNodeRawDataMenu", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Break Connections.
-        /// </summary>
-        public static string WireContextMenuHeaderBreakConnections {
-            get {
-                return ResourceManager.GetString("WireContextMenuHeaderBreakConnections", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Pin Wire.
-        /// </summary>
-        public static string WireContextMenuHeaderPinWire {
-            get {
-                return ResourceManager.GetString("WireContextMenuHeaderPinWire", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Select Connected.
-        /// </summary>
-        public static string WireContextMenuHeaderSelectConnected {
-            get {
-                return ResourceManager.GetString("WireContextMenuHeaderSelectConnected", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unpin Wire.
-        /// </summary>
-        public static string WireContextMenuHeaderUnpinWire {
-            get {
-                return ResourceManager.GetString("WireContextMenuHeaderUnpinWire", resourceCulture);
             }
         }
         

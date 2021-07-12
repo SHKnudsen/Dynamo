@@ -230,7 +230,7 @@ namespace Dynamo.Models
 
         //private void CreatePinImp(CreateWirePinCommand command)
         //{
-        //    WirePinModel pinModel = CurrentWorkspace.AddWirePin(
+        //    ConnectorPinModel pinModel = CurrentWorkspace.AddWirePin(
         //          command.DefaultPosition,
         //          command.X,
         //          command.Y,

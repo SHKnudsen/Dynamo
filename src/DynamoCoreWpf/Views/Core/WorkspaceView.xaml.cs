@@ -760,7 +760,7 @@ namespace Dynamo.Views
             var selection = DynamoSelection.Instance.Selection;
             var nodes = selection.OfType<NodeModel>();
             var notes = selection.OfType<NoteModel>();
-            var pins = selection.OfType<WirePinModel>();
+            var pins = selection.OfType<ConnectorPinModel>();
             var annotations = selection.OfType<AnnotationModel>();
 
             var connectors = nodes.SelectMany(n =>
@@ -769,7 +769,7 @@ namespace Dynamo.Views
 
             // set list of selected viewmodels
             draggedData = connectors.Select(c => (ViewModelBase)new ConnectorViewModel(ViewModel, c))
-                .Concat(pins.Select(p=> new WirePinViewModel(ViewModel, p)))
+                .Concat(pins.Select(p=> new ConnectorPinViewModel(ViewModel, p)))
                 .Concat(notes.Select(n => new NoteViewModel(ViewModel, n)))
                 .Concat(annotations.Select(a => new AnnotationViewModel(ViewModel, a)))
                 .Concat(nodes.Select(n =>
