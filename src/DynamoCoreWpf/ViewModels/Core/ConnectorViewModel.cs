@@ -636,7 +636,7 @@ namespace Dynamo.ViewModels
         {
             var pinViewModel = new ConnectorPinViewModel(this.workspaceViewModel, pinModel);
 
-            pinViewModel.RequestsSelection += HandleRequestSelected;
+            pinViewModel.RequestSelect += HandleRequestSelected;
             pinViewModel.RequestRedraw += HandlerRedrawRequest;
             pinViewModel.RequestRemove += HandleConnectorPinViewModelRemove;
 
@@ -648,7 +648,6 @@ namespace Dynamo.ViewModels
         {
             ConnectorPinViewModel pinViewModel = sender as ConnectorPinViewModel;
             IsPartlyVisible = pinViewModel.IsSelected && IsVisible == false ? true : false;
-            pinViewModel.RequestsSelection -= HandleRequestSelected;
         }
 
         private void HandleConnectorPinViewModelRemove(object sender, EventArgs e)
@@ -657,7 +656,7 @@ namespace Dynamo.ViewModels
             if (viewModelSender is null) return;
 
             var matchingPin = workspaceViewModel.Pins.First(x => x == viewModelSender);
-            matchingPin.RequestsSelection -= HandleRequestSelected;
+            matchingPin.RequestSelect -= HandleRequestSelected;
             matchingPin.RequestRedraw -= HandlerRedrawRequest;
             workspaceViewModel.Pins.Remove(matchingPin);
             ConnectorPinViewCollection.Remove(matchingPin);
@@ -687,7 +686,7 @@ namespace Dynamo.ViewModels
             foreach (var pin in ConnectorPinViewCollection)
             {
                 pin.RequestRedraw -= HandlerRedrawRequest;
-                pin.RequestsSelection -= HandleRequestSelected;
+                pin.RequestSelect -= HandleRequestSelected;
             }
 
             DiscardAllConnectorPins();

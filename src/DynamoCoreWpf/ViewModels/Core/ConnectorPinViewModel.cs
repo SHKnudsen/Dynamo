@@ -12,6 +12,14 @@ namespace Dynamo.ViewModels
     public partial class ConnectorPinViewModel : ViewModelBase
     {
         #region Events
+        public event EventHandler RequestSelect;
+        public virtual void OnRequestSelect(Object sender, EventArgs e)
+        {
+            if (RequestSelect != null)
+            {
+                RequestSelect(this, e);
+            }
+        }
 
         public event EventHandler RequestRedraw;
         public virtual void OnRequestRedraw(Object sender, EventArgs e)
@@ -33,8 +41,6 @@ namespace Dynamo.ViewModels
         #region Properties
 
         private ConnectorPinModel _model;
-        [JsonIgnore]
-        public readonly DynamoViewModel DynamoViewModel;
 
         [JsonIgnore]
         public readonly WorkspaceViewModel WorkspaceViewModel;
@@ -89,7 +95,6 @@ namespace Dynamo.ViewModels
             set { zIndex = value; RaisePropertyChanged(nameof(ZIndex)); }
         }
 
-
         [JsonIgnore]
         public bool IsSelected
         {
@@ -121,9 +126,6 @@ namespace Dynamo.ViewModels
 
         #endregion
 
-        [JsonIgnore]
-        public Action OnMouseLeave;
-
         #region Commands
         [JsonIgnore]
         public DelegateCommand UnpinConnectorCommand { get; set; }
@@ -142,11 +144,9 @@ namespace Dynamo.ViewModels
         public ConnectorPinViewModel(WorkspaceViewModel workspaceViewModel, ConnectorPinModel model)
         {
             this.WorkspaceViewModel = workspaceViewModel;
-            DynamoViewModel = workspaceViewModel.DynamoViewModel;
             _model = model;
             InitializeCommands();
             model.PropertyChanged += pin_PropertyChanged;
-           // DynamoSelection.Instance.Selection.CollectionChanged += SelectionOnCollectionChanged;
             ZIndex = ++StaticZIndex; // places the note on top of all nodes/notes
         }
 
@@ -154,6 +154,11 @@ namespace Dynamo.ViewModels
         {
             _model.PropertyChanged -= pin_PropertyChanged;
             base.Dispose();
+        }
+
+        public void UpdateSizeFromView(double w, double h)
+        {
+            this._model.SetSize(w, h);
         }
 
         private bool CanSelect(object parameter)
@@ -179,6 +184,7 @@ namespace Dynamo.ViewModels
                     RaisePropertyChanged(nameof(Top));
                     break;
                 case "IsSelected":
+                    OnRequestSelect(this, EventArgs.Empty);
                     RaisePropertyChanged(nameof(IsSelected));
                     break;
             }
