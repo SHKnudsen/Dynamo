@@ -145,7 +145,8 @@ namespace Dynamo.Graph.Workspaces
 
                 foreach (var pin in edge.ConnectorPinModels)
                 {
-                    combinedGraph.AddNode(pin.GUID, 30, 30,pin.CenterX, pin.CenterY,pin.IsSelected);
+                    combinedGraph.AddNode(pin.GUID, 30, 30,pin.CenterX, pin.CenterY,pin.IsSelected 
+                        || DynamoSelection.Instance.Selection.Count == 0);
                 }
             }
 

@@ -5,18 +5,6 @@ namespace Dynamo.ViewModels
 {
     public partial class ConnectorPinViewModel
     {
-        private DelegateCommand _selectCommand;
-        [JsonIgnore]
-        public DelegateCommand SelectCommand
-        {
-            get
-            {
-                if (_selectCommand == null)
-                    _selectCommand = new DelegateCommand(Select, CanSelect);
-                return _selectCommand;
-            }
-        }
-
         private DelegateCommand _createGroupCommand;
         [JsonIgnore]
         public DelegateCommand CreateGroupCommand

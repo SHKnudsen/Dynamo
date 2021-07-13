@@ -25,57 +25,36 @@ namespace Dynamo.Nodes
     public partial class ConnectorPinView : IViewModelView<ConnectorPinViewModel>
     {
         public ConnectorPinViewModel ViewModel { get; private set; }
+        /// <summary>
+        /// Old ZIndex of node. It's set, when mouse leaves node.
+        /// </summary>
+        private int oldZIndex;
 
         public ConnectorPinView()
         {
             InitializeComponent();
+            ViewModel = null;
 
             Loaded += OnPinViewLoaded;
             Unloaded += OnPinViewUnloaded;
         }
-
-
         void OnPinViewLoaded(object sender, RoutedEventArgs e)
         {
             ViewModel = this.DataContext as ConnectorPinViewModel;
-            ViewModel.RequestsSelection += OnViewModelRequestsSelection;
-
-            MouseLeave += ConnectorPin_MouseLeave;
-
         }
-
-        private void ConnectorPin_MouseLeave(object sender, MouseEventArgs e)
-        {
-            if (ViewModel != null && ViewModel.OnMouseLeave != null)
-                ViewModel.OnMouseLeave();
-        }
-
         void OnPinViewUnloaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.RequestsSelection -= OnViewModelRequestsSelection;
         }
 
-        void OnViewModelRequestsSelection(object sender, EventArgs e)
+        private void OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (!ViewModel.Model.IsSelected)
-            {
-                if (!Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
-                {
-                    DynamoSelection.Instance.ClearSelection();
-                }
-
-                DynamoSelection.Instance.Selection.AddUnique(ViewModel.Model);
-
-            }
-            else
-            {
-                if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
-                {
-                    DynamoSelection.Instance.Selection.Remove(ViewModel.Model);
-                }
-            }
+            BringToFront();
         }
-        
+        private void OnPinViewMouseLeave(object sender, MouseEventArgs e)
+        {
+            ViewModel.ZIndex = oldZIndex;
+        }
+
         /// <summary>
         /// Sets ZIndex of the particular note to be the highest in the workspace
         /// This brings the note to the forefront of the workspace when clicked
@@ -89,7 +68,6 @@ namespace Dynamo.Nodes
 
             ViewModel.ZIndex = ++ConnectorPinViewModel.StaticZIndex;
         }
-
 
         /// <summary>
         /// If ZIndex is more then max value of int, it should be set back to 0 for all elements.
@@ -116,23 +94,22 @@ namespace Dynamo.Nodes
 
         private void OnPinMouseDown(object sender, MouseButtonEventArgs e)
         {
-            DynamoSelection.Instance.Selection.AddUnique(ViewModel.Model);
-            BringToFront();
+            if (!ViewModel.Model.IsSelected)
+            {
+                if (!Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
+                {
+                    DynamoSelection.Instance.ClearSelection();
+                }
+
+                DynamoSelection.Instance.Selection.AddUnique(ViewModel.Model);
+            }
+            else
+            {
+                if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+                {
+                    DynamoSelection.Instance.Selection.Remove(ViewModel.Model);
+                }
+            }
         }
-
-        private void OnNodeViewMouseEnter(object sender, MouseEventArgs e)
-        {
-
-        }
-
-        //private void OnPinMouseUp(object sender, MouseButtonEventArgs e)
-        //{
-        //    DynamoSelection.Instance.Selection.Remove(ViewModel.Model);
-        //}
-
-        //private void WirePinView_OnMouseLeave(object sender, MouseEventArgs e)
-        //{
-        //    DynamoSelection.Instance.Selection.Remove(ViewModel.Model);
-        //}
     }
 }

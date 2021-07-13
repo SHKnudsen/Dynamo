@@ -13,15 +13,6 @@ namespace Dynamo.ViewModels
     {
         #region Events
 
-        public event EventHandler RequestsSelection;
-        public virtual void OnRequestsSelection(Object sender, EventArgs e)
-        {
-            if (RequestsSelection != null)
-            {
-                RequestsSelection(this, e);
-            }
-        }
-
         public event EventHandler RequestRedraw;
         public virtual void OnRequestRedraw(Object sender, EventArgs e)
         {
@@ -42,6 +33,8 @@ namespace Dynamo.ViewModels
         #region Properties
 
         private ConnectorPinModel _model;
+        [JsonIgnore]
+        public readonly DynamoViewModel DynamoViewModel;
 
         [JsonIgnore]
         public readonly WorkspaceViewModel WorkspaceViewModel;
@@ -149,6 +142,7 @@ namespace Dynamo.ViewModels
         public ConnectorPinViewModel(WorkspaceViewModel workspaceViewModel, ConnectorPinModel model)
         {
             this.WorkspaceViewModel = workspaceViewModel;
+            DynamoViewModel = workspaceViewModel.DynamoViewModel;
             _model = model;
             InitializeCommands();
             model.PropertyChanged += pin_PropertyChanged;
@@ -159,18 +153,7 @@ namespace Dynamo.ViewModels
         public override void Dispose()
         {
             _model.PropertyChanged -= pin_PropertyChanged;
-
             base.Dispose();
-        }
-
-        private void Select(object parameter)
-        {
-            OnRequestsSelection(this, EventArgs.Empty);
-        }
-
-        public void UpdateSizeFromView(double w, double h)
-        {
-            this._model.SetSize(w, h);
         }
 
         private bool CanSelect(object parameter)
@@ -188,12 +171,12 @@ namespace Dynamo.ViewModels
             switch (e.PropertyName)
             {
                 case "X":
-                    RaisePropertyChanged(nameof(Left));
                     OnRequestRedraw(this, EventArgs.Empty);
+                    RaisePropertyChanged(nameof(Left));
                     break;
                 case "Y":
-                    RaisePropertyChanged(nameof(Top));
                     OnRequestRedraw(this, EventArgs.Empty);
+                    RaisePropertyChanged(nameof(Top));
                     break;
                 case "IsSelected":
                     RaisePropertyChanged(nameof(IsSelected));
@@ -227,7 +210,6 @@ namespace Dynamo.ViewModels
                     }
                 }
             }
-
             return true;
         }
 

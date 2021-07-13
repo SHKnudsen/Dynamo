@@ -10,9 +10,9 @@
              d:DesignWidth="30"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:ui="clr-namespace:Dynamo.UI"
-           
              MouseLeftButtonDown="OnPinMouseDown"
-             MouseEnter="OnNodeViewMouseEnter">
+             PreviewMouseLeftButtonDown="OnPreviewMouseLeftButtonDown"
+             MouseLeave="OnPinViewMouseLeave">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -29,7 +29,7 @@
                 </ContextMenu>
             </Canvas.ContextMenu>
 
-            <!--<Grid  x:Name="PinBtn"  Background="Transparent">-->
+            <Grid  x:Name="PinBtn"  Background="Transparent">
                 <Border CornerRadius="20">
                     <Border.Style>
                         <Style TargetType="{x:Type Border}">
@@ -49,7 +49,7 @@
                     <Image.Source>/DynamoCoreWpf;component/UI/Images/Pin_16px.png</Image.Source>
                 </Image>
             </Border>
-            <!--</Grid>-->
+            </Grid>
         <Canvas.RenderTransform>
             <TranslateTransform X="0" Y="-10" />
         </Canvas.RenderTransform>
