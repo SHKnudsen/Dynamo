@@ -65,7 +65,6 @@ namespace Dynamo.Wpf.ViewModels.Core.Converters
 
                 serializer.Serialize(writer, new AnnotationViewModel(workspaceView, convertedNote));
             }
-
             writer.WriteEndArray();
 
             writer.WritePropertyName("X");

@@ -811,7 +811,6 @@ namespace Dynamo.Graph.Workspaces
             writer.WritePropertyName("Connectors");
             serializer.Serialize(writer, ws.Connectors);
 
-
             // Dependencies
             writer.WritePropertyName("Dependencies");
             writer.WriteStartArray();
