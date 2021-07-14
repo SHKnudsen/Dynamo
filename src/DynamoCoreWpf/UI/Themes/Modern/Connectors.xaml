@@ -12,7 +12,6 @@
     <ResourceDictionary.MergedDictionaries>
         <ui:SharedResourceDictionary Source="{x:Static ui:SharedDictionaryManager.DynamoConvertersDictionaryUri}" />
     </ResourceDictionary.MergedDictionaries>
-    <converters:HeaderVizConverter x:Key="HeaderVizConvert"/>
     <DataTemplate DataType="{x:Type viewModels:WatchHoverIconViewModel}">
         <!--Add ConnectorViewViews here-->
         <views:WatchHoverIconView DataContext="{Binding}" />
@@ -82,7 +81,21 @@
                 <ContextMenu>
                     <MenuItem Header="{x:Static props:Resources.ConnectorContextMenuHeaderBreakConnections}" Command="{Binding BreakConnectionCommand}"/>
                     <MenuItem Header="{x:Static props:Resources.ConnectorContextMenuHeaderSelectConnected}" Command="{Binding SelectConnectedCommand}"/>
-                    <MenuItem Header="{Binding Path=IsVisible, Converter={StaticResource HeaderVizConvert}}" Command="{Binding HideConnectorCommand}"/>
+                    <MenuItem Command="{Binding HideConnectorCommand}">
+                        <MenuItem.Style>
+                            <Style TargetType="MenuItem">
+                                <Setter Property="IsChecked" Value="False"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsVisible}" Value="True">
+                                        <Setter Property="Header" Value="Hide Wire"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsVisible}" Value="False">
+                                        <Setter Property="Header" Value="Show Wire"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </MenuItem.Style>
+                    </MenuItem>
                     <MenuItem Header="{x:Static props:Resources.ConnectorContextMenuHeaderPinConnector}" Command="{Binding PinConnectorCommand}"/>
                 </ContextMenu>
             </Grid.ContextMenu>

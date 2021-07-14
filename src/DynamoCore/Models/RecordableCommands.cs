@@ -1151,10 +1151,6 @@ namespace Dynamo.Models
         }
 
         /// <summary>
-        /// A command to create a note.
-        /// </summary>
-
-        /// <summary>
         /// A command to select a model object.
         /// </summary>
         [DataContract]

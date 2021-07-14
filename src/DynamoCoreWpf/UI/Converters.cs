@@ -32,24 +32,6 @@ using Thickness = System.Windows.Thickness;
 
 namespace Dynamo.Controls
 {
-    /// <summary>
-    /// Used at 'Connectors' to toggle between 'show wire/ hide wire' in the context menu when right clicking a wire.s
-    /// </summary>
-    public class HeaderVizConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            string displayString = (bool)value == true ? "Hide Wire": "Show Wire";
-            return displayString;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            string stringValue = value as string;
-            return stringValue == "Hide Wire" ? true : false;
-        }
-    }
-
     public class TooltipLengthTruncater : IValueConverter
     {
         private const int MaxChars = 100;
