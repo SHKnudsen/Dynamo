@@ -241,15 +241,6 @@ namespace Dynamo.Graph.Annotations
             this.Nodes = nodeModels.Concat(noteModels.Cast<ModelBase>()).ToList();
             UpdateBoundaryFromSelection();
         }
-        public AnnotationModel(IEnumerable<NodeModel> nodes, IEnumerable<ConnectorPinModel> pins)
-        {
-            var nodeModels = nodes as NodeModel[] ?? nodes.ToArray();
-            var pinModels = pins as ConnectorPinModel[] ?? pins.ToArray();
-            DeletedModelBases = new List<ModelBase>();
-            this.Nodes = nodeModels.Concat(pinModels.Cast<ModelBase>()).ToList();
-            UpdateBoundaryFromSelection();
-        }
-
 
         private void model_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
