@@ -1126,6 +1126,7 @@ namespace Dynamo.ViewModels
             var command = new DynamoModel.CreateNoteCommand(Guid.NewGuid(), null, 0, 0, true);
             this.ExecuteCommand(command);
         }
+
         internal bool CanAddNote(object parameters)
         {
             return true;

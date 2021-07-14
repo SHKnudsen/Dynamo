@@ -183,8 +183,8 @@ namespace Dynamo.UI
         public static ResourceDictionary ConnectorsDictionary
         {
             get {
-                  return _connectorsDictionary ??
-                    (_connectorsDictionary = new ResourceDictionary() { Source = ConnectorsDictionaryUri });                   
+                return _connectorsDictionary ??
+                    (_connectorsDictionary = new ResourceDictionary() {Source = ConnectorsDictionaryUri});                   
             }
         }
 
