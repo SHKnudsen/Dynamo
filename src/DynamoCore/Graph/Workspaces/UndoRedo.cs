@@ -516,7 +516,9 @@ namespace Dynamo.Graph.Workspaces
         {
             ModelBase foundModel = (Connectors.FirstOrDefault(c => c.GUID == modelGuid)
                 ?? Nodes.FirstOrDefault(node => node.GUID == modelGuid) as ModelBase)
-                ?? (Notes.FirstOrDefault(note => note.GUID == modelGuid) ?? Annotations.FirstOrDefault(annotation => annotation.GUID == modelGuid) as ModelBase ?? Presets.FirstOrDefault(preset => preset.GUID == modelGuid) as ModelBase);
+                ?? (Notes.FirstOrDefault(note => note.GUID == modelGuid)
+                ?? Annotations.FirstOrDefault(annotation => annotation.GUID == modelGuid) as ModelBase
+                ?? Presets.FirstOrDefault(preset => preset.GUID == modelGuid) as ModelBase);
 
             return foundModel;
         }
