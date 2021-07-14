@@ -151,7 +151,7 @@ namespace Dynamo.Graph
         }
 
         private static IEnumerable<AnnotationModel> LoadAnnotationsFromXml(XmlDocument xmlDoc, IEnumerable<NodeModel> nodes,
-                                                                                IEnumerable<NoteModel> notes)
+                                                                                IEnumerable<NoteModel> notes )
         {
             XmlNodeList nNodes = xmlDoc.GetElementsByTagName("Annotations");
             if (nNodes.Count == 0)
@@ -223,7 +223,6 @@ namespace Dynamo.Graph
             var nodes = LoadNodesFromXml(xmlDoc, nodeFactory, elementResolver).ToList();
             var connectors = LoadConnectorsFromXml(xmlDoc, nodes.ToDictionary(node => node.GUID)).ToList();
             var notes = LoadNotesFromXml(xmlDoc).ToList();
-           // var pins = LoadPinsFromXml(xmlDoc).ToList();
             var annotations = LoadAnnotationsFromXml(xmlDoc, nodes, notes).ToList();
             var presets = LoadPresetsFromXml(xmlDoc,nodes).ToList();
 
