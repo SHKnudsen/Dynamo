@@ -105,7 +105,7 @@ namespace Dynamo.ViewModels
             set
             {
                 _isConnecting = value;
-                RaisePropertyChanged("IsConnecting");
+                RaisePropertyChanged(nameof(IsConnecting));
             }
         }
 
@@ -239,7 +239,7 @@ namespace Dynamo.ViewModels
             set
             {
                 _curvePoint1 = value;
-                RaisePropertyChanged("CurvePoint1");
+                RaisePropertyChanged(nameof(CurvePoint1));
             }
         }
 
@@ -250,7 +250,7 @@ namespace Dynamo.ViewModels
             set
             {
                 _curvePoint2 = value;
-                RaisePropertyChanged("CurvePoint2");
+                RaisePropertyChanged(nameof(CurvePoint2));
             }
         }
 
@@ -261,7 +261,7 @@ namespace Dynamo.ViewModels
             set
             {
                 _curvePoint3 = value;
-                RaisePropertyChanged("CurvePoint3");
+                RaisePropertyChanged(nameof(CurvePoint3));
             }
         }
 
@@ -272,7 +272,7 @@ namespace Dynamo.ViewModels
             set
             {
                 _dotTop = value;
-                RaisePropertyChanged("DotTop");
+                RaisePropertyChanged(nameof(DotTop));
             }
         }
 
@@ -283,7 +283,7 @@ namespace Dynamo.ViewModels
             set
             {
                 _dotLeft = value;
-                RaisePropertyChanged("DotLeft");
+                RaisePropertyChanged(nameof(DotLeft));
             }
         }
 
@@ -294,7 +294,7 @@ namespace Dynamo.ViewModels
             set
             {
                 _endDotSize = value;
-                RaisePropertyChanged("EndDotSize");
+                RaisePropertyChanged(nameof(EndDotSize));
             }
         }
 
@@ -314,7 +314,7 @@ namespace Dynamo.ViewModels
             }
             set
             {
-                RaisePropertyChanged("BezVisibility");
+                RaisePropertyChanged(nameof(BezVisibility));
             }
         }
 
@@ -334,7 +334,7 @@ namespace Dynamo.ViewModels
             }
             set
             {
-                RaisePropertyChanged("PlineVisibility");
+                RaisePropertyChanged(nameof(PlineVisibility));
             }
         }
 
@@ -361,7 +361,7 @@ namespace Dynamo.ViewModels
                 }
 
                 if (_model.Start.Owner.IsSelected ||
-                    _model.End.Owner.IsSelected)
+                    _model.End.Owner.IsSelected|| AnyPinSelected)
                 {
                     return PreviewState.Selection;
                 }
@@ -369,7 +369,25 @@ namespace Dynamo.ViewModels
                 return PreviewState.None;
             }
         }
-         
+
+        private bool anyPinSelected;
+        /// <summary>
+        /// Toggle used to turn Connector PreviewState to the correct state when a pin is selected.
+        /// Modelled after connector preview behaviour when a node is selected.
+        /// </summary>
+        public bool AnyPinSelected
+        {
+            get
+            {
+                return anyPinSelected;
+            }
+            set
+            {
+                anyPinSelected = value;
+                RaisePropertyChanged(nameof(AnyPinSelected));
+            }
+        }
+
         public bool IsFrozen
         {
             get { return _model == null ? _activeStartPort.Owner.IsFrozen : Nodevm.IsFrozen; }
@@ -635,6 +653,7 @@ namespace Dynamo.ViewModels
         private void AddConnectorPinViewModel(ConnectorPinModel pinModel)
         {
             var pinViewModel = new ConnectorPinViewModel(this.workspaceViewModel, pinModel);
+            pinViewModel.PropertyChanged += PinViewModelPropertyChanged;
 
             pinViewModel.RequestSelect += HandleRequestSelected;
             pinViewModel.RequestRedraw += HandlerRedrawRequest;
@@ -642,6 +661,26 @@ namespace Dynamo.ViewModels
 
             workspaceViewModel.Pins.Add(pinViewModel);
             ConnectorPinViewCollection.Add(pinViewModel);
+        }
+
+        /// <summary>
+        /// Checking to see if any connector pin is selected, if so
+        /// global 'AnyPinSelected' is set to true and wire Preview State is set to 'Selected'
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PinViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(ConnectorPinModel.IsSelected):
+                    var vm = sender as ConnectorPinViewModel;
+                    AnyPinSelected = vm.IsSelected;
+                    RaisePropertyChanged(nameof(PreviewState));
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void HandleRequestSelected(object sender, EventArgs e)
@@ -655,18 +694,19 @@ namespace Dynamo.ViewModels
             var viewModelSender = sender as ConnectorPinViewModel;
             if (viewModelSender is null) return;
 
-            var matchingPin = workspaceViewModel.Pins.First(x => x == viewModelSender);
-            matchingPin.RequestSelect -= HandleRequestSelected;
-            matchingPin.RequestRedraw -= HandlerRedrawRequest;
-            workspaceViewModel.Pins.Remove(matchingPin);
-            ConnectorPinViewCollection.Remove(matchingPin);
+            var matchingPinViewModel = workspaceViewModel.Pins.First(x => x == viewModelSender);
+            matchingPinViewModel.PropertyChanged += PinViewModelPropertyChanged;
+            matchingPinViewModel.RequestSelect -= HandleRequestSelected;
+            matchingPinViewModel.RequestRedraw -= HandlerRedrawRequest;
+            workspaceViewModel.Pins.Remove(matchingPinViewModel);
+            ConnectorPinViewCollection.Remove(matchingPinViewModel);
 
             _model.ConnectorPinModels.Remove(viewModelSender.Model);
 
             if (ConnectorPinViewCollection.Count == 0)
                 BezierControlPoints = null;
 
-            matchingPin.Dispose();
+            matchingPinViewModel.Dispose();
         }
 
         private void HandleCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -696,11 +736,11 @@ namespace Dynamo.ViewModels
         {
             switch (e.PropertyName)
             {
-                case "ShowExecutionPreview":
-                    RaisePropertyChanged("PreviewState");
+                case nameof(NodeViewModel.ShowExecutionPreview):
+                    RaisePropertyChanged(nameof(PreviewState));
                     break;
-                case "IsFrozen":
-                    RaisePropertyChanged("IsFrozen");
+                case nameof(NodeViewModel.IsFrozen):
+                    RaisePropertyChanged(nameof(IsFrozen));
                     break;
             }
         }
@@ -715,22 +755,22 @@ namespace Dynamo.ViewModels
            
             switch (e.PropertyName)
             {
-                case "IsSelected":
-                    RaisePropertyChanged("PreviewState");
+                case nameof(NodeModel.IsSelected):
+                   RaisePropertyChanged(nameof(PreviewState));
                     IsPartlyVisible = _model.Start.Owner.IsSelected && IsVisible == false? true : false;
                     break;
-                case "Position":
-                    RaisePropertyChanged("CurvePoint0");
+                case nameof(NodeModel.Position):
+                    RaisePropertyChanged(nameof(CurvePoint0));
                     Redraw();
                     break;
-                case "Width":
-                    RaisePropertyChanged("CurvePoint0");
+                case nameof(NodeModel.Width):
+                    RaisePropertyChanged(nameof(CurvePoint0));
                     Redraw();
                     break;
-                case "ShowExecutionPreview":
-                    RaisePropertyChanged("PreviewState");
+                case nameof(NodeViewModel.ShowExecutionPreview):
+                    RaisePropertyChanged(nameof(PreviewState));
                     break;
-                case "CachedValue":
+                case nameof(NodeModel.CachedValue):
                     UpdateConnectorDataToolTip();
                     break;
                 default:
@@ -748,20 +788,20 @@ namespace Dynamo.ViewModels
             
             switch (e.PropertyName)
             {
-                case "IsSelected":
-                    RaisePropertyChanged("PreviewState");
+                case nameof(NodeModel.IsSelected):
+                    RaisePropertyChanged(nameof(PreviewState));
                     IsPartlyVisible = _model.End.Owner.IsSelected && IsVisible == false? true : false;
                     break;
-                case "Position":
-                    RaisePropertyChanged("CurvePoint0");
+                case nameof(NodeModel.Position):
+                    RaisePropertyChanged(nameof(CurvePoint0));
                     Redraw();
                     break;
-                case "Width":
-                    RaisePropertyChanged("CurvePoint0");
+                case nameof(NodeModel.Width):
+                    RaisePropertyChanged(nameof(CurvePoint0));
                     Redraw();
                     break;
-                case "ShowExecutionPreview":
-                    RaisePropertyChanged("PreviewState");
+                case nameof(NodeViewModel.ShowExecutionPreview):
+                    RaisePropertyChanged(nameof(PreviewState));
                     break;
             }
         }
@@ -770,7 +810,7 @@ namespace Dynamo.ViewModels
         {
             switch (e.PropertyName)
             {
-                case "ConnectorType":
+                case nameof(ConnectorType):
                     if (workspaceViewModel.DynamoViewModel.ConnectorType == ConnectorType.BEZIER)
                     {
                         BezVisibility = true;
@@ -783,9 +823,9 @@ namespace Dynamo.ViewModels
                     }
                     Redraw();
                     break;
-                case "IsShowingConnectors":
-                    RaisePropertyChanged("BezVisibility");
-                    RaisePropertyChanged("PlineVisibility");
+                case nameof(DynamoViewModel.IsShowingConnectors):
+                    RaisePropertyChanged(nameof(BezVisibility));
+                    RaisePropertyChanged(nameof(PlineVisibility));
                     var dynModel = sender as DynamoViewModel;
                     IsVisible = dynModel.IsShowingConnectors;
                     break;               
@@ -796,9 +836,9 @@ namespace Dynamo.ViewModels
         {
             switch (e.PropertyName)
             {
-                case "CurrentWorkspace":
-                    RaisePropertyChanged("BezVisibility");
-                    RaisePropertyChanged("PlineVisibility");
+                case nameof(DynamoViewModel.Model.CurrentWorkspace):
+                    RaisePropertyChanged(nameof(BezVisibility));
+                    RaisePropertyChanged(nameof(PlineVisibility));
                     var dynModel = sender as DynamoViewModel;
                     IsVisible = dynModel.IsShowingConnectors;
                     break;

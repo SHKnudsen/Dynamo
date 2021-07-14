@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -8,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using Dynamo.Configuration;
 using Dynamo.Controls;
+using Dynamo.Graph.Connectors;
 using Dynamo.Selection;
 using Dynamo.UI;
 using Dynamo.UI.Controls;
@@ -100,7 +102,6 @@ namespace Dynamo.Nodes
                 {
                     DynamoSelection.Instance.ClearSelection();
                 }
-
                 DynamoSelection.Instance.Selection.AddUnique(ViewModel.Model);
             }
             else
