@@ -237,7 +237,7 @@ namespace Dynamo.Graph.Annotations
         {
             var nodeModels = nodes as NodeModel[] ?? nodes.ToArray();
             var noteModels = notes as NoteModel[] ?? notes.ToArray();
-            DeletedModelBases = new List<ModelBase>();
+            DeletedModelBases = new List<ModelBase>(); 
             this.Nodes = nodeModels.Concat(noteModels.Cast<ModelBase>()).ToList();
             UpdateBoundaryFromSelection();
         }
