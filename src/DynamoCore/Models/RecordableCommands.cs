@@ -159,9 +159,6 @@ namespace Dynamo.Models
                     case "CreateNoteCommand":
                         command = CreateNoteCommand.DeserializeCore(element);
                         break;
-                    //case "CreateWirePinCommand":
-                    //    command = CreateWirePinCommand.DeserializeCore(element);
-                    //    break;
                     case "SelectInRegionCommand":
                         command = SelectInRegionCommand.DeserializeCore(element);
                         break;
@@ -1156,114 +1153,6 @@ namespace Dynamo.Models
         /// <summary>
         /// A command to create a note.
         /// </summary>
-        //[DataContract]
-        //public class CreateWirePinCommand : ModelBasedRecordableCommand
-        //{
-        //    #region Public Class Methods
-
-        //    private void SetProperties(double x, double y, bool defaultPosition)
-        //    {
-      
-        //        X = x;
-        //        Y = y;
-        //        DefaultPosition = defaultPosition;
-        //    }
-
-        //    /// <summary>
-        //    ///
-        //    /// </summary>
-        //    /// <param name="nodeId"></param>
-        //    /// <param name="noteText"></param>
-        //    /// <param name="x"></param>
-        //    /// <param name="y"></param>
-        //    /// <param name="defaultPosition"></param>
-        //    public CreateWirePinCommand(Guid nodeId, string noteText,
-        //        double x, double y, bool defaultPosition)
-        //        : base(new[] { nodeId })
-        //    {
-        //        SetProperties(x, y, defaultPosition);
-        //    }
-
-        //    /// <summary>
-        //    ///
-        //    /// </summary>
-        //    /// <param name="nodeIds"></param>
-        //    /// <param name="noteText"></param>
-        //    /// <param name="x"></param>
-        //    /// <param name="y"></param>
-        //    /// <param name="defaultPosition"></param>
-        //    public CreateWirePinCommand(IEnumerable<Guid> nodeIds,
-        //        double x, double y, bool defaultPosition)
-        //        : base(nodeIds)
-        //    {
-        //        SetProperties(x, y, defaultPosition);
-        //    }
-
-        //    /// <summary>
-        //    ///
-        //    /// </summary>
-        //    /// <param name="nodeId"></param>
-        //    /// <param name="noteText"></param>
-        //    /// <param name="x"></param>
-        //    /// <param name="y"></param>
-        //    /// <param name="defaultPosition"></param>
-        //    [JsonConstructor]
-        //    public CreateWirePinCommand(string nodeId, string noteText,
-        //        double x, double y, bool defaultPosition)
-        //        : base(new[] { Guid.Parse(nodeId) })
-        //    {
-        //        SetProperties(x, y, defaultPosition);
-        //    }
-
-        //    internal static CreateWirePinCommand DeserializeCore(XmlElement element)
-        //    {
-        //        var helper = new XmlElementHelper(element);
-        //        var nodeId = DeserializeGuid(element, helper);
-        //        double x = helper.ReadDouble("X");
-        //        double y = helper.ReadDouble("Y");
-
-        //        return new CreateWirePinCommand(nodeId, x, y,
-        //            helper.ReadBoolean("DefaultPosition"));
-        //    }
-
-        //    #endregion
-
-        //    #region Public Command Properties
-
-        //    [DataMember]
-        //    internal string NoteText { get; private set; }
-
-        //    [DataMember]
-        //    internal double X { get; private set; }
-
-        //    [DataMember]
-        //    internal double Y { get; private set; }
-
-        //    [DataMember]
-        //    internal bool DefaultPosition { get; private set; }
-
-        //    #endregion
-
-        //    #region Protected Overridable Methods
-
-        //    protected override void ExecuteCore(DynamoModel dynamoModel)
-        //    {
-        //        dynamoModel.CreatePinImp(this);
-        //    }
-
-        //    protected override void SerializeCore(XmlElement element)
-        //    {
-        //        base.SerializeCore(element);
-        //        var helper = new XmlElementHelper(element);
-        //        helper.SetAttribute("NoteText", NoteText);
-        //        helper.SetAttribute("X", X);
-        //        helper.SetAttribute("Y", Y);
-        //        helper.SetAttribute("DefaultPosition", DefaultPosition);
-        //    }
-
-        //    #endregion
-        //}
-
 
         /// <summary>
         /// A command to select a model object.

@@ -23,7 +23,6 @@ namespace Dynamo.ViewModels
             WriteToLogCmd = new DelegateCommand(o => model.Logger.Log(o.ToString()), CanWriteToLog);
             PostUiActivationCommand = new DelegateCommand(model.PostUIActivation);
             AddNoteCommand = new DelegateCommand(AddNote, CanAddNote);
-            //AddPinCommand = new DelegateCommand(AddPin, CanAddPin);
             AddAnnotationCommand = new DelegateCommand(AddAnnotation,CanAddAnnotation);
             UngroupAnnotationCommand = new DelegateCommand(UngroupAnnotation,CanUngroupAnnotation);
             UngroupModelCommand = new DelegateCommand(UngroupModel,CanUngroupModel);
@@ -90,7 +89,6 @@ namespace Dynamo.ViewModels
         public DelegateCommand WriteToLogCmd { get; set; }
         public DelegateCommand PostUiActivationCommand { get; set; }
         public DelegateCommand AddNoteCommand { get; set; }
-        //public DelegateCommand AddPinCommand { get; set; }
         public DelegateCommand AddAnnotationCommand { get; set; }
         public DelegateCommand UngroupAnnotationCommand { get; set; }
         public DelegateCommand UngroupModelCommand { get; set; }

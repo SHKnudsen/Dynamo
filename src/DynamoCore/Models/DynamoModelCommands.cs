@@ -228,17 +228,6 @@ namespace Dynamo.Models
             CurrentWorkspace.RecordCreatedModel(noteModel);
         }
 
-        //private void CreatePinImp(CreateWirePinCommand command)
-        //{
-        //    ConnectorPinModel pinModel = CurrentWorkspace.AddWirePin(
-        //          command.DefaultPosition,
-        //          command.X,
-        //          command.Y,
-        //          command.ModelGuid);
-
-        //    CurrentWorkspace.RecordCreatedModel(pinModel);
-
-        //}
 
         private void CreateAnnotationImpl(CreateAnnotationCommand command)
         {

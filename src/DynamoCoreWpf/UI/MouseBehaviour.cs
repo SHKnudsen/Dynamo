@@ -44,13 +44,6 @@ namespace Dynamo.Wpf.UI
             MouseY = pos.Y;
         }
 
-        //private void AssociatedObjectOnMouseMove(object sender, MouseEventArgs mouseEventArgs)
-        //{
-        //    var pos = mouseEventArgs.Location;
-        //    MouseX = pos.X;
-        //    MouseY = pos.Y;
-        //}
-
         protected override void OnDetaching()
         {
             AssociatedObject.MouseMove -= AssociatedObjectOnMouseMove;

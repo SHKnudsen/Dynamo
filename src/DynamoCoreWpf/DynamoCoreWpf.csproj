@@ -345,9 +345,6 @@
       <DependentUpon>PreferencesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Preview\CameraExtensions.cs" />
-    <Compile Include="Views\Preview\ConnectorDataPreview.xaml.cs">
-      <DependentUpon>ConnectorDataPreview.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Preview\PreviewCompactView.xaml.cs">
       <DependentUpon>PreviewCompactView.xaml</DependentUpon>
     </Compile>
@@ -455,10 +452,6 @@
     <Page Include="Views\Menu\PreferencesView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Preview\ConnectorDataPreview.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Preview\WatchHoverIconView.xaml">
       <SubType>Designer</SubType>

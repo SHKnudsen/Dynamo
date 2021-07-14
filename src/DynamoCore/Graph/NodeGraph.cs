@@ -143,35 +143,6 @@ namespace Dynamo.Graph
                 : Enumerable.Empty<NoteModel>();
         }
 
-        /// <summary>
-        ///     Creates and initializes a NoteModel from its Xml representation.
-        /// </summary>
-        /// <param name="pin"></param>
-        /// <returns></returns>
-        //public static ConnectorPinModel LoadPinFromXml(XmlNode pin)
-        //{
-        //    var instance = new ConnectorPinModel(0, 0, Guid.NewGuid());
-        //    instance.Deserialize(pin as XmlElement, SaveContext.Save);
-        //    return instance;
-        //}
-
-        ///// <summary>
-        ///// Check if tag name is pin or wirepin?
-        ///// </summary>
-        ///// <param name="xmlDoc"></param>
-        ///// <returns></returns>
-        //private static IEnumerable<ConnectorPinModel> LoadPinsFromXml(XmlDocument xmlDoc)
-        //{
-        //    XmlNodeList nNodes = xmlDoc.GetElementsByTagName("ConnectorPins");
-        //    if (nNodes.Count == 0)
-        //        nNodes = xmlDoc.GetElementsByTagName("dynNotes");
-        //    XmlNode nNodesList = nNodes[0];
-
-        //    return nNodesList != null
-        //        ? nNodesList.ChildNodes.Cast<XmlNode>().Select(LoadPinFromXml)
-        //        : Enumerable.Empty<ConnectorPinModel>();
-        //}
-
         internal static AnnotationModel LoadAnnotationFromXml(XmlNode annotation, IEnumerable<NodeModel> nodes, IEnumerable<NoteModel> notes)
         {
             var instance = new AnnotationModel(nodes,notes);             

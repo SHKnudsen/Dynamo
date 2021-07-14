@@ -472,7 +472,6 @@ namespace Dynamo.ViewModels
 
             foreach (NodeModel node in Model.Nodes) Model_NodeAdded(node);
             foreach (NoteModel note in Model.Notes) Model_NoteAdded(note);
-            //foreach (ConnectorPinModel pin in Model.ConnectorPins) Model_PinAdded(pin);
             foreach (AnnotationModel annotation in Model.Annotations) Model_AnnotationAdded(annotation);
             foreach (ConnectorModel connector in Model.Connectors) Connectors_ConnectorAdded(connector);
 
@@ -602,6 +601,7 @@ namespace Dynamo.ViewModels
         {
             var token = JToken.Parse(this.ToJson());
             modelData.Add("View", token);
+
             return modelData;
         }
 
@@ -748,8 +748,6 @@ namespace Dynamo.ViewModels
             PostNodeChangeActions();
         }
 
-
-
         void PostNodeChangeActions()
         {
             if (RunSettingsViewModel == null) return;
@@ -808,6 +806,7 @@ namespace Dynamo.ViewModels
                     break;
 
             }
+
         }
 
         void ModelPropertyChanged(object sender, PropertyChangedEventArgs e)
