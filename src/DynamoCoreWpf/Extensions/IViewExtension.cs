@@ -47,7 +47,7 @@ namespace Dynamo.Wpf.Extensions
         /// Action to be invoked when shutdown has begun.  This gives the UI a last minute chance to interact
         /// with the user.
         /// 
-        /// This action is guaranteed to be invoked before the associated connectorModel layer method on IExtension.
+        /// This action is guaranteed to be invoked before the associated model layer method on IExtension.
         /// </summary>
         void Shutdown();
     }

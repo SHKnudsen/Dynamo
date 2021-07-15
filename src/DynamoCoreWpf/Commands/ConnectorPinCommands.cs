@@ -5,46 +5,6 @@ namespace Dynamo.ViewModels
 {
     public partial class ConnectorPinViewModel
     {
-        private DelegateCommand _createGroupCommand;
-        [JsonIgnore]
-        public DelegateCommand CreateGroupCommand
-        {
-            get
-            {
-                if (_createGroupCommand == null)
-                    _createGroupCommand =
-                        new DelegateCommand(CreateGroup, CanCreateGroup);
-
-                return _createGroupCommand;
-            }
-        }
-
-        private DelegateCommand _ungroupCommand;
-        [JsonIgnore]
-        public DelegateCommand UngroupCommand
-        {
-            get
-            {
-                if (_ungroupCommand == null)
-                    _ungroupCommand =
-                        new DelegateCommand(UngroupConnectorPin, CanUngroupConnectorPin);
-
-                return _ungroupCommand;
-            }
-        }
-
-        private DelegateCommand _addToGroupCommand;
-        [JsonIgnore]
-        public DelegateCommand AddToGroupCommand
-        {
-            get
-            {
-                if (_addToGroupCommand == null)
-                    _addToGroupCommand =
-                        new DelegateCommand(AddToGroup, CanAddToGroup);
-
-                return _addToGroupCommand;
-            }
-        }
+      
     }
 }

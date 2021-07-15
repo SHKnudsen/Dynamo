@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 namespace DynamoWPFCLI
 {
     /// <summary>
-    /// This class invokes a dynamo connectorModel's run methods in a headless mode from the CLI using a set of flags.
+    /// This class invokes a dynamo model's run methods in a headless mode from the CLI using a set of flags.
     /// This class also has a very limited method for exporting the graph evaluation to an xml file, so that 
     /// the results from invoking dynamo from the command line are useable.
     /// </summary>

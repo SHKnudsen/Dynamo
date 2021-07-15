@@ -99,10 +99,10 @@ namespace Watch3DNodeModelsWpf
 
         protected override void OnWorkspaceSaving(XmlDocument doc)
         {
-            // In the node version of this view connectorModel, we don't save when 
+            // In the node version of this view model, we don't save when 
             // the workspace is saving. See Watch3D.SeralizeCore where we call
-            // the view connectorModel's SerializeCamera method, and Watch3D.DeserializeCore 
-            // where we call the view connectorModel's DeserializeCamera method.
+            // the view model's SerializeCamera method, and Watch3D.DeserializeCore 
+            // where we call the view model's DeserializeCamera method.
         }
 
         protected override void Dispose(bool disposing)

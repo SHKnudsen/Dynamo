@@ -123,7 +123,10 @@ namespace Dynamo.ViewModels
                 RaisePropertyChanged(nameof(IsHalftone));
             }
         }
-
+        /// <summary>
+        /// This property is purely used for serializing/ deserializing.
+        /// In reconstructing ConnectorPins, we need to know what Connector they belong to.
+        /// </summary>
         public Guid ConnectorGuid
         {
             get
@@ -135,6 +138,9 @@ namespace Dynamo.ViewModels
         #endregion
 
         #region Commands
+        /// <summary>
+        /// Delegate command handling the removal of this ConnectorPin from its corresponding connector.
+        /// </summary>
         [JsonIgnore]
         public DelegateCommand UnpinConnectorCommand { get; set; }
 
@@ -156,7 +162,7 @@ namespace Dynamo.ViewModels
             this.model = model;
             InitializeCommands();
             model.PropertyChanged += pin_PropertyChanged;
-            ZIndex = ++StaticZIndex; // places the note on top of all nodes/notes
+            ZIndex = ++StaticZIndex; // places the pin on top of all nodes/notes
         }
 
         public override void Dispose()
@@ -165,97 +171,24 @@ namespace Dynamo.ViewModels
             base.Dispose();
         }
 
-        public void UpdateSizeFromView(double w, double h)
-        {
-            this.model.SetSize(w, h);
-        }
-
-        private bool CanSelect(object parameter)
-        {
-            if (!DynamoSelection.Instance.Selection.Contains(model))
-            {
-                return true;
-            }
-            return false;
-        }
-
-        //respond to changes on the connectorModel's properties
+        //respond to changes on the model's properties
         void pin_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
-                case "X":
+                case nameof(ConnectorPinModel.X):
                     OnRequestRedraw(this, EventArgs.Empty);
                     RaisePropertyChanged(nameof(Left));
                     break;
-                case "Y":
+                case nameof(ConnectorPinModel.Y):
                     OnRequestRedraw(this, EventArgs.Empty);
                     RaisePropertyChanged(nameof(Top));
                     break;
-                case "IsSelected":
+                case nameof(ConnectorPinModel.IsSelected):
                     OnRequestSelect(this, EventArgs.Empty);
                     RaisePropertyChanged(nameof(IsSelected));
                     break;
             }
-        }
-
-        private void CreateGroup(object parameters)
-        {
-            WorkspaceViewModel.DynamoViewModel.AddAnnotationCommand.Execute(null);
-        }
-
-        private bool CanCreateGroup(object parameters)
-        {
-            var groups = WorkspaceViewModel.Model.Annotations;
-            //Create Group should be disabled when a group is selected
-            if (groups != null && groups.Any(x => x.IsSelected))
-            {
-                return false;
-            }
-
-            //Create Group should be disabled when a node selected is already in a group
-            if (!groups.Any(x => x.IsSelected))
-            {
-                var modelSelected = DynamoSelection.Instance.Selection.OfType<ModelBase>().Where(x => x.IsSelected);
-                foreach (var model in modelSelected)
-                {
-                    if (groups.ContainsModel(model.GUID))
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
-        private void UngroupConnectorPin(object parameters)
-        {
-            WorkspaceViewModel.DynamoViewModel.UngroupModelCommand.Execute(null);
-        }
-
-        private bool CanUngroupConnectorPin(object parameters)
-        {
-            var groups = WorkspaceViewModel.Model.Annotations;
-            if (!groups.Any(x => x.IsSelected))
-            {
-                return (groups.ContainsModel(Model.GUID));
-            }
-            return false;
-        }
-
-        private void AddToGroup(object parameters)
-        {
-            WorkspaceViewModel.DynamoViewModel.AddModelsToGroupModelCommand.Execute(null);
-        }
-
-        private bool CanAddToGroup(object parameters)
-        {
-            var groups = WorkspaceViewModel.Model.Annotations;
-            if (groups.Any(x => x.IsSelected))
-            {
-                return !(groups.ContainsModel(Model.GUID));
-            }
-            return false;
         }
     }
 }

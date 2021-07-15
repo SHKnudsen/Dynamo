@@ -303,10 +303,10 @@ namespace DynamoCoreWpfTests
             System.Threading.Thread.Sleep(500);
 
             // check if the node is loaded
-            //Assert.AreEqual(1, connectorModel.CurrentWorkspace.Nodes.Count());
+            //Assert.AreEqual(1, model.CurrentWorkspace.Nodes.Count());
 
             var graphNode = model.CurrentWorkspace.NodeFromWorkspace<Function>("9c8c2279-6f59-417c-8218-3b337230bd99");
-            //var graphNode = (Function)connectorModel.Nodes.First(x => x is Function);
+            //var graphNode = (Function)model.Nodes.First(x => x is Function);
 
             //Assert initial values
             Assert.AreEqual(534.75, graphNode.X);
@@ -571,7 +571,7 @@ namespace DynamoCoreWpfTests
             var fi = new FileInfo(filePath);
             var filePathBase = dirPath + @"\" + Path.GetFileNameWithoutExtension(fi.Name);
 
-            //no longer do this, as its done in connectorModel serialization tests.
+            //no longer do this, as its done in model serialization tests.
             //ConvertCurrentWorkspaceToDesignScriptAndSave(filePathBase);
 
             string json = saveFunction(this.ViewModel, filePath);
@@ -779,7 +779,7 @@ namespace DynamoCoreWpfTests
 
         private void CompareWorkspaceViews(WorkspaceViewComparisonData a, WorkspaceViewComparisonData b)
         {
-            //first compare the connectorModel data
+            //first compare the model data
             serializationTestUtils.CompareWorkspaceModels(a, b, this.modelsGuidToIdMap);
 
             Assert.IsTrue(Math.Abs(a.X - b.X) < .00001, "The workspaces don't have the same X offset.");
@@ -813,7 +813,7 @@ namespace DynamoCoreWpfTests
 
         private void CompareWorkspaceViewsDifferentGuids(WorkspaceViewComparisonData a, WorkspaceViewComparisonData b)
         {
-            //first compare the connectorModel data
+            //first compare the model data
             serializationTestUtils.CompareWorkspacesDifferentGuids(a, b, this.modelsGuidToIdMap);
 
             Assert.IsTrue(Math.Abs(a.X - b.X) < .00001, "The workspaces don't have the same X offset.");

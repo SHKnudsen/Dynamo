@@ -6,7 +6,7 @@ using Dynamo.Graph.Annotations;
 namespace Dynamo.Wpf.ViewModels.Core
 {
     /// <summary>
-    /// Extension method to check if a connectorModel exists in a group
+    /// Extension method to check if a model exists in a group
     /// </summary>
     internal static class AnnotationExtensions
     {

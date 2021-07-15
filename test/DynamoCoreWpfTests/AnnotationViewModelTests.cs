@@ -680,7 +680,7 @@ namespace DynamoCoreWpfTests
             //Check whether group is selected
             Assert.AreEqual(true, annotation.IsSelected);
 
-            //Check whether the connectorModel is selected
+            //Check whether the model is selected
             Assert.AreEqual(true,addNode.IsSelected);
         }
 

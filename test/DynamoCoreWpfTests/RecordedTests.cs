@@ -777,9 +777,9 @@ namespace DynamoCoreWpfTests
         {
             RunCommandsFromFile("TestRunEnabledButtonCanBeDisabled.xml", (commandTag) =>
             {
-                //This test case is to verify that when RunEnabled is changed to false from the connectorModel, 
+                //This test case is to verify that when RunEnabled is changed to false from the model, 
                 //the Run button is disabled. The strategy here is to directly modify the RunEnabled value
-                //in the connectorModel. But at that time, the view has not yet had a chance to refresh its button.
+                //in the model. But at that time, the view has not yet had a chance to refresh its button.
                 //So the process is separated into two steps. At the second step. the button status is checked.
                 if (commandTag == "OpenFile")
                 {
@@ -2030,8 +2030,8 @@ namespace DynamoCoreWpfTests
             ConnectorViewModel secondConnector = connectors[1];
 
             // Find out the corresponding ports they connect to.
-            Point2D firstPoint = firstConnector.ConnectorModel.End.Center;
-            Point2D secondPoint = secondConnector.ConnectorModel.End.Center;
+            Point2D firstPoint = firstConnector.Model.End.Center;
+            Point2D secondPoint = secondConnector.Model.End.Center;
 
             Assert.AreEqual(firstPoint.X, firstConnector.CurvePoint3.X);
             Assert.AreEqual(firstPoint.Y, firstConnector.CurvePoint3.Y);
@@ -4129,8 +4129,8 @@ namespace DynamoCoreWpfTests
             ConnectorViewModel secondConnector = connectors[1];
 
             // Find out the corresponding ports they connect to.
-            Point2D firstPoint = firstConnector.ConnectorModel.End.Center;
-            Point2D secondPoint = secondConnector.ConnectorModel.End.Center;
+            Point2D firstPoint = firstConnector.Model.End.Center;
+            Point2D secondPoint = secondConnector.Model.End.Center;
 
             Assert.AreEqual(firstPoint.X, firstConnector.CurvePoint3.X);
             Assert.AreEqual(firstPoint.Y, firstConnector.CurvePoint3.Y);

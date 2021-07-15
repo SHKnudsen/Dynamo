@@ -21,7 +21,7 @@ namespace Dynamo.ViewModels
         private const double autocompletePopupSpacing = 2.5;
 
         /// <summary>
-        /// Port connectorModel.
+        /// Port model.
         /// </summary>
         public PortModel PortModel
         {

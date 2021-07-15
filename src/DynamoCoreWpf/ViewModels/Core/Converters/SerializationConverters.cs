@@ -40,7 +40,9 @@ namespace Dynamo.Wpf.ViewModels.Core.Converters
             writer.WriteStartArray();
 
             foreach (var wirePin in workspaceView.Pins)
+            {
                 serializer.Serialize(writer, wirePin);
+            }
             writer.WriteEndArray();
 
             writer.WritePropertyName("NodeViews");

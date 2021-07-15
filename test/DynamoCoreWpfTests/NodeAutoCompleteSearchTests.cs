@@ -283,7 +283,7 @@ namespace DynamoCoreWpfTests
         public void NodeSearchElementComparerSortsBasedOnTypeDistance_MultiReturnNodeModel()
         {
             var core = Model.LibraryServices.LibraryManagementCore;
-            //inject our mock node into search connectorModel.
+            //inject our mock node into search model.
             Model.SearchModel.Add(new NodeModelSearchElement(new TypeLoadData(typeof(MultReturnTypeNode))));
 
             //we'll compare polyCurve to our mock node and expect the result to be 1 for the mocknode curve output to be closer to our input type.
@@ -299,7 +299,7 @@ namespace DynamoCoreWpfTests
         public void NodeSearchElementComparerSortsBasedOnTypeDistance_MultiReturnNodeModelEqual()
         {
             var core = Model.LibraryServices.LibraryManagementCore;
-            //inject our mock node into search connectorModel.
+            //inject our mock node into search model.
             Model.SearchModel.Add(new NodeModelSearchElement(new TypeLoadData(typeof(MultReturnTypeNode))));
 
             //we'll compare curve to our mock node and expect the result to be 0 since they both match exactly.

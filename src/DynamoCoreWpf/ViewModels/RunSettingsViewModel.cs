@@ -72,14 +72,14 @@ namespace Dynamo.Wpf.ViewModels
     }
 
     /// <summary>
-    /// The RunSettingsViewModel is the view connectorModel for the 
+    /// The RunSettingsViewModel is the view model for the 
     /// RunSettings object on a given HomeWorkspaceModel. This class
     /// handles property change notification from the underlying RunSettings
     /// object, raising corresponding property change notifications. Those
     /// property change notifications are, in turn, handled by the WorkspaceViewModel.
     /// Setters on the properties in this class do not raise property change
     /// notifications as those notifications are raised when the value is set on the
-    /// connectorModel.
+    /// model.
     /// </summary>
     public class RunSettingsViewModel : ViewModelBase
     {
@@ -250,7 +250,7 @@ namespace Dynamo.Wpf.ViewModels
         #region private and internal methods
 
         /// <summary>
-        /// Called when the RunSettings connectorModel has property changes.
+        /// Called when the RunSettings model has property changes.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

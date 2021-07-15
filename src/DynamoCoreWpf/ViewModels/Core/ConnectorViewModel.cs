@@ -96,17 +96,17 @@ namespace Dynamo.ViewModels
         }
 
         private readonly WorkspaceViewModel workspaceViewModel;
-        private PortModel _activeStartPort;
-        public PortModel ActiveStartPort { get { return _activeStartPort; } internal set { _activeStartPort = value; } }
+        private PortModel activeStartPort;
+        public PortModel ActiveStartPort { get { return activeStartPort; } internal set { activeStartPort = value; } }
 
-        private ConnectorModel connectorModel;
+        private ConnectorModel model;
 
         /// <summary>
         /// Refers to the connector model associated with this connector view model.
         /// </summary>
-        public ConnectorModel ConnectorModel
+        public ConnectorModel Model
         {
-            get { return connectorModel; }
+            get { return model; }
         }
 
         private bool isConnecting = false;
@@ -240,10 +240,10 @@ namespace Dynamo.ViewModels
         {
             get
             {
-                if (connectorModel == null)
-                    return _activeStartPort.Center.AsWindowsType();
-                else if (connectorModel.Start != null)
-                    return connectorModel.Start.Center.AsWindowsType();
+                if (model == null)
+                    return activeStartPort.Center.AsWindowsType();
+                else if (model.Start != null)
+                    return model.Start.Center.AsWindowsType();
                 else
                     return new Point();
             }
@@ -320,7 +320,7 @@ namespace Dynamo.ViewModels
 
         /// <summary>
         /// Returns visible if the connectors is in the current space and the 
-        /// connectorModel's current connector type is BEZIER
+        /// model's current connector type is BEZIER
         /// </summary>
         public bool BezVisibility
         {
@@ -340,15 +340,13 @@ namespace Dynamo.ViewModels
 
         /// <summary>
         /// Returns visible if the connectors is in the current space and the 
-        /// connectorModel's current connector type is POLYLINE
+        /// model's current connector type is POLYLINE
         /// </summary>
         public bool PlineVisibility
         {
             get
             {
-                //if (workspaceViewModel.DynamoViewModel.ConnectorType == ConnectorType.POLYLINE &&
-                //    workspaceViewModel.DynamoViewModel.IsShowingConnectors)
-                    if (workspaceViewModel.DynamoViewModel.ConnectorType == ConnectorType.POLYLINE)
+                if (workspaceViewModel.DynamoViewModel.ConnectorType == ConnectorType.POLYLINE)
                     return true;
                 return false;
             }
@@ -362,7 +360,7 @@ namespace Dynamo.ViewModels
         {
             get
             {
-                return workspaceViewModel.Nodes.FirstOrDefault(x => x.NodeLogic.GUID == connectorModel.Start.Owner.GUID);
+                return workspaceViewModel.Nodes.FirstOrDefault(x => x.NodeLogic.GUID == model.Start.Owner.GUID);
             }
         }
 
@@ -370,7 +368,7 @@ namespace Dynamo.ViewModels
         {
             get
             {               
-                if (connectorModel == null)
+                if (model == null)
                 {
                     return PreviewState.None;
                 }
@@ -380,8 +378,8 @@ namespace Dynamo.ViewModels
                     return PreviewState.ExecutionPreview;
                 }
 
-                if (connectorModel.Start.Owner.IsSelected ||
-                    connectorModel.End.Owner.IsSelected|| AnyPinSelected)
+                if (model.Start.Owner.IsSelected ||
+                    model.End.Owner.IsSelected|| AnyPinSelected)
                 {
                     return PreviewState.Selection;
                 }
@@ -410,7 +408,7 @@ namespace Dynamo.ViewModels
 
         public bool IsFrozen
         {
-            get { return connectorModel == null ? _activeStartPort.Owner.IsFrozen : Nodevm.IsFrozen; }
+            get { return model == null ? activeStartPort.Owner.IsFrozen : Nodevm.IsFrozen; }
         }
 
         #endregion
@@ -422,9 +420,9 @@ namespace Dynamo.ViewModels
         {
             bool isCollectionofFiveorMore = false;
 
-            if (connectorModel != null)
+            if (model != null)
             {
-                var portValue = connectorModel.Start.Owner.GetValue(connectorModel.Start.Index, workspaceViewModel.DynamoViewModel.EngineController);
+                var portValue = model.Start.Owner.GetValue(model.Start.Index, workspaceViewModel.DynamoViewModel.EngineController);
                 if (portValue is null)
                 {
                     ConnectorDataTooltip = "N/A";
@@ -432,7 +430,7 @@ namespace Dynamo.ViewModels
                 }
 
                 StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.AppendLine($"{connectorModel.Start.Owner.Name} -> {connectorModel.End.Owner.Name}");
+                stringBuilder.AppendLine($"{model.Start.Owner.Name} -> {model.End.Owner.Name}");
 
                 var isCollection = portValue.IsCollection;
                 if (isCollection)
@@ -507,7 +505,7 @@ namespace Dynamo.ViewModels
             if (WatchHoverViewModel == null && isDataFlowCollection && timer == null)
             {
                 MouseHoverOn = true;
-                WatchHoverViewModel = new WatchHoverIconViewModel(this, workspaceViewModel.DynamoViewModel);
+                WatchHoverViewModel = new WatchHoverIconViewModel(this, workspaceViewModel.DynamoViewModel.Model);
                 WatchHoverViewModel.IsHalftone = !IsVisible;
                 RaisePropertyChanged(nameof(WatchHoverIconViewModel));
             }
@@ -550,7 +548,7 @@ namespace Dynamo.ViewModels
         private void BreakConnectionCommandExecute(object parameter)
         {
             this.Dispose();
-            ConnectorModel.Delete();
+            Model.Delete();
         }
         /// <summary>
         /// Toggles wire viz on/off. This can be overwritten when a node is selected in hidden mode.
@@ -566,8 +564,8 @@ namespace Dynamo.ViewModels
         /// <param name="parameter"></param>
         private void SelectConnectedCommandExecute(object parameter)
         {
-            var leftSideNode = connectorModel.Start.Owner;
-            var rightSideNode = connectorModel.End.Owner;
+            var leftSideNode = model.Start.Owner;
+            var rightSideNode = model.End.Owner;
 
             DynamoSelection.Instance.Selection.Add(leftSideNode);
             DynamoSelection.Instance.Selection.Add(rightSideNode);
@@ -580,7 +578,7 @@ namespace Dynamo.ViewModels
         {
             MousePosition = new Point(PanelX, PanelY);
             if (MousePosition == new Point(0, 0)) return;
-            var connectorPinModel = new ConnectorPinModel(PanelX, PanelY, Guid.NewGuid(), connectorModel.GUID);
+            var connectorPinModel = new ConnectorPinModel(PanelX, PanelY, Guid.NewGuid(), model.GUID);
             AddConnectorPinModel(connectorPinModel);
         }
 
@@ -623,7 +621,7 @@ namespace Dynamo.ViewModels
             IsVisible = workspaceViewModel.DynamoViewModel.IsShowingConnectors;
             IsConnecting = true;
             MouseHoverOn = false;
-            _activeStartPort = port;
+            activeStartPort = port;
 
             Redraw(port.Center);
 
@@ -632,13 +630,13 @@ namespace Dynamo.ViewModels
 
 
         /// <summary>
-        /// Construct a view and respond to property changes on the connectorModel. 
+        /// Construct a view and respond to property changes on the model. 
         /// </summary>
         /// <param name="connectorModel"></param>
         public ConnectorViewModel(WorkspaceViewModel workspace, ConnectorModel connectorModel)
         {
             this.workspaceViewModel = workspace;
-            connectorModel = connectorModel;
+            model = connectorModel;
             connectorModel.ConnectorPinModels.CollectionChanged += ConnectorPinModelCollectionChanged;
 
             ConnectorPinViewCollection = new ObservableCollection<ConnectorPinViewModel>();
@@ -677,15 +675,15 @@ namespace Dynamo.ViewModels
         }
 
         /// <summary>
-        /// Adding a pinModel to a collection of pinModels stored in the ConnectorModel
+        /// Adding a pinModel to a collection of pinModels stored in the Model
         /// </summary>
         /// <param name="pinModel"></param>
         private void AddConnectorPinModel(ConnectorPinModel pinModel)
         {
-            connectorModel.ConnectorPinModels.Add(pinModel);
+            model.ConnectorPinModels.Add(pinModel);
         }
         /// <summary>
-        /// View connectorModel adding method only- given a connectorModel
+        /// View model adding method only- given a model
         /// </summary>
         /// <param name="pinModel"></param>
         private void AddConnectorPinViewModel(ConnectorPinModel pinModel)
@@ -739,7 +737,7 @@ namespace Dynamo.ViewModels
             workspaceViewModel.Pins.Remove(matchingPinViewModel);
             ConnectorPinViewCollection.Remove(matchingPinViewModel);
 
-            connectorModel.ConnectorPinModels.Remove(viewModelSender.Model);
+            model.ConnectorPinModels.Remove(viewModelSender.Model);
 
             if (ConnectorPinViewCollection.Count == 0)
                 BezierControlPoints = null;
@@ -753,10 +751,10 @@ namespace Dynamo.ViewModels
         }
         public virtual void Dispose()
         {
-            connectorModel.PropertyChanged -= ConnectorModelPropertyChanged;
-            connectorModel.Start.Owner.PropertyChanged -= StartOwner_PropertyChanged;
-            connectorModel.End.Owner.PropertyChanged -= EndOwner_PropertyChanged;
-            connectorModel.ConnectorPinModels.CollectionChanged -= ConnectorPinModelCollectionChanged;
+            model.PropertyChanged -= ConnectorModelPropertyChanged;
+            model.Start.Owner.PropertyChanged -= StartOwner_PropertyChanged;
+            model.End.Owner.PropertyChanged -= EndOwner_PropertyChanged;
+            model.ConnectorPinModels.CollectionChanged -= ConnectorPinModelCollectionChanged;
 
             workspaceViewModel.DynamoViewModel.Model.PreferenceSettings.PropertyChanged -= DynamoViewModel_PropertyChanged;
             Nodevm.PropertyChanged -= nodeViewModel_PropertyChanged;
@@ -795,7 +793,7 @@ namespace Dynamo.ViewModels
             {
                 case nameof(NodeModel.IsSelected):
                    RaisePropertyChanged(nameof(PreviewState));
-                    IsPartlyVisible = connectorModel.Start.Owner.IsSelected && IsVisible == false? true : false;
+                    IsPartlyVisible = model.Start.Owner.IsSelected && IsVisible == false? true : false;
                     break;
                 case nameof(NodeModel.Position):
                     RaisePropertyChanged(nameof(CurvePoint0));
@@ -828,7 +826,7 @@ namespace Dynamo.ViewModels
             {
                 case nameof(NodeModel.IsSelected):
                     RaisePropertyChanged(nameof(PreviewState));
-                    IsPartlyVisible = connectorModel.End.Owner.IsSelected && IsVisible == false? true : false;
+                    IsPartlyVisible = model.End.Owner.IsSelected && IsVisible == false? true : false;
                     break;
                 case nameof(NodeModel.Position):
                     RaisePropertyChanged(nameof(CurvePoint0));
@@ -884,16 +882,16 @@ namespace Dynamo.ViewModels
         }
 
         /// <summary>
-        ///     Recalculate the path points using the internal connectorModel.
+        ///     Recalculate the path points using the internal model.
         /// </summary>
         public void Redraw()
         {
-            if (this.ConnectorModel.End != null && ConnectorPinViewCollection.Count > 0)
+            if (this.Model.End != null && ConnectorPinViewCollection.Count > 0)
             {
                 RedrawBezierManyPoints();
             }
-            else if (this.ConnectorModel.End != null)
-                this.Redraw(this.ConnectorModel.End.Center);
+            else if (this.Model.End != null)
+                this.Redraw(this.Model.End.Center);
         }
 
        
@@ -943,7 +941,7 @@ namespace Dynamo.ViewModels
             dotLeft = CurvePoint3.X - EndDotSize / 2;
 
             //Update all the bindings at once.
-            //http://stackoverflow.com/questions/4651466/good-way-to-refresh-databinding-on-all-properties-of-a-viewmodel-when-connectorModel-chan
+            //http://stackoverflow.com/questions/4651466/good-way-to-refresh-databinding-on-all-properties-of-a-viewmodel-when-model-chan
             //RaisePropertyChanged(string.Empty);
 
          
@@ -1011,7 +1009,7 @@ namespace Dynamo.ViewModels
 
         public void RedrawBezierManyPoints()
         {
-            var parameter = this.ConnectorModel.End.Center;
+            var parameter = this.Model.End.Center;
             var param = parameter as object;
 
             var controlPoints = new List<Point[]>();

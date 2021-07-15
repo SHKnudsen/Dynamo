@@ -48,14 +48,14 @@ namespace Dynamo.Wpf.ViewModels.Watch3D
         private bool isFrozenData;
 
         /// <summary>
-        /// Is this connectorModel Frozen.
+        /// Is this model Frozen.
         /// </summary>
         public bool IsFrozenData { get { return isFrozenData; } internal set { updateAction(ref isFrozenData, value); } }
 
         private bool isSelectedData;
 
         /// <summary>
-        /// Is this connectorModel currently selected.
+        /// Is this model currently selected.
         /// </summary>
         public bool IsSelectedData { get { return isSelectedData; } internal set { updateAction(ref isSelectedData, value); } }
 
@@ -67,25 +67,25 @@ namespace Dynamo.Wpf.ViewModels.Watch3D
 
         private bool isSpecialData;
         /// <summary>
-        /// Is this connectorModel marked as a special render package.
+        /// Is this model marked as a special render package.
         /// </summary>
         public bool IsSpecialRenderPackageData { get { return isSpecialData; } internal set { updateAction(ref isSpecialData, value); } }
 
         private bool hasTransparencyData;
         /// <summary>
-        /// Does this connectorModel have alpha less than 255.
+        /// Does this model have alpha less than 255.
         /// </summary>
         public bool HasTransparencyData { get { return hasTransparencyData; } internal set { updateAction(ref hasTransparencyData, value); } }
 
         private bool requiresPerVertexColor;
         /// <summary>
-        /// Should this connectorModel display vertex colors.
+        /// Should this model display vertex colors.
         /// </summary>
         public bool RequiresPerVertexColor { get { return requiresPerVertexColor; } internal set { updateAction(ref requiresPerVertexColor, value); } }
 
         private bool isFlatShaded;
         /// <summary>
-        /// Should this connectorModel disregard lighting calculations and display unlit texture or vertex colors.
+        /// Should this model disregard lighting calculations and display unlit texture or vertex colors.
         /// </summary>
         public bool IsFlatShaded { get { return isFlatShaded; } internal set { updateAction(ref isFlatShaded, value); } }
 

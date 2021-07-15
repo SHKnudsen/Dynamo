@@ -178,7 +178,7 @@ namespace Dynamo.Tests
             Assert.DoesNotThrow(() => ViewModel.HomeSpace.Run());
         }
 
-        protected void RunCurrentModel() // Run currently loaded connectorModel.
+        protected void RunCurrentModel() // Run currently loaded model.
         {
             Assert.DoesNotThrow(() => ViewModel.HomeSpace.Run());
         }

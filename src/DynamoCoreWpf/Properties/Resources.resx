@@ -140,7 +140,7 @@
     <value>Numerical range shown here denote numbers in the following unit:</value>
   </data>
   <data name="ChangeScaleFactorPromptDescriptionContent" xml:space="preserve">
-    <value>Use this working range to connectorModel in values that fall between {0} to {1} units</value>
+    <value>Use this working range to model in values that fall between {0} to {1} units</value>
   </data>
   <data name="ChangeScaleFactorPromptDescriptionDefaultSetting" xml:space="preserve">
     <value>Default Setting:</value>
@@ -1014,7 +1014,7 @@ Uninstall the following dependent packages: {1}?</value>
     <value>Confirmation</value>
   </data>
   <data name="SaveModelToSTLDialogTitle" xml:space="preserve">
-    <value>Save your connectorModel to STL.</value>
+    <value>Save your model to STL.</value>
   </data>
   <data name="SaveWorkbenToImageDialogTitle" xml:space="preserve">
     <value>Save your Workbench to an Image</value>
@@ -1513,7 +1513,7 @@ Do you want to install the latest Dynamo update?</value>
     <value>Capture.png</value>
   </data>
   <data name="FileDialogDefaultSTLModelName" xml:space="preserve">
-    <value>connectorModel.stl</value>
+    <value>model.stl</value>
   </data>
   <data name="FileDialogDesignScriptFiles" xml:space="preserve">
     <value>DesignScript Files ({0})|{0}</value>

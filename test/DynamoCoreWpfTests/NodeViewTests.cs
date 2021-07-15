@@ -268,7 +268,7 @@ namespace DynamoCoreWpfTests
 
             // Get the node view for the dummy node in the graph
             NodeView nodeView = NodeViewWithGuid("94e8d6a8-5463-483c-9fe6-ace668670fae");
-            // Get a reference to the dummy node view connectorModel
+            // Get a reference to the dummy node view model
             NodeViewModel nodeViewModel = (nodeView.DataContext as NodeViewModel);
 
             Assert.AreEqual(false, nodeViewModel.IsRenamed);
@@ -284,8 +284,8 @@ namespace DynamoCoreWpfTests
 
             // Get the node view for the not loaded custom node in the graph
             NodeView nodeView = NodeViewWithGuid("5795dc19-47c9-4084-a5da-df248e03edc4");
-            
-            // Get a reference to the custom node view connectorModel
+
+            // Get a reference to the custom node view model
             NodeViewModel nodeViewModel = (nodeView.DataContext as NodeViewModel);
 
             Assert.AreEqual(false, nodeViewModel.IsRenamed);
@@ -304,7 +304,7 @@ namespace DynamoCoreWpfTests
             // Get the node view for the not loaded custom node in the graph
             NodeView nodeView = NodeViewWithGuid("5795dc19-47c9-4084-a5da-df248e03edc4");
 
-            // Get a reference to the custom node view connectorModel
+            // Get a reference to the custom node view model
             NodeViewModel nodeViewModel = (nodeView.DataContext as NodeViewModel);
 
             Assert.AreEqual(true, nodeViewModel.IsRenamed);

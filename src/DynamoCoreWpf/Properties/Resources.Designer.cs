@@ -313,7 +313,7 @@ namespace Dynamo.Wpf.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use this working range to connectorModel in values that fall between {0} to {1} units.
+        ///   Looks up a localized string similar to Use this working range to model in values that fall between {0} to {1} units.
         /// </summary>
         public static string ChangeScaleFactorPromptDescriptionContent {
             get {
@@ -2322,7 +2322,7 @@ namespace Dynamo.Wpf.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to connectorModel.stl.
+        ///   Looks up a localized string similar to model.stl.
         /// </summary>
         public static string FileDialogDefaultSTLModelName {
             get {
@@ -5227,7 +5227,7 @@ namespace Dynamo.Wpf.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Save your connectorModel to STL..
+        ///   Looks up a localized string similar to Save your model to STL..
         /// </summary>
         public static string SaveModelToSTLDialogTitle {
             get {

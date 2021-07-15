@@ -76,7 +76,7 @@ namespace Dynamo.Wpf.ViewModels.Watch3D
         /// <summary>
         /// A flag which indicates whether this Watch3DView should process
         /// geometry updates. When set to False, the Watch3DView corresponding
-        /// to this view connectorModel is not displayed.
+        /// to this view model is not displayed.
         /// </summary>
         public virtual bool Active
         {
@@ -118,13 +118,13 @@ namespace Dynamo.Wpf.ViewModels.Watch3D
         }
 
         /// <summary>
-        /// A name which identifies this view connectorModel when multiple
+        /// A name which identifies this view model when multiple
         /// Watch3DViewModel objects exist.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// A flag which indicates whether this view connectorModel is used for a background preview.
+        /// A flag which indicates whether this view model is used for a background preview.
         /// </summary>
         public virtual bool IsBackgroundPreview 
         {
@@ -600,7 +600,7 @@ namespace Dynamo.Wpf.ViewModels.Watch3D
             if (packages.IsEmpty())
                 return;
 
-            // If there is no attached connectorModel update for all render packages
+            // If there is no attached model update for all render packages
             if (watchModel == null)
             {
                 AddGeometryForRenderPackages(packages);

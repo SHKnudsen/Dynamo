@@ -481,7 +481,7 @@ namespace Dynamo.ViewModels
         }
 
         /// <summary>
-        /// Returns a value indicating whether this connectorModel is frozen.
+        /// Returns a value indicating whether this model is frozen.
         /// </summary>
         /// <value>
         ///   <c>true</c> if this instance is frozen; otherwise, <c>false</c>.
@@ -627,7 +627,7 @@ namespace Dynamo.ViewModels
             previewPinned = logic.PreviewPinned;
 
             //respond to collection changed events to add
-            //and remove port connectorModel views
+            //and remove port model views
             logic.InPorts.CollectionChanged += inports_collectionChanged;
             logic.OutPorts.CollectionChanged += outports_collectionChanged;
 
@@ -768,7 +768,7 @@ namespace Dynamo.ViewModels
 
 
         /// <summary>
-        /// Respond to property changes on the Dynamo connectorModel
+        /// Respond to property changes on the Dynamo model
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -783,7 +783,7 @@ namespace Dynamo.ViewModels
         }
 
         /// <summary>
-        /// Respond to property changes on the node connectorModel.
+        /// Respond to property changes on the node model.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -966,7 +966,7 @@ namespace Dynamo.ViewModels
 
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                //create a new port view connectorModel
+                //create a new port view model
                 foreach (var item in e.NewItems)
                 {
                     PortViewModel inportViewModel = SubscribePortEvents(item as PortModel);
@@ -975,7 +975,7 @@ namespace Dynamo.ViewModels
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove)
             {
-                //remove the port view connectorModel whose connectorModel item
+                //remove the port view model whose model item
                 //is the one passed in
                 foreach (var item in e.OldItems)
                 {
@@ -1002,7 +1002,7 @@ namespace Dynamo.ViewModels
 
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                //create a new port view connectorModel
+                //create a new port view model
                 foreach (var item in e.NewItems)
                 {
                     PortViewModel outportViewModel = SubscribePortEvents(item as PortModel);
@@ -1011,7 +1011,7 @@ namespace Dynamo.ViewModels
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove)
             {
-                //remove the port view connectorModel whose connectorModel item is the
+                //remove the port view model whose model item is the
                 //one passed in
                 foreach (var item in e.OldItems)
                 {

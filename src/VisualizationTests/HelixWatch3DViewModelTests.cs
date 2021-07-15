@@ -110,7 +110,7 @@ namespace WpfVisualizationTests
         }
 
         /// <summary>
-        /// Derived test classes can override this method to provide a customized Dynamo connectorModel.
+        /// Derived test classes can override this method to provide a customized Dynamo model.
         /// </summary>
         protected virtual DynamoModel CreateModel(DynamoModel.IStartConfiguration configuration)
         {
@@ -118,7 +118,7 @@ namespace WpfVisualizationTests
         }
 
         /// <summary>
-        /// Derived test classes can override this method to provide a customized view connectorModel configuration.
+        /// Derived test classes can override this method to provide a customized view model configuration.
         /// </summary>
         protected virtual DynamoViewModel.StartConfiguration CreateViewModelStartConfiguration()
         {

@@ -459,7 +459,7 @@ namespace DynamoCoreWpfTests
             //theres still one executions from modifying the engine, as changing engines does not trigger a run.
             Assert.AreEqual(1, (Model.CurrentWorkspace as HomeWorkspaceModel).EvaluationCount);
 
-            //assert connectorModel code is updated.
+            //assert model code is updated.
             Assert.AreEqual("ok", (nodeModel as PythonNode).Script);
 
             DispatcherUtil.DoEvents();

@@ -37,7 +37,7 @@ namespace CoreNodeModelsWpf.Nodes
 
             var undoRecorder = viewNode.ViewModel.WorkspaceViewModel.Model.UndoRecorder;
             WorkspaceModel.RecordModelForModification(colorPaletteNode, undoRecorder);
-            //kick off ui to match initial connectorModel state.
+            //kick off ui to match initial model state.
             this.ColorPaletteNode_PropertyChanged(ColorPaletteUINode, new PropertyChangedEventArgs("DsColor"));
         }
 
@@ -50,7 +50,7 @@ namespace CoreNodeModelsWpf.Nodes
                 var convertedModelColor = ((Color)(converter.Convert(colorPaletteNode.DsColor, null, null, null)));
                 var isSameColor = convertedModelColor
                      .Equals(ColorPaletteUINode.xceedColorPickerControl.SelectedColor);
-                //and if the color on the connectorModel is different than the selected Color on the view
+                //and if the color on the model is different than the selected Color on the view
                 //then update the view.
                 if (!isSameColor)
                 {
@@ -61,17 +61,17 @@ namespace CoreNodeModelsWpf.Nodes
 
         private void ColorPickerControl_Closed(object sender, System.Windows.RoutedEventArgs e)
         {
-            //if the connectorModel color is the same as the selected color when the color control is closed
-            //we should not record the connectorModel for undo again, it's already there.
+            //if the model color is the same as the selected color when the color control is closed
+            //we should not record the model for undo again, it's already there.
             var convertedModelColor = ((Color)(converter.Convert(colorPaletteNode.DsColor, null, null, null)));
             var isSameColor = convertedModelColor
                  .Equals(ColorPaletteUINode.xceedColorPickerControl.SelectedColor);
             if (!isSameColor)
             {
-                //we need to record the colorPicker node before the connectorModel is updated.
+                //we need to record the colorPicker node before the model is updated.
                 var undoRecorder = viewNode.ViewModel.WorkspaceViewModel.Model.UndoRecorder;
                 WorkspaceModel.RecordModelForModification(colorPaletteNode, undoRecorder);
-                //now that we have recorded the old state, set the color on the connectorModel.
+                //now that we have recorded the old state, set the color on the model.
                 colorPaletteNode.DsColor = converter.ConvertBack(ColorPaletteUINode.xceedColorPickerControl.SelectedColor, null, null, null) as DSColor;
             }
         }

@@ -20,14 +20,14 @@ namespace Dynamo.ViewModels
     public class WatchHoverIconViewModel: NotificationObject
     {
         private ConnectorViewModel ViewModel { get; set; }
-        private DynamoViewModel DynamoViewModel { get; set; }
+        private DynamoModel DynamoModel { get; set; }
         private Dispatcher Dispatcher { get; set; }
         private double MarkerSize { get; set; } = 30;
 
         /// <summary>
         /// Midpoint of the connector bezier curve.
         /// </summary>
-        public Point MidPoint { get; private set; }
+        public Point MidPoint { get; set; }
 
         private bool isHalftone;
         /// <summary>
@@ -51,7 +51,7 @@ namespace Dynamo.ViewModels
         #region Commands
         
         /// <summary>
-        /// Commands which places a watch node in the center of the connector.
+        /// Command which places a watch node in the center of the connector.
         /// </summary>
         public DelegateCommand PlaceWatchNodeCommand { get; set; }
 
@@ -67,15 +67,22 @@ namespace Dynamo.ViewModels
         }
         #endregion
 
-        public WatchHoverIconViewModel(ConnectorViewModel connectorViewModel, DynamoViewModel dynamoViewModel)
+        public WatchHoverIconViewModel(ConnectorViewModel connectorViewModel, DynamoModel dynamoModel)
         {
             ViewModel = connectorViewModel;
-            DynamoViewModel = dynamoViewModel;
+            DynamoModel = dynamoModel;
             InitCommands();
 
             if (ViewModel.ConnectorPinViewCollection.Count == 0 && ViewModel.BezierControlPoints is null)
             {
-                MidPoint = ConnectorBezierMidpoint();
+                MidPoint = ConnectorBezierMidpoint(
+                    new Point[]
+                    {
+                        ViewModel.CurvePoint0,
+                        ViewModel.CurvePoint1,
+                        ViewModel.CurvePoint2,
+                        ViewModel.CurvePoint3
+                    });
             }
             else
             {
@@ -91,38 +98,25 @@ namespace Dynamo.ViewModels
             if (!(e.PropertyName.Contains("CurvePoint") |
                   e.PropertyName == nameof(ConnectorViewModel.ConnectorPinViewCollection)))
                 return;
-            
-                if (ViewModel.ConnectorPinViewCollection.Count > 0 && ViewModel.BezierControlPoints != null)
-                    MidPoint = MultiBezierMidpoint();
-                else
-                    MidPoint = ConnectorBezierMidpoint();
 
-                RaisePropertyChanged(nameof(MidPoint));
-            
-        }
+            if (ViewModel.ConnectorPinViewCollection.Count > 0 && ViewModel.BezierControlPoints != null)
+            {
+                MidPoint = MultiBezierMidpoint();
+            }
+            else
+            {
+                MidPoint = ConnectorBezierMidpoint(
+                    new Point[]
+                    {
+                            ViewModel.CurvePoint0,
+                            ViewModel.CurvePoint1,
+                            ViewModel.CurvePoint2,
+                            ViewModel.CurvePoint3
+                    });
+            }
 
-        private Point ConnectorBezierMidpoint()
-        {
-            // formula to get bezier curve midtpoint
-            // https://stackoverflow.com/questions/5634460/quadratic-b%c3%a9zier-curve-calculate-points?rq=1
-            var parameter = 0.5;
-            var x = ((1 - parameter) * (1 - parameter) * (1 - parameter) *
-                ViewModel.CurvePoint0.X + 3 * (1 - parameter) * (1 - parameter)
-                * parameter *
-                ViewModel.CurvePoint1.X + 3 * (1 - parameter)
-                * parameter * parameter *
-                ViewModel.CurvePoint2.X + parameter * parameter * parameter *
-                ViewModel.CurvePoint3.X) - (MarkerSize / 2);
+            RaisePropertyChanged(nameof(MidPoint));
 
-            var y = ((1 - parameter) * (1 - parameter) * (1 - parameter) *
-                ViewModel.CurvePoint0.Y + 3 * (1 - parameter) * (1 - parameter)
-                * parameter *
-                ViewModel.CurvePoint1.Y + 3 * (1 - parameter)
-                * parameter * parameter *
-                ViewModel.CurvePoint2.Y + parameter * parameter * parameter *
-                ViewModel.CurvePoint3.Y) - (MarkerSize / 2);
-
-            return new Point(x, y);
         }
 
         private Point ConnectorBezierMidpoint(Point[] points)
@@ -175,16 +169,15 @@ namespace Dynamo.ViewModels
         /// </summary>
         internal void PlaceWatchNode()
         {
-            NodeModel startNode = ViewModel.ConnectorModel.Start.Owner;
-            NodeModel endNode = ViewModel.ConnectorModel.End.Owner;
-            var dynamoModel = DynamoViewModel.Model;
+            NodeModel startNode = ViewModel.Model.Start.Owner;
+            NodeModel endNode = ViewModel.Model.End.Owner;
             this.Dispatcher.Invoke(() =>
             {
                 var watchNode = new Watch();
                 var nodeX = MidPoint.X - (watchNode.Width / 2);
                 var nodeY = MidPoint.Y - (watchNode.Height / 2);
-                dynamoModel.ExecuteCommand(new DynamoModel.CreateNodeCommand(watchNode, nodeX, nodeY, false, false));
-                WireNewNode(dynamoModel, startNode, endNode, watchNode);
+                DynamoModel.ExecuteCommand(new DynamoModel.CreateNodeCommand(watchNode, nodeX, nodeY, false, false));
+                WireNewNode(DynamoModel, startNode, endNode, watchNode);
             });
         }
 

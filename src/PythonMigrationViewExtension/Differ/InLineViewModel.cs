@@ -35,7 +35,7 @@ namespace Dynamo.PythonMigration.Differ
         /// This is different to standard DiffPlex Inline behaviour as it retains
         /// all changed fragments in a line, indicating each character that's changed.
         /// </summary>
-        /// <param name="diffModel">The diff connectorModel to convert</param>
+        /// <param name="diffModel">The diff model to convert</param>
         /// <returns>The combined DiffPaneModel that can be used in an inline diff display.</returns>
         private DiffPaneModel ConvertToInline(SideBySideDiffModel diffModel)
         {
@@ -58,7 +58,7 @@ namespace Dynamo.PythonMigration.Differ
         /// <summary>
         /// Filter and modify which lines from old text should be included in the inline diff.
         /// </summary>
-        /// <param name="oldTextModel">The diff connectorModel for the old text.</param>
+        /// <param name="oldTextModel">The diff model for the old text.</param>
         /// <returns>The list of diff pieces that represent the old text to display.</returns>
         private IEnumerable<DiffPiece> ProcessOldLines(DiffPaneModel oldTextModel)
         {

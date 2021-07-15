@@ -80,7 +80,7 @@ namespace Dynamo.UI.Prompts
 
         private ModelBase GetBoundModel(object dataItem)
         {
-            // Attempt get to the data-bound connectorModel (if there's any).
+            // Attempt get to the data-bound model (if there's any).
             var nodeModel = dataItem as NodeModel;
             var noteModel = dataItem as NoteModel;
             var annotationModel = dataItem as AnnotationModel; 

@@ -8,7 +8,7 @@ namespace CoreNodeModelsWpf
 {
     /// <summary>
     /// The SliderViewModel acts as the converter
-    /// for numeric sliders. By using a view connectorModel
+    /// for numeric sliders. By using a view model
     /// to do the conversion instead of a converter,
     /// we can do conditional conversion based on the 
     /// context in which the conversion happens.

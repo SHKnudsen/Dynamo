@@ -68,7 +68,7 @@ namespace Dynamo.Wpf.ViewModels.Watch3D
         /// <summary>
         /// Returns the current camera position of the 3D background preview
         /// Note: GetCameraInformation returns the camera position but without the correct
-        /// transformation to connectorModel coordinates. This function takes care of that transformation
+        /// transformation to model coordinates. This function takes care of that transformation
         /// TODO: Task to fix GetCameraInformation to return the correct camera position
         /// so that we can remove this API and simply use GetCameraInformation consistently
         /// </summary>

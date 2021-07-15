@@ -40,7 +40,7 @@ namespace DynamoCoreWpfTests
 
         /// <summary>
         /// This test method will execute the next methods/properties from the ConverterViewModel.cs file:
-        /// public ConverterViewModel(DynamoConvert connectorModel,NodeView nodeView)
+        /// public ConverterViewModel(DynamoConvert model,NodeView nodeView)
         /// public ConversionMetricUnit SelectedMetricConversion
         /// public ConversionUnit SelectedFromConversion
         /// public ConversionUnit SelectedToConversion

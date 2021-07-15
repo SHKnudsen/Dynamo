@@ -60,8 +60,8 @@ namespace Watch3DNodeModelsWpf
             {
                 try
                 {
-                    // The deserialization logic is unified between the view connectorModel and this node connectorModel.
-                    // For the node connectorModel, we need to supply the deserialization method with the camera node.
+                    // The deserialization logic is unified between the view model and this node model.
+                    // For the node model, we need to supply the deserialization method with the camera node.
                     var cameraNode = model.initialCameraData.ChildNodes.Cast<XmlNode>().FirstOrDefault(innerNode => innerNode.Name.Equals("camera", StringComparison.OrdinalIgnoreCase));
                     var cameraData = watch3DViewModel.DeserializeCamera(cameraNode);
                     watch3DViewModel.SetCameraData(cameraData);
@@ -84,13 +84,13 @@ namespace Watch3DNodeModelsWpf
 
             // When user sizes a watch node, only view gets resized. The actual 
             // NodeModel does not get updated. This is where the view updates the 
-            // connectorModel whenever its size is updated. 
+            // model whenever its size is updated. 
             // Updated from (Watch3d)View.SizeChanged to nodeView.SizeChanged - height 
-            // and width should correspond to node connectorModel and not watch3Dview
+            // and width should correspond to node model and not watch3Dview
             nodeView.SizeChanged += (sender, args) =>
 			    model.SetSize(args.NewSize.Width, args.NewSize.Height);
 
-            // set WatchSize in connectorModel
+            // set WatchSize in model
             watch3DView.View.SizeChanged += (sender, args) => 
 			    model.SetWatchSize(args.NewSize.Width, args.NewSize.Height);
 

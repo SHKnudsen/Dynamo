@@ -34,7 +34,7 @@ namespace Dynamo.Manipulation
         }
 
         /// <summary>
-        /// Sets the workspace connectorModel property and updates event handlers accordingly.
+        /// Sets the workspace model property and updates event handlers accordingly.
         /// </summary>
         /// <param name="wsm">Workspace Model to set</param>
         private void SetWorkSpaceModel(IWorkspaceModel wsm)

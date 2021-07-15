@@ -44,10 +44,17 @@ namespace Dynamo.Graph.Connectors
         public PortModel End { get; private set; }
 
         /// <summary>
-        /// Collection of pinmodels
+        /// Collection of ConnectorPinModels associated with this Connector.
         /// </summary>
-        public ObservableCollection<ConnectorPinModel> ConnectorPinModels { get; set; }
+        public ObservableCollection<ConnectorPinModel> ConnectorPinModels { get; private set; }
 
+        /// <summary>
+        /// Handles adding a new ConnectorPin to the collection of CollectorPins associated with this connector.
+        /// This function is called after deserializing and is responsible for reconstructing the pins corresponding
+        /// to each connector.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         internal void AddPin(double x, double y)
         {
             ConnectorPinModels.Add(new ConnectorPinModel(x, y, Guid.NewGuid(),this.GUID));
