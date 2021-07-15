@@ -42,6 +42,7 @@ namespace Dynamo.Graph.Connectors
         /// Returns end port model.
         /// </summary>
         public PortModel End { get; private set; }
+
         /// <summary>
         /// Collection of pinmodels
         /// </summary>

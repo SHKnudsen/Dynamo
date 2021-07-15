@@ -25,11 +25,6 @@ namespace Dynamo.Controls
         public WatchHoverIconView()
         {
             InitializeComponent();
-            //this.DataContextChanged += OnDataContextChanged;
         }
-        //private void OnDataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
-        //{
-        //    viewModel = DataContext as WatchHoverIconViewModel;
-        //}
     }
 }

@@ -14,7 +14,7 @@ namespace Dynamo.Wpf.ViewModels.Watch3D
     /// This class handles actually updating the scene and shaders. Updates to the properties on this class invalidate
     /// the renderer and pass new data to the shader.
     /// This class can override callbacks that occur during low level rendering updates. The only one we use currently is
-    /// OnUpdatePerModelStruct() to modify the per model data that is passed to our shader.
+    /// OnUpdatePerModelStruct() to modify the per connectorModel data that is passed to our shader.
     /// </summary>
     internal class DynamoGeometryMeshCore : MeshRenderCore
     {
@@ -62,7 +62,7 @@ namespace Dynamo.Wpf.ViewModels.Watch3D
         }
 
         /// <summary>
-        /// Does this model require displaying vertex colors.
+        /// Does this connectorModel require displaying vertex colors.
         /// </summary>
         public bool RequiresPerVertexColoration
         {

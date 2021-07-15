@@ -14,31 +14,45 @@ using Dynamo.UI.Commands;
 namespace Dynamo.ViewModels
 {
     /// <summary>
-    /// 
+    /// ViewModel of the 'watch icon', which gets displayed when
+    /// a connector is hovered over.
     /// </summary>
     public class WatchHoverIconViewModel: NotificationObject
     {
         private ConnectorViewModel ViewModel { get; set; }
         private DynamoViewModel DynamoViewModel { get; set; }
         private Dispatcher Dispatcher { get; set; }
+        private double MarkerSize { get; set; } = 30;
 
+        /// <summary>
+        /// Midpoint of the connector bezier curve.
+        /// </summary>
         public Point MidPoint { get; private set; }
-        public double MarkerSize { get; private set; } = 30;
 
-        private bool _isHalftone;
+        private bool isHalftone;
+        /// <summary>
+        /// Property used to tell xaml which image to use for the watch icon,
+        /// the normal or the greyed-out. This depends on whether the wire
+        /// is visible or hidden.
+        /// </summary>
         public bool IsHalftone 
         {
             get
             {
-                return _isHalftone;
+                return isHalftone;
             }
             set
             {
-                _isHalftone = value;
+                isHalftone = value;
                 RaisePropertyChanged(nameof(IsHalftone));
             }
         }
 
+        #region Commands
+        
+        /// <summary>
+        /// Commands which places a watch node in the center of the connector.
+        /// </summary>
         public DelegateCommand PlaceWatchNodeCommand { get; set; }
 
         private void PlaceWatchNodeCommandExecute(object param)
@@ -47,15 +61,11 @@ namespace Dynamo.ViewModels
             PlaceWatchNode();
         }
 
-        bool CanExecute(object parameter)
+        private void InitCommands()
         {
-            return true;
+            PlaceWatchNodeCommand = new DelegateCommand(PlaceWatchNodeCommandExecute, x=> true);
         }
-
-        void InitCommands()
-        {
-            PlaceWatchNodeCommand = new DelegateCommand(PlaceWatchNodeCommandExecute,CanExecute);
-        }
+        #endregion
 
         public WatchHoverIconViewModel(ConnectorViewModel connectorViewModel, DynamoViewModel dynamoViewModel)
         {
@@ -63,15 +73,14 @@ namespace Dynamo.ViewModels
             DynamoViewModel = dynamoViewModel;
             InitCommands();
 
-            Dispatcher = Dispatcher.CurrentDispatcher;
-
-            var bez = ViewModel.BezierControlPoints;
-            var coll = ViewModel.ConnectorPinViewCollection;
-
-            if (ViewModel.ConnectorPinViewCollection.Count==0 && ViewModel.BezierControlPoints is null)
+            if (ViewModel.ConnectorPinViewCollection.Count == 0 && ViewModel.BezierControlPoints is null)
+            {
                 MidPoint = ConnectorBezierMidpoint();
+            }
             else
+            {
                 MidPoint = MultiBezierMidpoint();
+            }
 
             connectorViewModel.PropertyChanged += OnConnectorViewModelPropertyChanged;
             IsHalftone = false;
@@ -140,6 +149,10 @@ namespace Dynamo.ViewModels
             return new Point(x, y);
         }
 
+        /// <summary>
+        /// Returns the 'midpoint' of the multi-segment bezier curve.
+        /// </summary>
+        /// <returns></returns>
         private Point MultiBezierMidpoint()
         {
             int bezierMiddleSegmentIndex = -1;
@@ -157,6 +170,9 @@ namespace Dynamo.ViewModels
             return ConnectorBezierMidpoint(segmentToCalculateMidpointOn);
         }
 
+        /// <summary>
+        /// Places watch node at the midpoint of the connector
+        /// </summary>
         internal void PlaceWatchNode()
         {
             NodeModel startNode = ViewModel.ConnectorModel.Start.Owner;
@@ -172,18 +188,25 @@ namespace Dynamo.ViewModels
             });
         }
 
+        /// <summary>
+        /// Rewires nodes and newly placed watch node between them.
+        /// </summary>
+        /// <param name="dynamoModel"></param>
+        /// <param name="startNode"></param>
+        /// <param name="endNode"></param>
+        /// <param name="watchNodeModel"></param>
         private static void WireNewNode(DynamoModel dynamoModel, NodeModel startNode, NodeModel endNode, NodeModel watchNodeModel)
         {
             (List<int> startIndex, List<int> endIndex) = GetPortIndex(startNode, endNode);
 
-            // Connect startNode and remember node
+            // Connect startNode and watch node
             foreach (var idx in startIndex)
             {
                 dynamoModel.ExecuteCommand(new DynamoModel.MakeConnectionCommand(startNode.GUID, idx, PortType.Output, DynamoModel.MakeConnectionCommand.Mode.Begin));
                 dynamoModel.ExecuteCommand(new DynamoModel.MakeConnectionCommand(watchNodeModel.GUID, 0, PortType.Input, DynamoModel.MakeConnectionCommand.Mode.End));
             }
 
-            // Connect remember node and endNode
+            // Connect watch node and endNode
             foreach (var idx in endIndex)
             {
                 dynamoModel.ExecuteCommand(new DynamoModel.MakeConnectionCommand(watchNodeModel.GUID, 0, PortType.Output, DynamoModel.MakeConnectionCommand.Mode.Begin));

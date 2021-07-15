@@ -442,7 +442,7 @@ namespace Dynamo.ViewModels
             var annotationsColl = new CollectionContainer {Collection = Annotations};
             WorkspaceElements.Add(annotationsColl);
 
-            //respond to collection changes on the model by creating new view models
+            //respond to collection changes on the connectorModel by creating new view models
             //currently, view models are added for notes and nodes
             //connector view models are added during connection
 
@@ -487,8 +487,8 @@ namespace Dynamo.ViewModels
         /// <summary>
         /// This event is triggered from Workspace Model. Used in instrumentation
         /// </summary>
-        /// <param name="modelData"> Workspace model data as JSON </param>
-        /// <returns>workspace model with view block in string format</returns>
+        /// <param name="modelData"> Workspace connectorModel data as JSON </param>
+        /// <returns>workspace connectorModel with view block in string format</returns>
         private string Model_PopulateJSONWorkspace(JObject modelData)
         {
              var jsonData = AddViewBlockToJSON(modelData);
@@ -567,7 +567,7 @@ namespace Dynamo.ViewModels
                 if (!isBackup)
                     Model.OnSaving(saveContext);
 
-                //set the name before serializing model.
+                //set the name before serializing connectorModel.
                 this.Model.setNameBasedOnFileName(filePath, isBackup);
                 // Stage 1: Serialize the workspace.
                 var json = Model.ToJson(engine);
@@ -594,7 +594,7 @@ namespace Dynamo.ViewModels
             }
         }
         /// <summary>
-        /// This function appends view block to the model json
+        /// This function appends view block to the connectorModel json
         /// </summary>
         /// <param name="modelData">Workspace Model data in JSON format</param>
         private JObject AddViewBlockToJSON(JObject modelData)
@@ -773,7 +773,7 @@ namespace Dynamo.ViewModels
         /// <summary>
         /// Handles the port snapping on Mouse Enter.
         /// </summary>
-        /// <param name="portViewModel">The port view model.</param>
+        /// <param name="portViewModel">The port view connectorModel.</param>
         private void nodeViewModel_SnapInputEvent(PortViewModel portViewModel)
         {
             switch (portViewModel.EventType)
@@ -1262,7 +1262,7 @@ namespace Dynamo.ViewModels
 
                 if (!models.Any()) return;
 
-                // initialize to the first model (either note or node) on the list 
+                // initialize to the first connectorModel (either note or node) on the list 
 
                 var firstModel = models.First();
                 minX = firstModel.X;

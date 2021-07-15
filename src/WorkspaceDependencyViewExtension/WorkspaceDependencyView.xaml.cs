@@ -82,7 +82,7 @@ namespace Dynamo.WorkspaceDependency
         /// <summary>
         /// Event handler for workspaceAdded event
         /// </summary>
-        /// <param name="obj">workspace model</param>
+        /// <param name="obj">workspace connectorModel</param>
         internal void OnWorkspaceChanged(IWorkspaceModel obj)
         {
             if (obj is WorkspaceModel)
@@ -102,7 +102,7 @@ namespace Dynamo.WorkspaceDependency
         /// <summary>
         /// Event handler for workspaceRemoved event
         /// </summary>
-        /// <param name="obj">workspace model</param>
+        /// <param name="obj">workspace connectorModel</param>
         internal void OnWorkspaceCleared(IWorkspaceModel obj)
         {
             PackageDependencyTable.ItemsSource = null;
@@ -121,7 +121,7 @@ namespace Dynamo.WorkspaceDependency
         /// <summary>
         /// Regenerate dependency table
         /// </summary>
-        /// <param name="ws">workspace model</param>
+        /// <param name="ws">workspace connectorModel</param>
         internal void DependencyRegen(WorkspaceModel ws)
         {
             RestartBanner.Visibility = Visibility.Hidden;
@@ -167,7 +167,7 @@ namespace Dynamo.WorkspaceDependency
         }
 
         /// <summary>
-        /// Calls the DependencyRegen function when the DummyNodesReloaded event is triggered from the dynamo model.
+        /// Calls the DependencyRegen function when the DummyNodesReloaded event is triggered from the dynamo connectorModel.
         /// </summary>
         internal void TriggerDependencyRegen()
         {

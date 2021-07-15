@@ -189,7 +189,7 @@ namespace Dynamo.ViewModels
             {
                 try
                 {
-                    // Create an array containing a connector view model to begin drawing
+                    // Create an array containing a connector view connectorModel to begin drawing
                     var connectors = new ConnectorViewModel[] { new ConnectorViewModel(this, portModel) };
                     this.SetActiveConnectors(connectors);
                     firstStartPort = isInPort ? null : node.OutPorts[portIndex];
@@ -248,7 +248,7 @@ namespace Dynamo.ViewModels
                 return;
             try
             {
-                // Create an array containing a connector view model to begin drawing
+                // Create an array containing a connector view connectorModel to begin drawing
                 var connectors = new ConnectorViewModel[] { new ConnectorViewModel(this, firstStartPort) };
                 this.SetActiveConnectors(connectors);
             }

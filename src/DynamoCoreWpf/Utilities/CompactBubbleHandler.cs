@@ -30,7 +30,7 @@ namespace Dynamo.Wpf.Utilities
 
         /// <summary>
         /// Counts the number of all collection items of node output and if specified 
-        /// it generates appropriate view model for compact preview bubble
+        /// it generates appropriate view connectorModel for compact preview bubble
         /// </summary>
         /// <param name="mirrorData">Data which represents the value of node output</param>
         /// <param name="generateViewModel">Flag to not create unused view models</param>

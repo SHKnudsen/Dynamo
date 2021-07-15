@@ -231,7 +231,7 @@ namespace Dynamo.Nodes
 
         private NodeModel GetBoundModel(object dataItem)
         {
-            // Attempt get to the data-bound model (if there's any).
+            // Attempt get to the data-bound connectorModel (if there's any).
             NodeModel nodeModel = dataItem as NodeModel;
             if (null == nodeModel)
             {

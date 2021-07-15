@@ -38,14 +38,10 @@ namespace Dynamo.Nodes
             ViewModel = null;
 
             Loaded += OnPinViewLoaded;
-            Unloaded += OnPinViewUnloaded;
         }
-        void OnPinViewLoaded(object sender, RoutedEventArgs e)
+        private void OnPinViewLoaded(object sender, RoutedEventArgs e)
         {
             ViewModel = this.DataContext as ConnectorPinViewModel;
-        }
-        void OnPinViewUnloaded(object sender, RoutedEventArgs e)
-        {
         }
 
         private void OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -73,22 +69,15 @@ namespace Dynamo.Nodes
 
         /// <summary>
         /// If ZIndex is more then max value of int, it should be set back to 0 for all elements.
+        /// The ZIndex for ConnectorPins is set to match that of nodes.
         /// </summary>
         private void PrepareZIndex()
         {
-            NoteViewModel.StaticZIndex = Configurations.NodeStartZIndex;
-
             var parent = TemplatedParent as ContentPresenter;
             if (parent == null) return;
 
-            // reset the ZIndex for all Notes
-            foreach (var child in parent.ChildrenOfType<NoteView>())
-            {
-                child.ViewModel.ZIndex = Configurations.NodeStartZIndex;
-            }
-
-            // reset the ZIndex for all Nodes
-            foreach (var child in parent.ChildrenOfType<Controls.NodeView>())
+            // reset the ZIndex for all ConnectorPins
+            foreach (var child in parent.ChildrenOfType<ConnectorPinView>())
             {
                 child.ViewModel.ZIndex = Configurations.NodeStartZIndex;
             }

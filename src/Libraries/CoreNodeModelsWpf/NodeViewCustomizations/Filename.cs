@@ -31,7 +31,7 @@ namespace DSCore.File
                 var filepath = openDialog.FileName;
                 model.HintPath = filepath; //Update the hint path as full path.
 
-                //Evaluate relative path to store as model.Value
+                //Evaluate relative path to store as connectorModel.Value
                 if (workspaceModel != null && !string.IsNullOrEmpty(workspaceModel.FileName))
                 {
                     if (filepath == workspaceModel.FileName)

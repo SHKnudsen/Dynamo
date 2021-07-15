@@ -73,7 +73,7 @@ namespace Dynamo.ViewModels
         private ObservableCollection<DefaultWatch3DViewModel> watch3DViewModels = new ObservableCollection<DefaultWatch3DViewModel>();
 
         /// <summary>
-        /// An observable collection of workspace view models which tracks the model
+        /// An observable collection of workspace view models which tracks the connectorModel
         /// </summary>
         private ObservableCollection<WorkspaceViewModel> workspaces = new ObservableCollection<WorkspaceViewModel>();
         public ObservableCollection<WorkspaceViewModel> Workspaces
@@ -175,7 +175,7 @@ namespace Dynamo.ViewModels
                 var viewModel = workspaces.FirstOrDefault(vm => vm.Model == model.CurrentWorkspace);
                 var index = workspaces.IndexOf(viewModel);
 
-                // As the getter could aslo be triggered by the change of model,
+                // As the getter could aslo be triggered by the change of connectorModel,
                 // we need to update currentWorkspaceViewModel here. 
                 if (currentWorkspaceViewModel != viewModel)
                     currentWorkspaceViewModel = viewModel;
@@ -204,7 +204,7 @@ namespace Dynamo.ViewModels
         }
 
         /// <summary>
-        /// Returns the workspace view model whose workspace model is the model's current workspace
+        /// Returns the workspace view connectorModel whose workspace connectorModel is the connectorModel's current workspace
         /// </summary>
         public WorkspaceViewModel CurrentSpaceViewModel
         {
@@ -1253,7 +1253,7 @@ namespace Dynamo.ViewModels
                 // but has its DataContext set to the RunSettingsViewModel 
                 // on the HomeWorkspaceViewModel. When the home workspace is changed,
                 // we need to raise a property change notification for the 
-                // homespace view model, so the RunSettingsControl's bindings
+                // homespace view connectorModel, so the RunSettingsControl's bindings
                 // get updated.
                 RaisePropertyChanged("HomeSpaceViewModel");
             }
@@ -1620,8 +1620,8 @@ namespace Dynamo.ViewModels
         /// Save the current workspace to a specific file path. If the file path is null or empty, an
         /// exception is written to the console.
         /// </summary>
-        /// <param name="id">Indicate the id of target workspace view model instead of defaulting to 
-        /// current workspace view model. This is critical in crash cases.</param>
+        /// <param name="id">Indicate the id of target workspace view connectorModel instead of defaulting to 
+        /// current workspace view connectorModel. This is critical in crash cases.</param>
         /// <param name="path">The path to the file.</param>
         /// <param name="isBackup">Indicates if an automated backup save has called this function.</param>
         /// <param name="saveContext">The context of the save operation.</param>

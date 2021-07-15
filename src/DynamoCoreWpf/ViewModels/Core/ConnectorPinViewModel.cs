@@ -40,20 +40,21 @@ namespace Dynamo.ViewModels
 
         #region Properties
 
-        private ConnectorPinModel _model;
+        
 
         [JsonIgnore]
-        public readonly WorkspaceViewModel WorkspaceViewModel;
+        private readonly WorkspaceViewModel WorkspaceViewModel;
         private int zIndex = Configurations.NodeStartZIndex; // initialize the start Z-Index of a note to the same as that of a node
         internal static int StaticZIndex = Configurations.NodeStartZIndex;
 
+        private ConnectorPinModel model;
         [JsonIgnore]
         public ConnectorPinModel Model
         {
-            get { return _model; }
+            get { return model; }
             set
             {
-                _model = value;
+                model = value;
                 RaisePropertyChanged(nameof(Model));
             }
         }
@@ -63,10 +64,10 @@ namespace Dynamo.ViewModels
         /// </summary>
         public double Left
         {
-            get { return _model.X; }
+            get { return model.X; }
             set
             {
-                _model.X = value;
+                model.X = value;
                 RaisePropertyChanged(nameof(Left));
             }
         }
@@ -76,10 +77,10 @@ namespace Dynamo.ViewModels
         /// </summary>
         public double Top
         {
-            get { return _model.Y; }
+            get { return model.Y; }
             set
             {
-                _model.Y = value;
+                model.Y = value;
                 RaisePropertyChanged(nameof(Top));
             }
         }
@@ -95,13 +96,20 @@ namespace Dynamo.ViewModels
             set { zIndex = value; RaisePropertyChanged(nameof(ZIndex)); }
         }
 
+        /// <summary>
+        /// Provides the ViewModel (this) with the selected state of the ConnectorPinModel.
+        /// </summary>
         [JsonIgnore]
         public bool IsSelected
         {
-            get { return _model.IsSelected; }
+            get { return model.IsSelected; }
         }
 
         private bool isHalftone;
+        /// <summary>
+        /// Provides the ViewModel (this) with the visibility state of the Connector.
+        /// When set to 'hidden', 'IsHalftone' is set to true, and viceversa.
+        /// </summary>
         [JsonIgnore]
         public bool IsHalftone
         {
@@ -120,7 +128,7 @@ namespace Dynamo.ViewModels
         {
             get
             {
-                return _model.ConnectorId;
+                return model.ConnectorId;
             }
         }
 
@@ -134,6 +142,7 @@ namespace Dynamo.ViewModels
         {
             OnRequestRemove(this, EventArgs.Empty);
         }
+
         private void InitializeCommands()
         {
             UnpinConnectorCommand = new DelegateCommand(UnpinWireCommandExecute);
@@ -144,7 +153,7 @@ namespace Dynamo.ViewModels
         public ConnectorPinViewModel(WorkspaceViewModel workspaceViewModel, ConnectorPinModel model)
         {
             this.WorkspaceViewModel = workspaceViewModel;
-            _model = model;
+            this.model = model;
             InitializeCommands();
             model.PropertyChanged += pin_PropertyChanged;
             ZIndex = ++StaticZIndex; // places the note on top of all nodes/notes
@@ -152,25 +161,25 @@ namespace Dynamo.ViewModels
 
         public override void Dispose()
         {
-            _model.PropertyChanged -= pin_PropertyChanged;
+            model.PropertyChanged -= pin_PropertyChanged;
             base.Dispose();
         }
 
         public void UpdateSizeFromView(double w, double h)
         {
-            this._model.SetSize(w, h);
+            this.model.SetSize(w, h);
         }
 
         private bool CanSelect(object parameter)
         {
-            if (!DynamoSelection.Instance.Selection.Contains(_model))
+            if (!DynamoSelection.Instance.Selection.Contains(model))
             {
                 return true;
             }
             return false;
         }
 
-        //respond to changes on the model's properties
+        //respond to changes on the connectorModel's properties
         void pin_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)

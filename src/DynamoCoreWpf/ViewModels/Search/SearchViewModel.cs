@@ -276,7 +276,7 @@ namespace Dynamo.ViewModels
         }
 
         /// <summary>
-        /// To get view model for a node based on its name
+        /// To get view connectorModel for a node based on its name
         /// </summary>
         /// <param name="nodeName"></param>
         /// <returns></returns>

@@ -154,8 +154,8 @@ namespace Dynamo.Controls
         #endregion
 
         /// <summary>
-        /// Called when the size of the node changes. Communicates changes down to the view model 
-        /// then to the model.
+        /// Called when the size of the node changes. Communicates changes down to the view connectorModel 
+        /// then to the connectorModel.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>
@@ -375,7 +375,7 @@ namespace Dynamo.Controls
                 e.IsEnabled = false;
             }
 
-            //set the state using the view model's command
+            //set the state using the view connectorModel's command
             if (ViewModel.SetStateCommand.CanExecute(ElementState.Dead))
                 ViewModel.SetStateCommand.Execute(ElementState.Dead);
         }

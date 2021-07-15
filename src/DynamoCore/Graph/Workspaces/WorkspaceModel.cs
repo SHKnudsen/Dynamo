@@ -2139,17 +2139,16 @@ namespace Dynamo.Graph.Workspaces
             }
         }
 
-        private void LoadConnectorPins(IEnumerable<ExtraConnectorPinInfo> pinViews)
+        private void LoadConnectorPins(IEnumerable<ExtraConnectorPinInfo> pinInfo)
         {
-            if (pinViews == null)
-                return;
+            if (pinInfo == null) {return;}
 
-            foreach (ExtraConnectorPinInfo pinViewInfo in pinViews)
+            foreach (ExtraConnectorPinInfo pinViewInfo in pinInfo)
             {
                 var connectorGuid = IdToGuidConverter(pinViewInfo.ConnectorGuid);
 
                 var matchingConnector = Connectors.FirstOrDefault(x => x.GUID == connectorGuid);
-                if (matchingConnector is null) return;
+                if (matchingConnector is null) {return;}
 
                 matchingConnector.AddPin(pinViewInfo.Left, pinViewInfo.Top);
             }
@@ -2157,8 +2156,7 @@ namespace Dynamo.Graph.Workspaces
 
         private void LoadAnnotations(IEnumerable<ExtraAnnotationViewInfo> annotationViews)
         {
-            if (annotationViews == null)
-              return;
+            if (annotationViews == null) {return;}
 
             foreach (ExtraAnnotationViewInfo annotationViewInfo in annotationViews)
             {
@@ -2202,13 +2200,6 @@ namespace Dynamo.Graph.Workspaces
                       continue;
 
                     notes.Add(noteModel);
-                }
-
-                foreach (string pinId in annotationViewInfo.Nodes)
-                {
-                    var guidValue = IdToGuidConverter(pinId);
-                    if (guidValue == null)
-                        continue;
                 }
 
                 var annotationModel = new AnnotationModel(nodes, notes);

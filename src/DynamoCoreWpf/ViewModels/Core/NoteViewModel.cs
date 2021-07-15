@@ -139,7 +139,7 @@ namespace Dynamo.ViewModels
             return false;
         }
 
-        //respond to changes on the model's properties
+        //respond to changes on the connectorModel's properties
         void note_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)

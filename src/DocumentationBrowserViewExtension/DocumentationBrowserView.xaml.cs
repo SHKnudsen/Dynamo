@@ -25,7 +25,7 @@ namespace Dynamo.DocumentationBrowser
             this.DataContext = viewModel;
             this.viewModel = viewModel;
 
-            // subscribe to the link changed event on the view model
+            // subscribe to the link changed event on the view connectorModel
             // so we know when to navigate to a new documentation page/document
             viewModel.LinkChanged += NavigateToPage;
 

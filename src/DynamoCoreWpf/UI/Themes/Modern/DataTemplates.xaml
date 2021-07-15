@@ -20,9 +20,9 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type viewModels:InfoBubbleViewModel}">
-        <controls:Inf
-            oBubbleView></controls:Inf>
+        <controls:InfoBubbleView></controls:InfoBubbleView>
     </DataTemplate>
+
     <DataTemplate DataType="{x:Type viewModels:AnnotationViewModel}">
         <nodes:AnnotationView></nodes:AnnotationView>
     </DataTemplate>

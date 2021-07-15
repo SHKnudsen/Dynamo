@@ -118,7 +118,7 @@ namespace Dynamo.Views
         }
 
         /// <summary>
-        /// clean up view model subscriptions to prevent memory leak
+        /// clean up view connectorModel subscriptions to prevent memory leak
         /// </summary>
         /// <param name="ViewModel"></param>
         private void RemoveViewModelsubscriptions(WorkspaceViewModel ViewModel)
@@ -144,7 +144,7 @@ namespace Dynamo.Views
         }
 
         /// <summary>
-        /// Attach view model subscriptions
+        /// Attach view connectorModel subscriptions
         /// </summary>
         /// <param name="ViewModel"></param>
         private void AttachViewModelsubscriptions(WorkspaceViewModel ViewModel)
@@ -611,7 +611,7 @@ namespace Dynamo.Views
             resultOffset.X = -(zoomArgs.Offset.X * scaleRequired) + centerOffsetX;
             resultOffset.Y = -(zoomArgs.Offset.Y * scaleRequired) + centerOffsetY;
 
-            // Apply on model
+            // Apply on connectorModel
             ViewModel.Zoom = scaleRequired;
             ViewModel.Model.X = resultOffset.X;
             ViewModel.Model.Y = resultOffset.Y;

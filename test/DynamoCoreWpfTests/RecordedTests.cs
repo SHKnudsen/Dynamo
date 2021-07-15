@@ -777,9 +777,9 @@ namespace DynamoCoreWpfTests
         {
             RunCommandsFromFile("TestRunEnabledButtonCanBeDisabled.xml", (commandTag) =>
             {
-                //This test case is to verify that when RunEnabled is changed to false from the model, 
+                //This test case is to verify that when RunEnabled is changed to false from the connectorModel, 
                 //the Run button is disabled. The strategy here is to directly modify the RunEnabled value
-                //in the model. But at that time, the view has not yet had a chance to refresh its button.
+                //in the connectorModel. But at that time, the view has not yet had a chance to refresh its button.
                 //So the process is separated into two steps. At the second step. the button status is checked.
                 if (commandTag == "OpenFile")
                 {

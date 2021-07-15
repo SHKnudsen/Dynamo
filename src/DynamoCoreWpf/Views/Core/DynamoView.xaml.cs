@@ -72,7 +72,7 @@ namespace Dynamo.Controls
         private ShortcutToolbar shortcutBar;
         private bool loaded = false;
         // This is to identify whether the PerformShutdownSequenceOnViewModel() method has been
-        // called on the view model and the process is not cancelled
+        // called on the view connectorModel and the process is not cancelled
         private bool isPSSCalledOnViewModelNoCancel = false;
         private readonly DispatcherTimer _workspaceResizeTimer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 0, 500), IsEnabled = false };
         private ViewLoadedParams sharedViewExtensionLoadedParams;
@@ -92,7 +92,7 @@ namespace Dynamo.Controls
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="dynamoViewModel">Dynamo view model</param>
+        /// <param name="dynamoViewModel">Dynamo view connectorModel</param>
         public DynamoView(DynamoViewModel dynamoViewModel)
         {
             // The user's choice to enable hardware acceleration is now saved in
@@ -1546,7 +1546,7 @@ namespace Dynamo.Controls
         private void WindowClosed(object sender, EventArgs e)
         {
             //There will be chances that WindowsClosed is called but WindowClosing is not called.
-            //This is to ensure PerformShutdownSequence is always called on the view model.
+            //This is to ensure PerformShutdownSequence is always called on the view connectorModel.
             if (!isPSSCalledOnViewModelNoCancel)
             {
                 PerformShutdownSequenceOnViewModel();

@@ -48,7 +48,7 @@ namespace CoreNodeModelsWpf.Nodes
             };
             combo.SetBinding(ItemsControl.ItemsSourceProperty, bindingVal);
 
-            // bind the selected index to the model property SelectedIndex
+            // bind the selected index to the connectorModel property SelectedIndex
             var indexBinding = new Binding("SelectedIndex")
             {
                 Mode = BindingMode.TwoWay,

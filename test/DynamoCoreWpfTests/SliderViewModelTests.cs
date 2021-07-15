@@ -62,12 +62,12 @@ namespace DynamoCoreWpfTests
             var dynamoSlider = nodeView.grid.ChildrenOfType<DynamoSlider>().FirstOrDefault();
             var sliderBaseModel = dynamoSlider.DataContext as SliderViewModel<double>;
 
-            //Getting the model using reflection
+            //Getting the connectorModel using reflection
             BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.NonPublic;
-            FieldInfo field = sliderBaseModel.GetType().GetField("model", bindFlags);
+            FieldInfo field = sliderBaseModel.GetType().GetField("connectorModel", bindFlags);
             SliderBase<double> sliderModel = (SliderBase<double>)field.GetValue(sliderBaseModel);
 
-            //Setting the model values
+            //Setting the connectorModel values
             sliderModel.Max = 200.0;
             sliderModel.Min = 0.0;
             sliderModel.Step = 10;

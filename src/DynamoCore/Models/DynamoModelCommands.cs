@@ -228,7 +228,6 @@ namespace Dynamo.Models
             CurrentWorkspace.RecordCreatedModel(noteModel);
         }
 
-
         private void CreateAnnotationImpl(CreateAnnotationCommand command)
         {
             AnnotationModel annotationModel = currentWorkspace.AddAnnotation(command.AnnotationText, command.ModelGuid);
@@ -248,13 +247,6 @@ namespace Dynamo.Models
             foreach (var guid in command.ModelGuids)
             {
                 ModelBase model = CurrentWorkspace.GetModelInternal(guid);
-
-                if (model is null)
-                {
-                    DynamoSelection.Instance.Selection.AddUnique(model);
-
-                    return;
-                }
 
                 if (!model.IsSelected)
                 {

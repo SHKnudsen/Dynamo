@@ -58,9 +58,9 @@ namespace Dynamo.Wpf
         {
             // generate:
             //
-            // (model, view) => {
+            // (connectorModel, view) => {
             //      var c = new NodeViewCustomizer();
-            //      c.CustomizeView( model as NodeModelType, view );
+            //      c.CustomizeView( connectorModel as NodeModelType, view );
             //      return new OnceDisposable( c );
             // }
 
@@ -68,7 +68,7 @@ namespace Dynamo.Wpf
             if (compiledCustomizationCall != null) return compiledCustomizationCall;
             
             // parameters for the lambda
-            var modelParam = Expression.Parameter(typeof(NodeModel), "model");
+            var modelParam = Expression.Parameter(typeof(NodeModel), "connectorModel");
             var viewParam = Expression.Parameter(typeof(NodeView), "view");
 
             // var c = new NodeViewCustomizer();
@@ -77,7 +77,7 @@ namespace Dynamo.Wpf
             var varExp = Expression.Variable(customizerType);
             var assignExp = Expression.Assign(varExp, custExp);
 
-            // c.CustomizeView( model as NodeModelType, view );
+            // c.CustomizeView( connectorModel as NodeModelType, view );
             var castModelExp = Expression.TypeAs(modelParam, nodeModelType);
             var invokeExp = Expression.Call(varExp, customizeViewMethodInfo, castModelExp, viewParam);
 

@@ -246,7 +246,7 @@ namespace Dynamo.Wpf.ViewModels
         /// <summary>
         /// Create new node for search element, connect to port and place using graph auto layout.
         /// </summary>
-        /// <param name="parameter">Port model to connect to</param>
+        /// <param name="parameter">Port connectorModel to connect to</param>
         protected virtual void CreateAndConnectToPort(object parameter)
         {
             var portModel = (PortModel) parameter;
