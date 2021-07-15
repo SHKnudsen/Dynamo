@@ -289,7 +289,11 @@ namespace Dynamo.Graph.Workspaces
 
         #region events
 
- 
+        /// <summary>
+        ///     Function that can be used to respond on a saved workspace.
+        /// </summary>
+        /// <param name="model">The <see cref="WorkspaceModel"/> object which has been saved.</param>
+        public delegate void WorkspaceSavedEvent(WorkspaceModel model);
 
         /// <summary>
         ///     Event that is fired when a workspace requests that a Node or Note model is

@@ -12,6 +12,10 @@ namespace Dynamo.ViewModels
     public partial class ConnectorPinViewModel : ViewModelBase
     {
         #region Events
+
+        /// <summary>
+        /// Raises a 'select' event for this ConnectorPinViewModel
+        /// </summary>
         public event EventHandler RequestSelect;
         public virtual void OnRequestSelect(Object sender, EventArgs e)
         {
@@ -21,6 +25,9 @@ namespace Dynamo.ViewModels
             }
         }
 
+        /// <summary>
+        /// Raises a 'redraw' event for this ConnectorPinViewModel
+        /// </summary>
         public event EventHandler RequestRedraw;
         public virtual void OnRequestRedraw(Object sender, EventArgs e)
         {
@@ -30,6 +37,9 @@ namespace Dynamo.ViewModels
             }
         }
 
+        /// <summary>
+        /// Raises a 'remove' event for this ConnectorPinViewModel
+        /// </summary>
         public event EventHandler RequestRemove;
         public virtual void OnRequestRemove(Object sender, EventArgs e)
         {
@@ -40,14 +50,33 @@ namespace Dynamo.ViewModels
 
         #region Properties
 
-        
-
         [JsonIgnore]
         private readonly WorkspaceViewModel WorkspaceViewModel;
-        private int zIndex = Configurations.NodeStartZIndex; // initialize the start Z-Index of a note to the same as that of a node
+        /// initialize the start Z-Index of a pin to a default
+        /// zIndex is mutable depending on mouse behaviour
+        private int zIndex = Configurations.NodeStartZIndex; 
+        /// <summary>
+        /// StaticZIndez is static Z-level of all ConnectorPins (which currently is
+        /// set to match that of nodes)
+        /// </summary>
         internal static int StaticZIndex = Configurations.NodeStartZIndex;
 
+        /// <summary>
+        /// ZIndex represents the order on the z-plane in which the pins and other objects appear. 
+        /// </summary>
+        [JsonIgnore]
+        public int ZIndex
+        {
+
+            get { return zIndex; }
+            set { zIndex = value; RaisePropertyChanged(nameof(ZIndex)); }
+        }
+
         private ConnectorPinModel model;
+
+        /// <summary>
+        /// ConnectorPinModel reference (listens to property changes of it).
+        /// </summary>
         [JsonIgnore]
         public ConnectorPinModel Model
         {
@@ -83,17 +112,6 @@ namespace Dynamo.ViewModels
                 model.Y = value;
                 RaisePropertyChanged(nameof(Top));
             }
-        }
-
-        /// <summary>
-        /// ZIndex represents the order on the z-plane in which the notes and other objects appear. 
-        /// </summary>
-        [JsonIgnore]
-        public int ZIndex
-        {
-
-            get { return zIndex; }
-            set { zIndex = value; RaisePropertyChanged(nameof(ZIndex)); }
         }
 
         /// <summary>

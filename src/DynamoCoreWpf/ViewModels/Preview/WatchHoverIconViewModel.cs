@@ -73,6 +73,8 @@ namespace Dynamo.ViewModels
             DynamoModel = dynamoModel;
             InitCommands();
 
+            Dispatcher = Dispatcher.CurrentDispatcher;
+
             if (ViewModel.ConnectorPinViewCollection.Count == 0 && ViewModel.BezierControlPoints is null)
             {
                 MidPoint = ConnectorBezierMidpoint(

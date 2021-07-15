@@ -175,13 +175,7 @@
                 <Setter TargetName="endDot"  Property="Opacity" Value="0.5"/>
                 <Setter TargetName="startDot" Property="Opacity" Value="0.5"/>
             </DataTrigger>
-            <DataTrigger Binding="{Binding Path=IsFrozen, Mode=OneWay}" Value="True">
-                <Setter TargetName="endDot"  Property="Opacity" Value="0.5"/>
-                <Setter TargetName="startDot" Property="Opacity" Value="0.5"/>
-            </DataTrigger>
-
         </DataTemplate.Triggers>
-
     </DataTemplate>
 
 </ResourceDictionary>
