@@ -332,8 +332,8 @@ namespace Dynamo.Graph.Workspaces
                 // If any of the incident edges are connected to unselected (outside) nodes
                 // then mark these edges as anchors.
 
-                graph.AnchorRightEdges.UnionWith(currentNode.RightEdges.Where(e => !e.EndNode.IsSelected));
-                graph.AnchorLeftEdges.UnionWith(currentNode.LeftEdges.Where(e => !e.StartNode.IsSelected));
+                graph.AnchorRightEdges.UnionWith(currentNode.RightEdges.Where(e => e.EndNode != null || !e.EndNode.IsSelected));
+                graph.AnchorLeftEdges.UnionWith(currentNode.LeftEdges.Where(e => e.StartNode != null || !e.StartNode.IsSelected));
 
                 foreach (var node in selectedNodes)
                 {
