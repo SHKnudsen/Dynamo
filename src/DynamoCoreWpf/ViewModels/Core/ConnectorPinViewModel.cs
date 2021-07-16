@@ -141,6 +141,19 @@ namespace Dynamo.ViewModels
                 RaisePropertyChanged(nameof(IsHalftone));
             }
         }
+        private bool isVisible;
+        public bool IsVisible
+        {
+            get
+            {
+                return isVisible;
+            }
+            set
+            {
+                isVisible = value;
+                RaisePropertyChanged(nameof(IsVisible));
+            }
+        }
         /// <summary>
         /// This property is purely used for serializing/ deserializing.
         /// In reconstructing ConnectorPins, we need to know what Connector they belong to.

@@ -11,6 +11,10 @@ using System.Windows.Shapes;
 
 namespace Dynamo.Wpf.UI
 {
+    /// <summary>
+    /// Class that handles passing mouse position to Connectors for placement of ConnectorPins.
+    /// Stack overflow reference: https://stackoverflow.com/questions/30047415/how-do-i-get-mouse-positions-in-my-view-model
+    /// </summary>
     public class MouseBehaviour : Behavior<Path>
     {
         public static readonly DependencyProperty MouseYProperty = DependencyProperty.Register(
@@ -19,13 +23,18 @@ namespace Dynamo.Wpf.UI
         public static readonly DependencyProperty MouseXProperty = DependencyProperty.Register(
            "MouseX", typeof(double), typeof(MouseBehaviour), new PropertyMetadata(default(double)));
 
-
+        /// <summary>
+        /// MouseY location
+        /// </summary>
         public double MouseY
         {
             get { return (double)GetValue(MouseYProperty); }
             set { SetValue(MouseYProperty, value); }
         }
 
+        /// <summary>
+        /// MouseX location
+        /// </summary>
         public double MouseX
         {
             get { return (double)GetValue(MouseXProperty); }

@@ -12,7 +12,8 @@
              xmlns:ui="clr-namespace:Dynamo.UI"
              MouseLeftButtonDown="OnPinMouseDown"
              PreviewMouseLeftButtonDown="OnPreviewMouseLeftButtonDown"
-             MouseLeave="OnPinViewMouseLeave">
+             MouseLeave="OnPinViewMouseLeave"
+             Visibility="{Binding IsVisible}">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -47,7 +48,7 @@
                     </Border.Style>
                     <Image>
                     <Image.Source>/DynamoCoreWpf;component/UI/Images/Pin_16px.png</Image.Source>
-                </Image>
+                    </Image>
             </Border>
             </Grid>
         <Canvas.RenderTransform>

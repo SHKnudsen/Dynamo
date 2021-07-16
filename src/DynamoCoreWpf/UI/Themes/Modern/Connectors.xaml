@@ -18,8 +18,9 @@
     <DataTemplate DataType="{x:Type viewModels:ConnectorPinViewModel}">
         <nodes:ConnectorPinView DataContext="{Binding}" />
     </DataTemplate>
-    <!--used for displaying pins on canvas-->
+    <!--Template used for displaying connectorPins on canvas-->
     <DataTemplate x:Key="ShowPinCollection">
+        <!--Defines how each item in the collection is displayed-->
         <ItemsControl x:Name="ic" ItemsSource="{Binding}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -27,6 +28,7 @@
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemContainerStyle>
+                <!--Presents each item bound to its Left,Top (x,y)-->
                 <Style TargetType="ContentPresenter">
                     <Setter Property="Canvas.Left" Value="{Binding Path=Left}" />
                     <Setter Property="Canvas.Top" Value="{Binding Path=Top}" />
@@ -109,7 +111,8 @@
                 <Ellipse  Name="startDot" Width="8" Height="8" Margin="-5"  Fill="{Binding PreviewState, Converter={StaticResource ConnectionStateToBrushConverter}}" IsHitTestVisible="False"
                           Canvas.Top="{Binding CurvePoint0.Y}" Canvas.Left="{Binding CurvePoint0.X}" Canvas.ZIndex="1"/>
             </Canvas>
-         
+
+            <!--Bezier Path-->
             <Path Stroke="{DynamicResource BConnectorSelection}" StrokeThickness="3" IsHitTestVisible="{Binding IsHitTestVisible, Mode=OneWay}"
               Name="connector"
               Visibility="{Binding BezVisibility, Converter={StaticResource BooleanToVisibilityConverter}}" 
@@ -125,10 +128,9 @@
                         <i:InvokeCommandAction Command="{Binding MouseUnhoverCommand}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-
             </Path>
            
-
+            <!--Polyline Path-->
             <Path Stroke="{DynamicResource BConnectorSelection}" StrokeThickness="3" IsHitTestVisible="{Binding IsHitTestVisible}"
               Name="plineConnector" Style="{StaticResource SConnector}"
               Visibility="{Binding PlineVisibility, Converter={StaticResource BooleanToVisibilityConverter}}" Canvas.ZIndex="0">
