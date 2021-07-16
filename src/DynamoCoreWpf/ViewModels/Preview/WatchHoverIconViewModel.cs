@@ -22,7 +22,10 @@ namespace Dynamo.ViewModels
         private ConnectorViewModel ViewModel { get; set; }
         private DynamoModel DynamoModel { get; set; }
         private Dispatcher Dispatcher { get; set; }
-        private double MarkerSize { get; set; } = 30;
+        /// <summary>
+        /// The size of the Watch Icon (x & y dimensions).
+        /// </summary>
+        public double MarkerSize { get; set; } = 30;
 
         /// <summary>
         /// Midpoint of the connector bezier curve.

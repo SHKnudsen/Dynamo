@@ -123,24 +123,6 @@ namespace Dynamo.ViewModels
             get { return model.IsSelected; }
         }
 
-        private bool isHalftone;
-        /// <summary>
-        /// Provides the ViewModel (this) with the visibility state of the Connector.
-        /// When set to 'hidden', 'IsHalftone' is set to true, and viceversa.
-        /// </summary>
-        [JsonIgnore]
-        public bool IsHalftone
-        {
-            get
-            {
-                return isHalftone;
-            }
-            set
-            {
-                isHalftone = value;
-                RaisePropertyChanged(nameof(IsHalftone));
-            }
-        }
         private bool isVisible;
         public bool IsVisible
         {
@@ -154,6 +136,26 @@ namespace Dynamo.ViewModels
                 RaisePropertyChanged(nameof(IsVisible));
             }
         }
+
+        private bool isPartlyVisible;
+        /// <summary>
+        /// Provides the ViewModel (this) with the visibility state of the Connector.
+        /// When set to 'hidden', 'IsHalftone' is set to true, and viceversa.
+        /// </summary>
+        [JsonIgnore]
+        public bool IsPartlyVisible
+        {
+            get
+            {
+                return isPartlyVisible;
+            }
+            set
+            {
+                isPartlyVisible = value;
+                RaisePropertyChanged(nameof(IsPartlyVisible));
+            }
+        }
+
         /// <summary>
         /// This property is purely used for serializing/ deserializing.
         /// In reconstructing ConnectorPins, we need to know what Connector they belong to.

@@ -12,15 +12,14 @@
              xmlns:ui="clr-namespace:Dynamo.UI"
              MouseLeftButtonDown="OnPinMouseDown"
              PreviewMouseLeftButtonDown="OnPreviewMouseLeftButtonDown"
-             MouseLeave="OnPinViewMouseLeave"
-             Visibility="{Binding IsVisible}">
+             MouseLeave="OnPinViewMouseLeave">
 
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="{x:Static ui:SharedDictionaryManager.DynamoColorsAndBrushesDictionaryUri}" />
             </ResourceDictionary.MergedDictionaries>
-            </ResourceDictionary>
+        </ResourceDictionary>
     </UserControl.Resources>
 
     <Canvas Left="{Binding Left, Mode=TwoWay}" Top="{Binding Top, Mode=TwoWay}">
@@ -48,7 +47,21 @@
                     </Border.Style>
                     <Image>
                     <Image.Source>/DynamoCoreWpf;component/UI/Images/Pin_16px.png</Image.Source>
-                    </Image>
+                    <Image.Style>
+                        <Style TargetType="Image">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=IsVisible, Mode=OneWay}" Value="False">
+                                <Setter Property="Opacity" Value="0.0"/>
+                                <Setter Property="ToolTipService.IsEnabled" Value="False"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=IsPartlyVisible, Mode=OneWay}" Value="True">
+                                <Setter Property="Opacity" Value="0.4"/>
+                                <Setter Property="ToolTipService.IsEnabled" Value="True"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
             </Border>
             </Grid>
         <Canvas.RenderTransform>

@@ -141,11 +141,22 @@ namespace Dynamo.ViewModels
 
         private void SetVisibilityOfPins(bool visibility)
         {
-            if (ConnectorPinViewCollection is null) return;
+            if (ConnectorPinViewCollection is null) { return; }
 
             foreach (var pin in ConnectorPinViewCollection)
             {
-                pin.IsHalftone = !visibility;
+                //set visible or hidden based on connector
+                pin.IsVisible = visibility;
+            }
+        }
+        private void SetPartialVisibilityOfPins(bool partialVisibility)
+        {
+            if (ConnectorPinViewCollection is null) { return; }
+
+            foreach (var pin in ConnectorPinViewCollection)
+            {
+                //set 'partlyVisible' based on connector (when selected while connector is hidden
+                pin.IsPartlyVisible = partialVisibility;
             }
         }
 
@@ -160,6 +171,7 @@ namespace Dynamo.ViewModels
             set
             {
                 isPartlyVisible = value;
+                SetPartialVisibilityOfPins(isPartlyVisible);
                 RaisePropertyChanged(nameof(IsPartlyVisible));
             }
         }
@@ -689,6 +701,8 @@ namespace Dynamo.ViewModels
         private void AddConnectorPinViewModel(ConnectorPinModel pinModel)
         {
             var pinViewModel = new ConnectorPinViewModel(this.workspaceViewModel, pinModel);
+            pinViewModel.IsVisible = IsVisible;
+            pinViewModel.IsPartlyVisible = isPartlyVisible;
             pinViewModel.PropertyChanged += PinViewModelPropertyChanged;
 
             pinViewModel.RequestSelect += HandleRequestSelected;
@@ -731,7 +745,8 @@ namespace Dynamo.ViewModels
             if (viewModelSender is null) return;
 
             var matchingPinViewModel = workspaceViewModel.Pins.First(x => x == viewModelSender);
-            matchingPinViewModel.PropertyChanged += PinViewModelPropertyChanged;
+            if (matchingPinViewModel is null) return;
+            matchingPinViewModel.PropertyChanged -= PinViewModelPropertyChanged;
             matchingPinViewModel.RequestSelect -= HandleRequestSelected;
             matchingPinViewModel.RequestRedraw -= HandlerRedrawRequest;
             workspaceViewModel.Pins.Remove(matchingPinViewModel);

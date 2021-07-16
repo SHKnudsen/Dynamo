@@ -113,7 +113,7 @@
             </Canvas>
 
             <!--Bezier Path-->
-            <Path Stroke="{DynamicResource BConnectorSelection}" StrokeThickness="3" IsHitTestVisible="{Binding IsHitTestVisible, Mode=OneWay}"
+            <Path Stroke="{DynamicResource BConnectorSelection}" StrokeThickness="3"
               Name="connector"
               Visibility="{Binding BezVisibility, Converter={StaticResource BooleanToVisibilityConverter}}" 
               Style="{StaticResource SConnector}" Canvas.ZIndex="0" ToolTip="{Binding ConnectorDataTooltip}" Data="{Binding ComputedBezierPathGeometry, UpdateSourceTrigger=PropertyChanged}">
@@ -131,7 +131,7 @@
             </Path>
            
             <!--Polyline Path-->
-            <Path Stroke="{DynamicResource BConnectorSelection}" StrokeThickness="3" IsHitTestVisible="{Binding IsHitTestVisible}"
+            <Path Stroke="{DynamicResource BConnectorSelection}" StrokeThickness="3"
               Name="plineConnector" Style="{StaticResource SConnector}"
               Visibility="{Binding PlineVisibility, Converter={StaticResource BooleanToVisibilityConverter}}" Canvas.ZIndex="0">
                 <Path.Data>
