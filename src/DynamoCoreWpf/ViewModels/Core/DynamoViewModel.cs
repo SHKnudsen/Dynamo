@@ -73,7 +73,7 @@ namespace Dynamo.ViewModels
         private ObservableCollection<DefaultWatch3DViewModel> watch3DViewModels = new ObservableCollection<DefaultWatch3DViewModel>();
 
         /// <summary>
-        /// An observable collection of workspace view models which tracks the model
+        /// An observable collection of workspace view models which tracks the connectorModel
         /// </summary>
         private ObservableCollection<WorkspaceViewModel> workspaces = new ObservableCollection<WorkspaceViewModel>();
         public ObservableCollection<WorkspaceViewModel> Workspaces

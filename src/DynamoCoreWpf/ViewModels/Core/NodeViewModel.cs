@@ -314,7 +314,7 @@ namespace Dynamo.ViewModels
 
         /// <summary>
         /// Input grid's enabled state is now bound to this property
-        /// which tracks the node model's InteractionEnabled property
+        /// which tracks the node connectorModel's InteractionEnabled property
         /// </summary>
         [JsonIgnore]
         public bool IsInteractionEnabled

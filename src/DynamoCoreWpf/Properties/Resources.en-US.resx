@@ -601,7 +601,7 @@ You will get a chance to save your work.</value>
   </data>
   <data name="DynamoViewFileMenuExportToSTL" xml:space="preserve">
     <value>_Export Model to STL...</value>
-    <comment>File menu | Export geometry model to STL file format</comment>
+    <comment>File menu | Export geometry connectorModel to STL file format</comment>
   </data>
   <data name="DynamoViewFileMenuImport" xml:space="preserve">
     <value>_Import Library...</value>
@@ -2322,6 +2322,18 @@ Uninstall the following packages: {0}?</value>
   <data name="DynamoViewExtensionsMenu" xml:space="preserve">
     <value>_Extensions</value>
     <comment>Extensions menu</comment>
+  </data>
+  <data name="ConnectorContextMenuHeaderBreakConnections" xml:space="preserve">
+    <value>Break Connections</value>
+  </data>
+  <data name="ConnectorContextMenuHeaderPinConnector" xml:space="preserve">
+    <value>Pin Wire</value>
+  </data>
+  <data name="ConnectorContextMenuHeaderSelectConnected" xml:space="preserve">
+    <value>Select Connected</value>
+  </data>
+  <data name="ConnectorContextMenuHeaderUnpinConnector" xml:space="preserve">
+    <value>Unpin Wire</value>
   </data>
   <data name="PreferencesViewPython" xml:space="preserve">
     <value>Python</value>

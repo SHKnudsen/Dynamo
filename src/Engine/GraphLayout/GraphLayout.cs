@@ -828,12 +828,14 @@ namespace GraphLayout
             OwnerGraph = ownerGraph;
 
             StartNode = OwnerGraph.FindNode(startId);
+            if(StartNode is null) { return; }
             if (StartNode != null)
             {
                 StartNode.RightEdges.Add(this);
             }
 
             EndNode = OwnerGraph.FindNode(endId);
+            if(EndNode is null) { return; }
             if (EndNode != null)
             {
                 EndNode.LeftEdges.Add(this);

@@ -60,7 +60,7 @@ namespace Dynamo.Wpf
             //
             // (model, view) => {
             //      var c = new NodeViewCustomizer();
-            //      c.CustomizeView( model as NodeModelType, view );
+            //      c.CustomizeView( connectorModel as NodeModelType, view );
             //      return new OnceDisposable( c );
             // }
 
