@@ -124,6 +124,7 @@ namespace Dynamo.ViewModels
         }
 
         private bool isVisible;
+        [JsonIgnore]
         public bool IsVisible
         {
             get

@@ -432,50 +432,51 @@ namespace Dynamo.ViewModels
         {
             bool isCollectionofFiveorMore = false;
 
-            if (model != null)
+            ///if model is null or enginecontroller is disposed, return
+            if (model is null || workspaceViewModel.DynamoViewModel.EngineController.IsDisposed == true) { return; }
+
+            var portValue = model.Start.Owner.GetValue(model.Start.Index, workspaceViewModel.DynamoViewModel.EngineController);
+            if (portValue is null)
             {
-                var portValue = model.Start.Owner.GetValue(model.Start.Index, workspaceViewModel.DynamoViewModel.EngineController);
-                if (portValue is null)
-                {
-                    ConnectorDataTooltip = "N/A";
-                    return;
-                }
+                ConnectorDataTooltip = "N/A";
+                return;
+            }
 
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.AppendLine($"{model.Start.Owner.Name} -> {model.End.Owner.Name}");
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine($"{model.Start.Owner.Name} -> {model.End.Owner.Name}");
 
-                var isCollection = portValue.IsCollection;
-                if (isCollection)
+            var isCollection = portValue.IsCollection;
+            if (isCollection)
+            {
+                if (isCollection && portValue.GetElements().Count() > 5)
                 {
-                    if (isCollection && portValue.GetElements().Count() > 5)
+                    ///only sets 'is a collection' to true if the collection meets a size of 5
+                    isCollectionofFiveorMore = true;
+                    for (int i = 0; i < 5; i++)
                     {
-                        ///only sets 'is a collection' to true if the collection meets a size of 5
-                        isCollectionofFiveorMore = true;
-                        for (int i = 0; i < 5; i++)
-                        {
-                            stringBuilder.AppendLine(portValue.GetElements().ElementAt(i).StringData);
-                        }
-                        stringBuilder.AppendLine("...");
-                        stringBuilder.AppendLine(portValue.GetElements().Last().StringData);
-                        ConnectorDataTooltip = stringBuilder.ToString();
+                        stringBuilder.AppendLine(portValue.GetElements().ElementAt(i).StringData);
                     }
-                    else
-                    {
-                        for (int i = 0; i < portValue.GetElements().Count(); i++)
-                        {
-                            stringBuilder.AppendLine(portValue.GetElements().ElementAt(i).StringData);
-                        }
-                        ConnectorDataTooltip = stringBuilder.ToString();
-                    }
+                    stringBuilder.AppendLine("...");
+                    stringBuilder.AppendLine(portValue.GetElements().Last().StringData);
+                    ConnectorDataTooltip = stringBuilder.ToString();
                 }
                 else
                 {
-                    stringBuilder.AppendLine(portValue.StringData);
+                    for (int i = 0; i < portValue.GetElements().Count(); i++)
+                    {
+                        stringBuilder.AppendLine(portValue.GetElements().ElementAt(i).StringData);
+                    }
                     ConnectorDataTooltip = stringBuilder.ToString();
                 }
-                isDataFlowCollection = isCollectionofFiveorMore;
             }
+            else
+            {
+                stringBuilder.AppendLine(portValue.StringData);
+                ConnectorDataTooltip = stringBuilder.ToString();
+            }
+            isDataFlowCollection = isCollectionofFiveorMore;
         }
+
         #region Commands
 
         /// <summary>
@@ -865,13 +866,16 @@ namespace Dynamo.ViewModels
                     if (workspaceViewModel.DynamoViewModel.ConnectorType == ConnectorType.BEZIER)
                     {
                         BezVisibility = true;
+                        SetVisibilityOfPins(BezVisibility);
                         PlineVisibility = false;
                     }
                     else
                     {
                         BezVisibility = false;
+                        SetVisibilityOfPins(BezVisibility);
                         PlineVisibility = true;
                     }
+
                     Redraw();
                     break;
                 case nameof(DynamoViewModel.IsShowingConnectors):

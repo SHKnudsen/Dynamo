@@ -1252,6 +1252,7 @@ namespace Dynamo.Graph.Nodes
         /// <returns></returns>
         public MirrorData GetValue(int outPortIndex, EngineController engine)
         {
+            var eng = engine;
             return engine.GetMirror(GetAstIdentifierForOutputIndex(outPortIndex).Value).GetData();
         }
 
